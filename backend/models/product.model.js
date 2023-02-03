@@ -8,16 +8,16 @@ const productSchema = new Schema(
     price: { type: Number, required: true },
     numberOfProducts: { type: Number, required: true },
     brand: { type: Object, required: true },
-    gender: { type: [String], required: true },
-    size: { type: [String], required: true },
-    images: { type: [Object], required: true }, // -----
-    providers: { type: [Object], required: true }, // -----
-    frameColor: { type: [Object], required: true }, // { nameFa, nameEn, color, isAvailable }
-    isAvailable: { type: Boolean },
-    isOriginal: { type: Boolean },
-    isSpecialSale: { type: Boolean },
-    isFreeDelivery: { type: Boolean },
-    testAtHome: { type: Boolean },
+    gender: { type: [String], required: true, default: [] },
+    size: { type: [String], required: true, default: [] },
+    images: { type: [Object], required: true, default: [] }, // -----
+    providers: { type: [Object], required: true, default: [] }, // -----
+    frameColors: { type: [Object], required: true, default: [] }, // { nameFa, nameEn, color, isAvailable }
+    isAvailable: { type: Boolean, default: true },
+    isOriginal: { type: Boolean, default: false },
+    isSpecialSale: { type: Boolean, default: false },
+    isFreeDelivery: { type: Boolean, default: false },
+    testAtHome: { type: Boolean, default: true },
     model: { type: String },
     category: { type: String },
     originCountry: { type: String },
@@ -29,13 +29,13 @@ const productSchema = new Schema(
     lensMaterial: { type: String },
     lensColor: { type: String },
     lensFeature: { type: String },
-    stars: { type: Number },
-    discountPercent: { type: Number },
-    discountedPrice: { type: Number },
-    features: { type: [String] },
-    frameShape: { type: [String] },
-    faceShape: { type: [String] },
-    comments: { type: [Object] },
+    stars: { type: Number, default: 0 },
+    discountPercent: { type: Number, default: 0 },
+    discountedPrice: { type: Number, default: 0 },
+    features: { type: [String], default: [] },
+    frameShape: { type: [String], default: [] },
+    faceShape: { type: [String], default: [] },
+    comments: { type: [Object], default: [] },
   },
   { timestamps: true, collection: "products" }
 );
