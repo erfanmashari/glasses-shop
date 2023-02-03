@@ -40,6 +40,6 @@ const productSchema = new Schema(
   { timestamps: true, collection: "products" }
 );
 
-const Prouct = mongoose.model("Product", productSchema);
+const Product = mongoose.model("Product", productSchema);
 
 module.exports = Prouct;
