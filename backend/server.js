@@ -7,7 +7,7 @@ const path = require("path")
 const dotenv = require('dotenv');
 // const userRoutes = require("./routes/user.routes");
 // const authRoutes = require("./routes/auth.routes");
-// const categoryRoutes = require("./routes/category.routes");
+const brandRoutes = require("./routes/brand.routes");
 const productRoutes = require("./routes/product.routes");
 
 // express app
@@ -60,5 +60,5 @@ app.use(express.static('public'));
 // routing
 // app.use("/users", userRoutes);
 // app.use("/auth", authRoutes);
-// app.use("/categories", categoryRoutes);
+app.use("/brand", brandRoutes);
 app.use("/products", productRoutes);
