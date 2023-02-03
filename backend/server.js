@@ -20,6 +20,7 @@ dotenv.config();
 app.use(cors());
 
 // connect to mongodb
+mongoose.set("strictQuery", false);
 mongoose
   .connect(process.env.DB_URI)
   .then((result) => {
