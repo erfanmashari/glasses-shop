@@ -27,33 +27,6 @@ function createRandomImageName(length) {
 
 // check categories if they entered correctly
 const checkCategories = (categroies, res) => {
-  let isCategoriesCorrect = true;
-  let previousCategoryId = null;
-  categroies.forEach((category, index) => {
-    if (
-      index + 1 !== category.classification ||
-      (category.classification !== 1 &&
-        category.higherCategoryId !== previousCategoryId)
-    ) {
-      isCategoriesCorrect = false;
-    }
-    previousCategoryId = category._id;
-  });
-  if (categroies[categroies.length - 1].isSubCategoryAllowed) {
-    res.status(406).json(
-      jsonResponse(406, {
-        message: `دسته بندی ای برای این محصول انتخاب نشده است!`,
-      })
-    );
-  } else if (!isCategoriesCorrect) {
-    res.status(406).json(
-      jsonResponse(406, {
-        message: `دسته بندی ها یا سلسله آنها صحیح نمی باشد!`,
-      })
-    );
-  } else {
-    return true;
-  }
 };
 
 // compare images and images files and check if cover image is set
@@ -197,11 +170,11 @@ const checkItems = (items, category, res) => {
 const add_product = async (req, res) => {
   const body = req.body;
   const files = req.files;
-
-  // make number, boolean and object fields from string
+  console.log("files: ", files)
+  // // make number, boolean and object fields from string
   const numberFields = [
-    "model",
     "price",
+    "stars",
     "discountPercent",
     "discountedPrice",
     "numberOfProducts",
@@ -211,12 +184,17 @@ const add_product = async (req, res) => {
     "isOriginal",
     "isSpecialSale",
     "isFreeDelivery",
+    "testAtHome",
   ];
   const objectFields = [
-    "categories",
+    "brand",
+    "genders",
+    "sizes",
+    "frameColors",
+    "frameShapes",
+    "faceShapes",
     "features",
     "images",
-    "items",
     "providers",
   ];
 
@@ -238,71 +216,69 @@ const add_product = async (req, res) => {
       [
         "nameFa",
         "nameEn",
-        "brandNameFa",
-        "brandNameEn",
-        "origin",
-        "model",
+        "brand",
         "price",
         "isAvailable",
-        "isOriginal",
         "numberOfProducts",
-        "categories",
-        "features",
+        "category",
+        "genders",
         "images",
-        "items",
+        "sizes",
         "providers",
+        "frameColors",
       ],
       res
     )
   ) {
     return null;
   }
+  console.log("body: ", body)
 
-  if (
-    !checkCategories(body.categories, res) ||
-    !checkImages(body.images, files, res) ||
-    !checkItems(body.items, body.categories[body.categories.length - 1], res)
-    // checkProvider()
-  ) {
-    return null;
-  }
+  // if (
+  //   !checkCategories(body.categories, res) ||
+  //   !checkImages(body.images, files, res) ||
+  //   !checkItems(body.items, body.categories[body.categories.length - 1], res)
+  //   // checkProvider()
+  // ) {
+  //   return null;
+  // }
 
-  // create new product
-  const productsIndex = await Product.create(body);
+  // // create new product
+  // const productsIndex = await Product.create(body);
 
-  // save images with unique name
-  const savedFilesStatus = [];
-  await files.forEach((file, index) => {
-    const imageName = `${productsIndex.nameEn}_${createRandomImageName(10)}`;
+  // // save images with unique name
+  // const savedFilesStatus = [];
+  // await files.forEach((file, index) => {
+  //   const imageName = `${productsIndex.nameEn}_${createRandomImageName(10)}`;
 
-    // add image file name to image object saved in database
-    const newImages = [...productsIndex.images];
-    for (const img of newImages) {
-      if (file.originalname === img.name) {
-        img.fileName = imageName;
-      }
-    }
+  //   // add image file name to image object saved in database
+  //   const newImages = [...productsIndex.images];
+  //   for (const img of newImages) {
+  //     if (file.originalname === img.name) {
+  //       img.fileName = imageName;
+  //     }
+  //   }
 
-    fs.writeFile(
-      `public/products/${imageName}.jpg`,
-      file.buffer,
-      "binary",
-      function (err) {
-        if (err) throw err;
-        Product.findByIdAndUpdate(
-          productsIndex._id,
-          { images: newImages },
-          { new: true }
-        )
-          .then((res) => {
-            savedFilesStatus.push(true);
-          })
-          .catch((err) => {
-            console.log("err-mongo-files: ", err);
-          });
-      }
-    );
-  });
+  //   fs.writeFile(
+  //     `public/products/${imageName}.jpg`,
+  //     file.buffer,
+  //     "binary",
+  //     function (err) {
+  //       if (err) throw err;
+  //       Product.findByIdAndUpdate(
+  //         productsIndex._id,
+  //         { images: newImages },
+  //         { new: true }
+  //       )
+  //         .then((res) => {
+  //           savedFilesStatus.push(true);
+  //         })
+  //         .catch((err) => {
+  //           console.log("err-mongo-files: ", err);
+  //         });
+  //     }
+  //   );
+  // });
 
   res.json(
     jsonResponse(201, {
