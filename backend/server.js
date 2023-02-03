@@ -5,9 +5,9 @@ const session = require("express-session");
 const cors = require('cors');
 const path = require("path")
 const dotenv = require('dotenv');
-const userRoutes = require("./routes/user.routes");
-const authRoutes = require("./routes/auth.routes");
-const categoryRoutes = require("./routes/category.routes");
+// const userRoutes = require("./routes/user.routes");
+// const authRoutes = require("./routes/auth.routes");
+// const categoryRoutes = require("./routes/category.routes");
 const productRoutes = require("./routes/product.routes");
 
 // express app
@@ -57,7 +57,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 // routing
-app.use("/users", userRoutes);
-app.use("/auth", authRoutes);
-app.use("/categories", categoryRoutes);
+// app.use("/users", userRoutes);
+// app.use("/auth", authRoutes);
+// app.use("/categories", categoryRoutes);
 app.use("/products", productRoutes);

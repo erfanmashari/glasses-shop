@@ -1,7 +1,7 @@
 const Product = require("../models/product.model");
 const path = require("path");
 const fs = require("fs");
-const { jsonResponse, checkDataExist } = require("../config/global");
+const { jsonResponse, checkDataExist } = require("../functions");
 
 const product_index = (req, res) => {
   Product.find()
