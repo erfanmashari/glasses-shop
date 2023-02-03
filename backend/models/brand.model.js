@@ -11,6 +11,6 @@ const brandSchema = new Schema(
   { timestamps: true, collection: "brands" }
 );
 
-const Brand = mongoose.model("Brand", productSchema);
+const Brand = mongoose.model("Brand", brandSchema);
 
 module.exports = Brand;
