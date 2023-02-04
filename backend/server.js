@@ -6,9 +6,9 @@ const cors = require('cors');
 const path = require("path")
 const dotenv = require('dotenv');
 // const userRoutes = require("./routes/user.routes");
-// const authRoutes = require("./routes/auth.routes");
-const brandRoutes = require("./routes/brand.routes");
 const productRoutes = require("./routes/product.routes");
+const brandRoutes = require("./routes/brand.routes");
+const sellerRoutes = require("./routes/seller.routes");
 
 // express app
 const app = express();
@@ -59,6 +59,6 @@ app.use(express.static('public'));
 
 // routing
 // app.use("/users", userRoutes);
-// app.use("/auth", authRoutes);
-app.use("/brand", brandRoutes);
 app.use("/products", productRoutes);
+app.use("/brand", brandRoutes);
+app.use("/seller", sellerRoutes);
