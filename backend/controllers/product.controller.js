@@ -26,8 +26,7 @@ function createRandomImageName(length) {
 }
 
 // check categories if they entered correctly
-const checkCategories = (categroies, res) => {
-};
+const checkCategories = (categroies, res) => {};
 
 // compare images and images files and check if cover image is set
 const checkImages = (images, imagesFiles, res) => {
@@ -35,25 +34,21 @@ const checkImages = (images, imagesFiles, res) => {
   if (images.length !== imagesFiles.length) {
     res.status(406).json(
       jsonResponse(406, {
-        message: `تعداد عکس های آئلود شده و اطلاعات عکس ها برابر نیست!`,
+        message: `تعداد عکس های آپلود شده و اطلاعات عکس ها برابر نیست!`,
       })
     );
     return null;
   }
 
-  let isCoverImageSet = false;
   let isImagesBufferExist = true;
   // list of correct files: if length of this list is equal to length of images then files are correct
   let listOfCorrectFiles = [];
   images.forEach((img) => {
     delete img.originalFile;
-    if (img.isCoverImage) {
-      isCoverImageSet = true;
-    }
     imagesFiles.forEach((imgFile) => {
       if (
         img.name === imgFile.originalname &&
-        img.size === imgFile.size &&
+        Number(img.size) === imgFile.size &&
         img.type === imgFile.mimetype
       ) {
         listOfCorrectFiles.push(true);
@@ -64,13 +59,7 @@ const checkImages = (images, imagesFiles, res) => {
     });
   });
 
-  if (!isCoverImageSet) {
-    res.status(406).json(
-      jsonResponse(406, {
-        message: `عکس کاور مشخص نشده است!`,
-      })
-    );
-  } else if (!isImagesBufferExist) {
+  if (!isImagesBufferExist) {
     res.status(406).json(
       jsonResponse(406, {
         message: `عکس های آپلود شده مشکل دارند!`,
@@ -87,90 +76,10 @@ const checkImages = (images, imagesFiles, res) => {
   }
 };
 
-// check if all allowed items are entered and they are correct
-const checkItems = (items, category, res) => {
-  // console.log("items: ", items)
-  // console.log("category: ", category)
-  const productItems = category.productItemsAllowedStatus;
-
-  const itemsFa = {
-    sizes: "اندازه ها",
-    labels: "برچسب ها",
-    colors: "رنگ ها",
-    warranties: "گارانتی ها",
-    insurances: "بیمه ها",
-    expertReviews: " بررسی های تخصصی",
-  };
-
-  let isItemsExist = true;
-  let missedProductItemFa = "";
-  for (const productItem in productItems) {
-    if (
-      productItem !== "insurances" &&
-      productItem !== "expertReviews" &&
-      productItems[productItem] &&
-      (!items[productItem] || !items[productItem].length)
-    ) {
-      missedProductItemFa = itemsFa[productItem];
-      isItemsExist = false;
-      break;
-    }
-  }
-
-  let isItemPropertiesCorrect = true;
-  let uncorrectItemNameFa = "";
-  for (const item in items) {
-    for (const itemProperty of items[item]) {
-      if (
-        ((item === "sizes" || item === "labels") &&
-          (!itemProperty.nameFa || !itemProperty.nameEn)) ||
-        (item === "insurances" &&
-          (!itemProperty.nameFa ||
-            !itemProperty.nameEn ||
-            !itemProperty.price)) ||
-        (item === "expertReviews" &&
-          (!itemProperty.nameFa ||
-            !itemProperty.nameEn ||
-            !itemProperty.description)) ||
-        (item === "colors" &&
-          (!itemProperty.nameFa ||
-            !itemProperty.nameEn ||
-            !itemProperty.numberOfProducts ||
-            !itemProperty.color)) ||
-        (item === "warranties" &&
-          (!itemProperty.nameFa ||
-            !itemProperty.nameEn ||
-            !itemProperty.color ||
-            !itemProperty.color.nameFa))
-      ) {
-        isItemPropertiesCorrect === false;
-        uncorrectItemNameFa = itemsFa[item];
-        break;
-      }
-    }
-  }
-
-  if (!isItemsExist) {
-    res.status(406).json(
-      jsonResponse(406, {
-        message: `آیتم ${missedProductItemFa} را وارد کنید!`,
-      })
-    );
-  } else if (!isItemPropertiesCorrect) {
-    res.status(406).json(
-      jsonResponse(406, {
-        message: `مقادیر آیتم ${uncorrectItemNameFa} کامل نیست!`,
-      })
-    );
-  } else {
-    return true;
-  }
-};
-
 const add_product = async (req, res) => {
   const body = req.body;
   const files = req.files;
-  console.log("files: ", files)
+
   // // make number, boolean and object fields from string
   const numberFields = [
     "price",
@@ -195,7 +104,7 @@ const add_product = async (req, res) => {
     "faceShapes",
     "features",
     "images",
-    "providers",
+    "sellers",
   ];
 
   for (const field in body) {
@@ -224,7 +133,7 @@ const add_product = async (req, res) => {
         "genders",
         "images",
         "sizes",
-        "providers",
+        "sellers",
         "frameColors",
       ],
       res
@@ -232,16 +141,15 @@ const add_product = async (req, res) => {
   ) {
     return null;
   }
-  console.log("body: ", body)
 
-  // if (
-  //   !checkCategories(body.categories, res) ||
-  //   !checkImages(body.images, files, res) ||
-  //   !checkItems(body.items, body.categories[body.categories.length - 1], res)
-  //   // checkProvider()
-  // ) {
-  //   return null;
-  // }
+  if (
+    //   !checkCategories(body.categories, res) ||
+    !checkImages(body.images, files, res)
+    //   !checkItems(body.items, body.categories[body.categories.length - 1], res)
+    //   // checkProvider()
+  ) {
+    return null;
+  }
 
   // // create new product
   // const productsIndex = await Product.create(body);
