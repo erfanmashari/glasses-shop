@@ -13,7 +13,7 @@ const productSchema = new Schema(
     genders: { type: [String], required: true },
     sizes: { type: [String], required: true },
     images: { type: [Object], required: true }, // -----
-    providers: { type: [Object], required: true }, // -----
+    sellers: { type: [Object], required: true }, // -----
     frameColors: { type: [Object], required: true }, // { nameFa, nameEn, color, isAvailable }
     isOriginal: { type: Boolean, default: false },
     isSpecialSale: { type: Boolean, default: false },
