@@ -1,4 +1,5 @@
 const Product = require("../models/product.model");
+const Brand = require("../models/brand.model");
 const path = require("path");
 const fs = require("fs");
 const { jsonResponse, checkDataExist } = require("../functions");
@@ -26,7 +27,22 @@ function createRandomImageName(length) {
 }
 
 // check categories if they entered correctly
-const checkCategories = (categroies, res) => {};
+const checkBrand = async (brand, res) => {
+  const brandIndex = await Brand.findOne(brand);
+
+  if (brandIndex) {
+    console.log("if")
+    return true
+  } else {
+    console.log("else")
+    res.status(406).json(
+      jsonResponse(406, {
+        message: `برند وارد شده معتبر نمی باشد!`,
+      })
+    );
+    return null;
+  }
+};
 
 // compare images and images files and check if cover image is set
 const checkImages = (images, imagesFiles, res) => {
@@ -142,8 +158,9 @@ const add_product = async (req, res) => {
     return null;
   }
 
+  const checkBrandStatus = await checkBrand(body.brand, res);
   if (
-    //   !checkCategories(body.categories, res) ||
+    !checkBrandStatus ||
     !checkImages(body.images, files, res)
     //   !checkItems(body.items, body.categories[body.categories.length - 1], res)
     //   // checkProvider()
