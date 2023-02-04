@@ -1,5 +1,6 @@
 const Product = require("../models/product.model");
 const Brand = require("../models/brand.model");
+const Seller = require("../models/seller.model");
 const path = require("path");
 const fs = require("fs");
 const { jsonResponse, checkDataExist } = require("../functions");
@@ -26,21 +27,41 @@ function createRandomImageName(length) {
   return result;
 }
 
-// check categories if they entered correctly
+// check brand if it exist in database or not
 const checkBrand = async (brand, res) => {
   const brandIndex = await Brand.findOne(brand);
 
   if (brandIndex) {
-    console.log("if")
-    return true
+    return true;
   } else {
-    console.log("else")
     res.status(406).json(
       jsonResponse(406, {
         message: `برند وارد شده معتبر نمی باشد!`,
       })
     );
-    return null;
+  }
+};
+
+// check sellers if they exist in database or not
+const checkSellers = async (sellers, res) => {
+  let isSellersExist = true;
+  for (const seller of sellers) {
+    const sellerIndex = await Seller.findOne(seller);
+    
+    if (!sellerIndex) {
+      isSellersExist = false
+    }
+  }
+  
+  if (!isSellersExist) {
+    res.status(406).json(
+      jsonResponse(406, {
+        message: `فروشنده های ورودی معتبر نیستند!`,
+      })
+    );
+    return null
+  } else {
+  return true;
   }
 };
 
@@ -159,10 +180,11 @@ const add_product = async (req, res) => {
   }
 
   const checkBrandStatus = await checkBrand(body.brand, res);
+  const checkSellersStatus = await checkSellers(body.sellers, res);
   if (
     !checkBrandStatus ||
+    !checkSellersStatus ||
     !checkImages(body.images, files, res)
-    //   !checkItems(body.items, body.categories[body.categories.length - 1], res)
     //   // checkProvider()
   ) {
     return null;
