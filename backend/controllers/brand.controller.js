@@ -1,5 +1,4 @@
 const Brand = require("../models/brand.model");
-const path = require("path");
 const fs = require("fs");
 const { jsonResponse, checkDataExist } = require("../functions");
 
