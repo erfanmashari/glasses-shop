@@ -14,6 +14,17 @@ const brand_index = (req, res) => {
     });
 };
 
+function createRandomImageName(length) {
+  let result = "";
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
+
 // compare images and images files and check if cover image is set
 const checkImages = (image, imageFile, res) => {
   if (
@@ -54,47 +65,43 @@ const add_brand = async (req, res) => {
     return null;
   }
 
-  // // create new product
-  // const productsIndex = await Product.create(body);
+  // create new brand
+  const brandIndex = await Brand.create(body);
 
-  // // save images with unique name
-  // const savedFilesStatus = [];
-  // await files.forEach((file, index) => {
-  //   const imageName = `${productsIndex.nameEn}_${createRandomImageName(10)}`;
+  // save images with unique name
+  const imageName = `${brandIndex.nameEn}_${createRandomImageName(10)}`;
 
-  //   // add image file name to image object saved in database
-  //   const newImages = [...productsIndex.images];
-  //   for (const img of newImages) {
-  //     if (file.originalname === img.name) {
-  //       img.fileName = imageName;
-  //     }
-  //   }
+  // add image file name to image object saved in database
+  const newImage = { ...brandIndex.image }
+  newImage.fileName = imageName;
 
-  //   fs.writeFile(
-  //     `public/products/${imageName}.jpg`,
-  //     file.buffer,
-  //     "binary",
-  //     function (err) {
-  //       if (err) throw err;
-  //       Product.findByIdAndUpdate(
-  //         productsIndex._id,
-  //         { images: newImages },
-  //         { new: true }
-  //       )
-  //         .then((res) => {
-  //           savedFilesStatus.push(true);
-  //         })
-  //         .catch((err) => {
-  //           console.log("err-mongo-files: ", err);
-  //         });
-  //     }
-  //   );
-  // });
-
-  res.json(
-    jsonResponse(201, {
-      message: "محصول جدید با موفقیت افزوده شد!",
-    })
+  fs.writeFile(
+    `public/brands/${imageName}.jpg`,
+    file.buffer,
+    "binary",
+    function (err) {
+      if (err) throw err;
+      Brand.findByIdAndUpdate(
+        brandIndex._id,
+        { image: newImage },
+        { new: true }
+      )
+        .then((response) => {
+          res.json(
+            jsonResponse(201, {
+              message: "برند جدید با موفقیت افزوده شد!",
+            })
+          );
+        })
+        .catch((err) => {
+          console.log("err-mongo-brand-files: ", err);
+          res.json(
+            jsonResponse(201, {
+              message: "عکس برند به درستی ذخیره نشده است!",
+            })
+          );
+        });
+    }
   );
 };
 
