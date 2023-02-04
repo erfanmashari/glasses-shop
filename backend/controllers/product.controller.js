@@ -47,21 +47,21 @@ const checkSellers = async (sellers, res) => {
   let isSellersExist = true;
   for (const seller of sellers) {
     const sellerIndex = await Seller.findOne(seller);
-    
+
     if (!sellerIndex) {
-      isSellersExist = false
+      isSellersExist = false;
     }
   }
-  
+
   if (!isSellersExist) {
     res.status(406).json(
       jsonResponse(406, {
         message: `فروشنده های ورودی معتبر نیستند!`,
       })
     );
-    return null
+    return null;
   } else {
-  return true;
+    return true;
   }
 };
 
@@ -112,6 +112,48 @@ const checkImages = (images, imagesFiles, res) => {
     return true;
   }
 };
+
+const checkFrameColors = async (colors, res) => {
+  console.log("colors: ", colors)
+  let isColorsCorrect = true;
+  const correctColorsList = [];
+  for (const color of colors) {
+    const sellerIndex = await Seller.findOne(color.seller);
+    if (!color.nameFa || !color.nameEn) {
+      isColorsCorrect= false;
+      res.status(406).json(
+        jsonResponse(406, {
+          message: `نام رنگ ها درست نیستند!`,
+        })
+      );
+      break;
+    } else if (!sellerIndex) {
+      isColorsCorrect= false;
+      res.status(406).json(
+        jsonResponse(406, {
+          message: `فروشنده مشخص شده برای رنگ ها صحیح نمی باشد!`,
+        })
+      );
+      break;
+    } else {
+      for (const colorSecond of colors) {
+        if (colorSecond.nameFa === color.nameFa && colorSecond.seller._id === color.seller._id) {
+          correctColorsList.push(true)
+        }
+      }
+    }
+  }
+  
+  if (correctColorsList.length !== colors.length) {
+    res.status(406).json(
+      jsonResponse(406, {
+        message: `رنگ های تکراری وجود دارد!`,
+      })
+    );
+  } else {
+  return isColorsCorrect;
+  }
+}
 
 const add_product = async (req, res) => {
   const body = req.body;
@@ -181,11 +223,12 @@ const add_product = async (req, res) => {
 
   const checkBrandStatus = await checkBrand(body.brand, res);
   const checkSellersStatus = await checkSellers(body.sellers, res);
+  const checkFrameColorsStatus = await checkFrameColors(body.frameColors, res);
   if (
     !checkBrandStatus ||
     !checkSellersStatus ||
+    !checkFrameColorsStatus ||
     !checkImages(body.images, files, res)
-    //   // checkProvider()
   ) {
     return null;
   }
