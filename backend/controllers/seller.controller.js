@@ -15,6 +15,18 @@ const seller_index = async (req, res) => {
 const add_seller = async (req, res) => {
   const body = req.body;
 
+  // make english text lower case
+  body.nameEn = body.nameEn.toLowerCase();
+
+  if (
+    !checkDataExist(body, ["nameFa", "nameEn"], res)
+  ) {
+    return null;
+  }
+
+  // create new seller
+  const sellerIndex = await Seller.create(body);
+
   res
     .status(201)
     .json(jsonResponse(201, { message: "قروشنده جدید با موفقیت افزوده شد!" }));
