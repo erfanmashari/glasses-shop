@@ -14,7 +14,7 @@ const checkDataExist = (body, requiredData, res) => {
     if (typeof body[property] !== "boolean" && !body[property] || (Array.isArray(body[property]) && !body[property].length)) {
       res
         .status(404)
-        .json(jsonResponse(404, { message: `اطلاعات مورد نیاز وجود ندارد! ${property}` }));
+        .json(jsonResponse(404, { message: `اطلاعات مورد نیاز وجود ندارد!` }));
       isDataExist = false;
       break;
     }

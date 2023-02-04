@@ -14,36 +14,45 @@ const brand_index = (req, res) => {
     });
 };
 
+// compare images and images files and check if cover image is set
+const checkImages = (image, imageFile, res) => {
+  if (
+    image.name !== imageFile.originalname ||
+    Number(image.size) !== imageFile.size ||
+    image.type !== imageFile.mimetype
+  ) {
+    res.status(406).json(
+      jsonResponse(406, {
+        message: `اطلاعات عکس آپلود شده با اطلاعات عکس تطابق ندارد!`,
+      })
+    );
+  } else if (!imageFile.buffer) {
+    res
+      .status(406)
+      .json(jsonResponse(406, { message: `عکس آپلود شده صحیح نمی باشد!` }));
+  } else {
+    return true;
+  }
+};
+
 const add_brand = async (req, res) => {
   const body = req.body;
   const file = req.file;
   console.log("file: ", file);
   // parse body image object
-  body.image = JSON.parse(body[image]);
+  if (body.image) {
+    body.image = JSON.parse(body.image);
+  }
+
+  // make english text lower case
+  body.nameEn = body.nameEn.toLowerCase();
 
   if (
-    !checkDataExist(
-      body,
-      [
-        "nameFa",
-        "nameEn",
-        "origin",
-      ],
-      res
-    )
+    !checkDataExist(body, ["nameFa", "nameEn", "origin"], res) ||
+    !checkImages(body.image, file, res)
   ) {
     return null;
   }
-  console.log("body: ", body);
-
-  // if (
-  //   !checkCategories(body.categories, res) ||
-  //   !checkImages(body.images, files, res) ||
-  //   !checkItems(body.items, body.categories[body.categories.length - 1], res)
-  //   // checkProvider()
-  // ) {
-  //   return null;
-  // }
 
   // // create new product
   // const productsIndex = await Product.create(body);
