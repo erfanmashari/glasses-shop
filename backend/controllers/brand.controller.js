@@ -49,7 +49,7 @@ const checkImages = (image, imageFile, res) => {
 const add_brand = async (req, res) => {
   const body = req.body;
   const file = req.file;
-  console.log("file: ", file);
+
   // parse body image object
   if (body.image) {
     body.image = JSON.parse(body.image);
