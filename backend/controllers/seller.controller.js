@@ -12,4 +12,12 @@ const seller_index = async (req, res) => {
     });
 };
 
-module.exports = { seller_index }
+const add_seller = async (req, res) => {
+  const body = req.body;
+
+  res
+    .status(201)
+    .json(jsonResponse(201, { message: "قروشنده جدید با موفقیت افزوده شد!" }));
+};
+
+module.exports = { seller_index, add_seller };
