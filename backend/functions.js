@@ -11,7 +11,10 @@ const checkDataExist = (body, requiredData, res) => {
   let isDataExist = true;
 
   for (const property of requiredData) {
-    if (typeof body[property] !== "boolean" && !body[property] || (Array.isArray(body[property]) && !body[property].length)) {
+    if (
+      (typeof body[property] !== "boolean" && !body[property]) ||
+      (Array.isArray(body[property]) && !body[property].length)
+    ) {
       res
         .status(404)
         .json(jsonResponse(404, { message: `اطلاعات مورد نیاز وجود ندارد!` }));
@@ -23,4 +26,16 @@ const checkDataExist = (body, requiredData, res) => {
   return isDataExist;
 };
 
-module.exports = { jsonResponse, checkDataExist };
+// loop arrays with string indexes to check if they are not the same
+const checkArrayStringIndexes = (array) => {
+  if (array && Array.isArray(array)) {
+    const findDuplicates = array.filter(
+      (item, index) => array.indexOf(item) != index
+    );
+    return findDuplicates.length ? true : false;
+  } else {
+    return false;
+  }
+};
+
+module.exports = { jsonResponse, checkDataExist, checkArrayStringIndexes };

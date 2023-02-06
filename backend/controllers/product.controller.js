@@ -3,7 +3,11 @@ const Brand = require("../models/brand.model");
 const Seller = require("../models/seller.model");
 const path = require("path");
 const fs = require("fs");
-const { jsonResponse, checkDataExist } = require("../functions");
+const {
+  jsonResponse,
+  checkDataExist,
+  checkArrayStringIndexes,
+} = require("../functions");
 
 const product_index = (req, res) => {
   Product.find()
@@ -266,6 +270,27 @@ const checkDiscount = (discountPercent, discountedPrice, res) => {
   }
 };
 
+// check string arrays for duplicate values
+const checkStrArrays = (body, listOfArrays, res) => {
+  let isHaveDuplicate = false;
+  for (const arrayName of listOfArrays) {
+    isHaveDuplicate = checkArrayStringIndexes(body[arrayName]);
+    if (isHaveDuplicate) {
+      break;
+    }
+  }
+
+  if (isHaveDuplicate) {
+    res.status(406).json(
+      jsonResponse(406, {
+        message: `پارامتر های لیستی دارای آیتم تکراری می باشند!`,
+      })
+    );
+  }
+
+  return !isHaveDuplicate;
+};
+
 const add_product = async (req, res) => {
   const body = req.body;
   const files = req.files;
@@ -343,6 +368,18 @@ const add_product = async (req, res) => {
   if (
     !checkAvailabality(body.frameColors, body.isAvailable, res) ||
     !checkDiscount(body.discountPercent, body.discountedPrice, res) ||
+    !checkStrArrays(
+      body,
+      [
+        "genders",
+        "sizes",
+        "features",
+        "frameShapes",
+        "faceShapes",
+        "lensFeatures",
+      ],
+      res
+    ) ||
     !checkBrandStatus ||
     !checkSellersStatus ||
     !checkFrameColorsStatus ||
