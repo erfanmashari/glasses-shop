@@ -50,6 +50,7 @@ const checkSellers = async (sellers, res) => {
 
     if (!sellerIndex) {
       isSellersExist = false;
+      break;
     }
   }
 
@@ -114,21 +115,28 @@ const checkImages = (images, imagesFiles, res) => {
 };
 
 // check if colors are not repeated or number of them are correct
-const checkFrameColors = async (colors, numberOfProducts, res) => {
+// and check if sellers and color sellers are match
+const checkFrameColors = async (colors, numberOfProducts, sellers, res) => {
+  // variable for sum of number of product of every color
   let numberOfProductsColors = 0;
   let isColorsCorrect = true;
+  // list of sellers in colors
+  const colorsSellers = [];
   const correctColorsList = [];
   for (const color of colors) {
     // lower case the english name of color
     color.nameEn = color.nameEn.toLowerCase();
 
     // add number of products to variable
-    numberOfProductsColors += color.numberOfProducts ? color.numberOfProducts : 0;
+    numberOfProductsColors += color.numberOfProducts
+      ? color.numberOfProducts
+      : 0;
 
     // get seller from database
     const sellerIndex = await Seller.findOne(color.seller);
+
     if (!color.nameFa || !color.nameEn) {
-      isColorsCorrect= false;
+      isColorsCorrect = false;
       res.status(406).json(
         jsonResponse(406, {
           message: `نام رنگ ها درست نیستند!`,
@@ -136,7 +144,7 @@ const checkFrameColors = async (colors, numberOfProducts, res) => {
       );
       break;
     } else if (!sellerIndex) {
-      isColorsCorrect= false;
+      isColorsCorrect = false;
       res.status(406).json(
         jsonResponse(406, {
           message: `فروشنده مشخص شده برای رنگ ها صحیح نمی باشد!`,
@@ -144,9 +152,27 @@ const checkFrameColors = async (colors, numberOfProducts, res) => {
       );
       break;
     } else {
+      // add different sellers to array
+      if (colorsSellers.length) {
+        for (const seller of colorsSellers) {
+          if (
+            seller._id !== color.seller._id &&
+            seller.nameFa !== color.seller.nameFa &&
+            seller.nameEn !== color.seller.nameEn
+          ) {
+            colorsSellers.push(color.seller);
+          }
+        }
+      } else {
+        colorsSellers.push(color.seller);
+      }
+
       for (const colorSecond of colors) {
-        if (colorSecond.nameFa === color.nameFa && colorSecond.seller._id === color.seller._id) {
-          correctColorsList.push(true)
+        if (
+          colorSecond.nameFa === color.nameFa &&
+          colorSecond.seller._id === color.seller._id
+        ) {
+          correctColorsList.push(true);
         }
       }
     }
@@ -164,10 +190,40 @@ const checkFrameColors = async (colors, numberOfProducts, res) => {
         message: `رنگ های تکراری وجود دارد!`,
       })
     );
+  } else if (colorsSellers.length !== sellers.length) {
+    res.status(406).json(
+      jsonResponse(406, {
+        message: `تعداد فروشنده های ورودی با تعداد فروشنده های غیر تکراری رنگ ها برابر نیستند!`,
+      })
+    );
+  } else if (!isColorsCorrect) {
+    return isColorsCorrect;
   } else {
-  return isColorsCorrect;
+    let correctSellersList = [];
+    for (const colorSeller of colorsSellers) {
+      for (const seller of sellers) {
+        if (
+          seller._id === colorSeller._id &&
+          seller.nameFa === colorSeller.nameFa &&
+          seller.nameEn === colorSeller.nameEn
+        ) {
+          correctSellersList.push(true);
+        }
+      }
+    }
+
+    const isSellersCorrect = correctSellersList.length === colorsSellers.length;
+    if (!isSellersCorrect) {
+      res.status(406).json(
+        jsonResponse(406, {
+          message: `تعداد فروشنده های ورودی با تعداد فروشنده هایغ یرتکراری رنگ ها برابر نیستند !`,
+        })
+      );
+    }
+
+    return isSellersCorrect;
   }
-}
+};
 
 const add_product = async (req, res) => {
   const body = req.body;
@@ -237,7 +293,12 @@ const add_product = async (req, res) => {
 
   const checkBrandStatus = await checkBrand(body.brand, res);
   const checkSellersStatus = await checkSellers(body.sellers, res);
-  const checkFrameColorsStatus = await checkFrameColors(body.frameColors, body.numberOfProducts, res);
+  const checkFrameColorsStatus = await checkFrameColors(
+    body.frameColors,
+    body.numberOfProducts,
+    body.sellers,
+    res
+  );
   if (
     !checkBrandStatus ||
     !checkSellersStatus ||
