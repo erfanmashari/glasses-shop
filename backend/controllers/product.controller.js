@@ -119,7 +119,13 @@ const checkFrameColors = async (colors, numberOfProducts, res) => {
   let isColorsCorrect = true;
   const correctColorsList = [];
   for (const color of colors) {
+    // lower case the english name of color
+    color.nameEn = color.nameEn.toLowerCase();
+
+    // add number of products to variable
     numberOfProductsColors += color.numberOfProducts ? color.numberOfProducts : 0;
+
+    // get seller from database
     const sellerIndex = await Seller.findOne(color.seller);
     if (!color.nameFa || !color.nameEn) {
       isColorsCorrect= false;
@@ -242,41 +248,41 @@ const add_product = async (req, res) => {
   }
 
   // create new product
-  const productsIndex = await Product.create(body);
+  // const productsIndex = await Product.create(body);
 
-  // save images with unique name
-  const savedFilesStatus = [];
-  await files.forEach((file, index) => {
-    const imageName = `${productsIndex.nameEn}_${createRandomImageName(10)}`;
+  // // save images with unique name
+  // const savedFilesStatus = [];
+  // await files.forEach((file, index) => {
+  //   const imageName = `${productsIndex.nameEn}_${createRandomImageName(10)}`;
 
-    // add image file name to image object saved in database
-    const newImages = [...productsIndex.images];
-    for (const img of newImages) {
-      if (file.originalname === img.name) {
-        img.fileName = imageName;
-      }
-    }
+  //   // add image file name to image object saved in database
+  //   const newImages = [...productsIndex.images];
+  //   for (const img of newImages) {
+  //     if (file.originalname === img.name) {
+  //       img.fileName = imageName;
+  //     }
+  //   }
 
-    fs.writeFile(
-      `public/products/${imageName}.jpg`,
-      file.buffer,
-      "binary",
-      function (err) {
-        if (err) throw err;
-        Product.findByIdAndUpdate(
-          productsIndex._id,
-          { images: newImages },
-          { new: true }
-        )
-          .then((res) => {
-            savedFilesStatus.push(true);
-          })
-          .catch((err) => {
-            console.log("err-mongo-files: ", err);
-          });
-      }
-    );
-  });
+  //   fs.writeFile(
+  //     `public/products/${imageName}.jpg`,
+  //     file.buffer,
+  //     "binary",
+  //     function (err) {
+  //       if (err) throw err;
+  //       Product.findByIdAndUpdate(
+  //         productsIndex._id,
+  //         { images: newImages },
+  //         { new: true }
+  //       )
+  //         .then((res) => {
+  //           savedFilesStatus.push(true);
+  //         })
+  //         .catch((err) => {
+  //           console.log("err-mongo-files: ", err);
+  //         });
+  //     }
+  //   );
+  // });
 
   res.json(
     jsonResponse(201, {
