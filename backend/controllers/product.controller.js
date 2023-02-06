@@ -252,11 +252,7 @@ const checkAvailabality = (colors, isAvailable, res) => {
 
 // check if discountPercent and discountedPrice are entered correctly
 const checkDiscount = (discountPercent, discountedPrice, res) => {
-  const discountPercentNumber = Number(discountPercent);
-  const discountedPriceNumber = Number(discountedPrice);
-
   if (
-    (!isNaN(discountedPriceNumber) && !isNaN(discountedPriceNumber)) ||
     (discountPercent && discountedPrice) ||
     (!discountPercent && !discountedPrice)
   ) {
