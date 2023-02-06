@@ -113,11 +113,13 @@ const checkImages = (images, imagesFiles, res) => {
   }
 };
 
-const checkFrameColors = async (colors, res) => {
-  console.log("colors: ", colors)
+// check if colors are not repeated or number of them are correct
+const checkFrameColors = async (colors, numberOfProducts, res) => {
+  let numberOfProductsColors = 0;
   let isColorsCorrect = true;
   const correctColorsList = [];
   for (const color of colors) {
+    numberOfProductsColors += color.numberOfProducts ? color.numberOfProducts : 0;
     const sellerIndex = await Seller.findOne(color.seller);
     if (!color.nameFa || !color.nameEn) {
       isColorsCorrect= false;
@@ -143,8 +145,14 @@ const checkFrameColors = async (colors, res) => {
       }
     }
   }
-  
-  if (correctColorsList.length !== colors.length) {
+
+  if (numberOfProductsColors !== numberOfProducts) {
+    res.status(406).json(
+      jsonResponse(406, {
+        message: `تعداد محصول هر رنگ با تعداد کل محصولات برابر نیستند!`,
+      })
+    );
+  } else if (correctColorsList.length !== colors.length) {
     res.status(406).json(
       jsonResponse(406, {
         message: `رنگ های تکراری وجود دارد!`,
@@ -223,7 +231,7 @@ const add_product = async (req, res) => {
 
   const checkBrandStatus = await checkBrand(body.brand, res);
   const checkSellersStatus = await checkSellers(body.sellers, res);
-  const checkFrameColorsStatus = await checkFrameColors(body.frameColors, res);
+  const checkFrameColorsStatus = await checkFrameColors(body.frameColors, body.numberOfProducts, res);
   if (
     !checkBrandStatus ||
     !checkSellersStatus ||
