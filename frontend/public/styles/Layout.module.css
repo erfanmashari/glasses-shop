@@ -1,0 +1,10 @@
+.nav-products-list,
+.footer {
+    background-color: rgb(51,51,51);
+}
+
+.cart-badge {
+    top: -8px;
+    left: -8px;
+    font-size: 12px;
+}
