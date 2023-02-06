@@ -244,7 +244,27 @@ const checkAvailabality = (colors, isAvailable, res) => {
   } else {
     return true;
   }
-}
+};
+
+// check if discountPercent and discountedPrice are entered correctly
+const checkDiscount = (discountPercent, discountedPrice, res) => {
+  const discountPercentNumber = Number(discountPercent);
+  const discountedPriceNumber = Number(discountedPrice);
+
+  if (
+    (!isNaN(discountedPriceNumber) && !isNaN(discountedPriceNumber)) ||
+    (discountPercent && discountedPrice) ||
+    (!discountPercent && !discountedPrice)
+  ) {
+    return true;
+  } else {
+    res.status(406).json(
+      jsonResponse(406, {
+        message: `درصد تخفیف و قیمت تخفیف خورده یکسان نمی باشند!`,
+      })
+    );
+  }
+};
 
 const add_product = async (req, res) => {
   const body = req.body;
@@ -314,7 +334,6 @@ const add_product = async (req, res) => {
 
   const checkBrandStatus = await checkBrand(body.brand, res);
   const checkSellersStatus = await checkSellers(body.sellers, res);
-  const checkAvailabalityStatus = checkAvailabality(body.frameColors, body.isAvailable, res);
   const checkFrameColorsStatus = await checkFrameColors(
     body.frameColors,
     body.numberOfProducts,
@@ -322,9 +341,10 @@ const add_product = async (req, res) => {
     res
   );
   if (
+    !checkAvailabality(body.frameColors, body.isAvailable, res) ||
+    !checkDiscount(body.discountPercent, body.discountedPrice, res) ||
     !checkBrandStatus ||
     !checkSellersStatus ||
-    !checkAvailabalityStatus ||
     !checkFrameColorsStatus ||
     !checkImages(body.images, files, res)
   ) {
