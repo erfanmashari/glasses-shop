@@ -59,7 +59,7 @@ const add_brand = async (req, res) => {
 
   if (
     !checkDataExist(body, ["nameFa", "nameEn", "origin"], res) ||
-    !checkImages(body.image, file, res)
+    file ? !checkImages(body.image, file, res) : false
   ) {
     return null;
   }
@@ -67,41 +67,49 @@ const add_brand = async (req, res) => {
   // create new brand
   const brandIndex = await Brand.create(body);
 
-  // save images with unique name
-  const imageName = `${brandIndex.nameEn}_${createRandomImageName(10)}`;
-
-  // add image file name to image object saved in database
-  const newImage = { ...brandIndex.image }
-  newImage.fileName = imageName;
-
-  fs.writeFile(
-    `public/brands/${imageName}.jpg`,
-    file.buffer,
-    "binary",
-    function (err) {
-      if (err) throw err;
-      Brand.findByIdAndUpdate(
-        brandIndex._id,
-        { image: newImage },
-        { new: true }
-      )
-        .then((response) => {
-          res.json(
-            jsonResponse(201, {
-              message: "برند جدید با موفقیت افزوده شد!",
-            })
-          );
-        })
-        .catch((err) => {
-          console.log("err-mongo-brand-files: ", err);
-          res.json(
-            jsonResponse(201, {
-              message: "عکس برند به درستی ذخیره نشده است!",
-            })
-          );
-        });
-    }
-  );
+  if (file) {
+    // save images with unique name
+    const imageName = `${brandIndex.nameEn}_${createRandomImageName(10)}`;
+  
+    // add image file name to image object saved in database
+    const newImage = { ...brandIndex.image }
+    newImage.fileName = imageName;
+  
+    fs.writeFile(
+      `public/brands/${imageName}.jpg`,
+      file.buffer,
+      "binary",
+      function (err) {
+        if (err) throw err;
+        Brand.findByIdAndUpdate(
+          brandIndex._id,
+          { image: newImage },
+          { new: true }
+        )
+          .then((response) => {
+            res.json(
+              jsonResponse(201, {
+                message: "برند جدید با موفقیت افزوده شد!",
+              })
+            );
+          })
+          .catch((err) => {
+            console.log("err-mongo-brand-files: ", err);
+            res.json(
+              jsonResponse(201, {
+                message: "عکس برند به درستی ذخیره نشده است!",
+              })
+            );
+          });
+      }
+    );
+  } else {
+    res.json(
+      jsonResponse(201, {
+        message: "برند جدید با موفقیت افزوده شد!",
+      })
+    );
+  }
 };
 
 module.exports = { brand_index, add_brand };
