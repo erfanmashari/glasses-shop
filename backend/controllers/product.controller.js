@@ -216,7 +216,7 @@ const checkFrameColors = async (colors, numberOfProducts, sellers, res) => {
     if (!isSellersCorrect) {
       res.status(406).json(
         jsonResponse(406, {
-          message: `تعداد فروشنده های ورودی با تعداد فروشنده هایغ یرتکراری رنگ ها برابر نیستند !`,
+          message: `تعداد فروشنده های ورودی با تعداد فروشنده هایغ یرتکراری رنگ ها برابر نیستند!`,
         })
       );
     }
@@ -224,6 +224,27 @@ const checkFrameColors = async (colors, numberOfProducts, sellers, res) => {
     return isSellersCorrect;
   }
 };
+
+// check if isAvailable with color availabality are the same
+const checkAvailabality = (colors, isAvailable, res) => {
+  let isColorAvailable = false;
+  for (const color of colors) {
+    if (color.isAvailable === "true" || color.isAvailable === true) {
+      isColorAvailable = true;
+    }
+  }
+
+  if (isAvailable !== isColorAvailable) {
+    res.status(406).json(
+      jsonResponse(406, {
+        message: `وضعیت موجودیت کالا با وضعیت موجودیت رنگ ها همخوانی ندارند!`,
+      })
+    );
+    return false;
+  } else {
+    return true;
+  }
+}
 
 const add_product = async (req, res) => {
   const body = req.body;
@@ -293,6 +314,7 @@ const add_product = async (req, res) => {
 
   const checkBrandStatus = await checkBrand(body.brand, res);
   const checkSellersStatus = await checkSellers(body.sellers, res);
+  const checkAvailabalityStatus = checkAvailabality(body.frameColors, body.isAvailable, res);
   const checkFrameColorsStatus = await checkFrameColors(
     body.frameColors,
     body.numberOfProducts,
@@ -302,6 +324,7 @@ const add_product = async (req, res) => {
   if (
     !checkBrandStatus ||
     !checkSellersStatus ||
+    !checkAvailabalityStatus ||
     !checkFrameColorsStatus ||
     !checkImages(body.images, files, res)
   ) {
