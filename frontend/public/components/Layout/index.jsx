@@ -1,7 +1,7 @@
 // import components
 import Nav from "./Nav";
 import Footer from "./Footer";
-import Meta from "./Nav/Meta";
+import Meta from "./Meta";
 
 import { useEffect } from "react";
 
@@ -55,7 +55,7 @@ const Layout = ({ children }) => {
       <Meta />
       <Nav />
       {children}
-      <Footer />
+      {/* <Footer /> */}
       <ToastContainer rtl={true} />
     </main>
   );

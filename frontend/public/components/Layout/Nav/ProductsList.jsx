@@ -1,23 +1,19 @@
 // import components
 import ProductsItem from "./ProductsItem";
 
-// import styles
-import layoutStyles from "../../../styles/Layout.module.css";
+import Image from "next/image"
+
 
 const ProductsList = () => {
   return (
-    <ul className={`${layoutStyles["nav-products-list"]} w-full flex flex-row justify-center items-center text-white gap-4 px-8 py-3`}>
-        <ProductsItem name={"کالای دیجیتال"} />
-        <ProductsItem name={"خودرو، ایزار و تجهیزات"} />
-        <ProductsItem name={"مد و پوشاک"} />
-        <ProductsItem name={"کالاهای سوپرمارکتی"} />
-        <ProductsItem name={"اسباب بازی، کودک و نوزاد"} />
-        <ProductsItem name={"محصولات بومی و محلی"} />
-        {/* <ProductsItem name={"زیبایی و سلامت"} />
-        <ProductsItem name={"خانه و آشپزخانه"} />
-        <ProductsItem name={"کتاب، لوازم التحریر و هنر"} />
-        <ProductsItem name={"ورزش وسفر"} /> */}
+    <div className="flex flex-row justify-center items-center gap-2 py-3">
+      <Image width={60} height={60} alt="logo" src="/images/sudo-orange.png" />
+    <ul className={`flex flex-row justify-center items-center text-sm gap-4`} style={{ color: "#4b4b4b" }}>
+        <ProductsItem name={"عینک طبی"} />
+        <ProductsItem name={"عینک کامپیوتر"} />
+        <ProductsItem name={"عینک آفتابی"} />
     </ul>
+    </div>
   )
 }
 
