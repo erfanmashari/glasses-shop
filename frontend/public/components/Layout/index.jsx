@@ -55,7 +55,7 @@ const Layout = ({ children }) => {
       <Meta />
       <Nav />
       {children}
-      {/* <Footer /> */}
+      <Footer />
       <ToastContainer rtl={true} />
     </main>
   );
