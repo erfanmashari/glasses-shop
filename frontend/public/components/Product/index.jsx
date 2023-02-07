@@ -1,6 +1,7 @@
 import ImagesList from "./ImagesList"
 import BuyForm from "./BuyForm"
 import ProductInfo from "./ProductInfo"
+import SimilarProductsList from "./SimilarProductsList"
 
 const Product = () => {
   return (
@@ -10,6 +11,7 @@ const Product = () => {
             <BuyForm />
         </div>
         <ProductInfo />
+        <SimilarProductsList />
     </main>
   )
 }
