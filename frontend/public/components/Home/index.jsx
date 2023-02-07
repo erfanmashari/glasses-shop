@@ -1,6 +1,7 @@
 import Header from "./Header";
 import CategoriesList from "./CategoriesList";
 import DiscountedProductsList from "./DiscountedProductsList";
+import NewestProductsList from "./NewestProductsList";
 
 const Home = () => {
   return (
@@ -8,6 +9,9 @@ const Home = () => {
       <Header />
       <CategoriesList />
       <DiscountedProductsList />
+      <NewestProductsList />
+      <NewestProductsList />
+      <NewestProductsList />
     </main>
   );
 };
