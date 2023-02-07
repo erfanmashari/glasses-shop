@@ -13,7 +13,7 @@ const Nav = () => {
       style={{ backgroundImage: "linear-gradient(to left, #5a5a5a, #f7f7f7)" }}
     >
       <div
-        className="w-full h-full flex flex-row justify-between items-center rounded-bl-2xl px-8 py-2"
+        className="w-full h-full flex flex-row justify-between items-center rounded-bl-2xl pl-2.5 pr-8 py-2"
         style={{
           backgroundImage: "linear-gradient(to left, #eeeeee, #fafafa)",
         }}
