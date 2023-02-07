@@ -2,6 +2,7 @@ import Header from "./Header";
 import CategoriesList from "./CategoriesList";
 import DiscountedProductsList from "./DiscountedProductsList";
 import NewestProductsList from "./NewestProductsList";
+import ReadingsList from "./ReadingsList";
 
 const Home = () => {
   return (
@@ -12,6 +13,7 @@ const Home = () => {
       <NewestProductsList />
       <NewestProductsList />
       <NewestProductsList />
+      <ReadingsList />
     </main>
   );
 };
