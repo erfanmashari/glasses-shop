@@ -3,6 +3,7 @@ import CategoriesList from "./CategoriesList";
 import DiscountedProductsList from "./DiscountedProductsList";
 import NewestProductsList from "./NewestProductsList";
 import ReadingsList from "./ReadingsList";
+import FollowInstagram from "./FollowInstagram";
 
 const Home = () => {
   return (
@@ -14,6 +15,7 @@ const Home = () => {
       <NewestProductsList />
       <NewestProductsList />
       <ReadingsList />
+      <FollowInstagram />
     </main>
   );
 };
