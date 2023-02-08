@@ -1,8 +1,8 @@
 // action for changing product info from backend
-export const changeProductInfoFromBackend = (product) => {
+export const changeProductPageInfoFromBackend = (product) => {
     return {
         product,
-        type: "CHANGE_PRODUCT_INFO_FROM_BACKEND"
+        type: "CHANGE_PRODUCT_PAGE_INFO_FROM_BACKEND"
     }
 }
 
