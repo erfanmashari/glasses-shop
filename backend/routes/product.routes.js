@@ -9,8 +9,8 @@ const storage = multer.memoryStorage()
 const upload = multer({ storage: storage })
 
 productRoutes.get("/", productController.product_index);
-productRoutes.get("/:category", productController.product_category);
 productRoutes.get("/discount", productController.product_discount);
+productRoutes.get("/:category", productController.product_category);
 productRoutes.post(
   "/",
   upload.array("imagesFiles"),

@@ -21,6 +21,18 @@ const product_index = (req, res) => {
     });
 };
 
+// get products by category name
+const product_category = (req, res) => {
+  Product.find({ category: req.params.category })
+    .sort({ updatedAt: -1 })
+    .then((products) => {
+      res.json(jsonResponse(200, { products }));
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
 // get all disounted products
 const product_discount = (req, res) => {
   Product.find()
@@ -494,4 +506,4 @@ const add_product = async (req, res) => {
   }
 };
 
-module.exports = { product_index, add_product, product_discount };
+module.exports = { product_index, add_product, product_discount, product_category };
