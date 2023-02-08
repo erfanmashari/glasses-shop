@@ -1,5 +1,7 @@
 import Image from "next/image";
 
+import Countdown from "react-countdown";
+
 import { useSelector } from "react-redux";
 
 import { Tooltip } from "flowbite-react";
@@ -19,7 +21,7 @@ const BuyForm = () => {
       <h2 className="w-full text-md border-b-2 border-stone-200 text-stone-500 font-bold pb-2">
         {productInfo.nameEn}
       </h2>
-      {productInfo.features.length && (
+      {productInfo.features.length ? (
         <div className="w-full flex flex-col justify-start items-start border-b-2 border-stone-200 gap-1 pb-3">
           <h2 className="w-full text-md font-bold">ویژگی ها</h2>
           <ul className="w-full flex flex-col justify-start items-start gap-1 mr-4 list-disc">
@@ -30,6 +32,8 @@ const BuyForm = () => {
             ))}
           </ul>
         </div>
+      ) : (
+        ""
       )}
       <div className="w-full flex flex-row justify-between items-center border-b-2 border-stone-200 pb-2">
         <h4>فروشنده</h4>
@@ -76,7 +80,9 @@ const BuyForm = () => {
           </div>
           <div className="w-full flex flex-row justify-between items-center border-b-2 border-stone-200 pb-2">
             <h4>زمان تخفیف</h4>
-            <span className="font-bold">{productInfo.discountTime}</span>
+            <span className="font-bold">
+              <Countdown date={productInfo.discountTime} />
+            </span>
           </div>
         </>
       ) : (
