@@ -3,6 +3,8 @@ import Nav from "./Nav";
 import Footer from "./Footer";
 import Meta from "./Meta";
 
+import Script from "next/script";
+
 import { useEffect } from "react";
 
 import { useDispatch } from "react-redux";
@@ -57,6 +59,7 @@ const Layout = ({ children }) => {
       {children}
       <Footer />
       <ToastContainer rtl={true} />
+      <Script src="../path/to/flowbite/dist/flowbite.min.js"></Script>
     </main>
   );
 };
