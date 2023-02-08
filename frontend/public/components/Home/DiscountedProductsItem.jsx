@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import Countdown from 'react-countdown';
+
 const DiscountedProductsItem = ({ isLast, product }) => {
   let imageSource = "";
   for (const image of product.images) {
@@ -30,9 +32,8 @@ const DiscountedProductsItem = ({ isLast, product }) => {
       <p className="text-sm text-stone-400 line-through">
         {product.price}تومان
       </p>
-      <div className="w-full flex flex-row justify-between items-center mt-1.5">
-        <span className="text-sm">زمان تخفیف:</span>
-        <span className="text-sm">{product.discountTime}</span>
+      <div className="w-full flex flex-row justify-center items-center mt-1.5">
+        <Countdown date={product.discountTime} />
       </div>
     </Link>
   );
