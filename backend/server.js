@@ -58,7 +58,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 // routing
-// app.use("/users", userRoutes);
 app.use("/products", productRoutes);
 app.use("/brands", brandRoutes);
 app.use("/sellers", sellerRoutes);
