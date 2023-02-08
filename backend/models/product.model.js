@@ -32,6 +32,8 @@ const productSchema = new Schema(
     stars: { type: Number, default: 0 },
     discountPercent: { type: Number, default: 0 },
     discountedPrice: { type: Number, default: 0 },
+    numberOfVisits: { type: Number, default: 0 },
+    discountTime: { type: Date },
     features: { type: [String], default: [] },
     frameShapes: { type: [String], default: [] },
     faceShapes: { type: [String], default: [] },
