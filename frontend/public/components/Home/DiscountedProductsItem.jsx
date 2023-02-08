@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 const DiscountedProductsItem = ({ isLast, product }) => {
   let imageSource = "";
@@ -10,7 +11,7 @@ const DiscountedProductsItem = ({ isLast, product }) => {
   }
 
   return (
-    <li className={`${!isLast && "border-l-2 border-blue-600"} w-1/5 h-full relative flex flex-col justify-between items-end cursor-pointer p-2 pb-6`}>
+    <Link href={`product/${product.nameFa}`} className={`${!isLast && "border-l-2 border-blue-600"} w-1/5 h-full relative flex flex-col justify-between items-end cursor-pointer p-2 pb-6`}>
       <div className="w-full h-1/2 relative">
         <Image
           fill={true}
@@ -28,7 +29,7 @@ const DiscountedProductsItem = ({ isLast, product }) => {
         <span className="text-sm">زمان تخفیف:</span>
         <span className="text-sm">{product.discountTime}</span>
       </div>
-    </li>
+    </Link>
   );
 };
 
