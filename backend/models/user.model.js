@@ -7,6 +7,7 @@ const userSchema = new Schema(
     firstName: { type: String, maxLength: 50, required: true },
     lastName: { type: String, maxLength: 50, required: true },
     username: { type: String, maxLength: 80, required: true },
+    gender: { type: String, maxLength: 10, required: true },
     rules: { type: Boolean },
     active: { type: Boolean, default: true },
     job: { type: String, maxLength: 60 },
