@@ -21,12 +21,27 @@ const product_index = (req, res) => {
     });
 };
 
-// get products by category name
+// get products which dont have discount by category name
 const product_category = (req, res) => {
   Product.find({ category: req.params.category })
     .sort({ updatedAt: -1 })
     .then((products) => {
-      res.json(jsonResponse(200, { products }));
+      const notDiscountedProducts = [];
+      for (const product of products) {
+        const dateOfNow = new Date();
+        const dateOfDiscountTime = product.discountTime
+          ? new Date(product.discountTime)
+          : dateOfNow;
+        if (
+          !product.discountPercent ||
+          !product.discountedPrice ||
+          !product.discountTime ||
+          (product.discountTime && dateOfNow >= dateOfDiscountTime)
+        ) {
+          notDiscountedProducts.push(product);
+        }
+      }
+      res.json(jsonResponse(200, { products: notDiscountedProducts }));
     })
     .catch((err) => {
       console.log(err);
@@ -506,4 +521,9 @@ const add_product = async (req, res) => {
   }
 };
 
-module.exports = { product_index, add_product, product_discount, product_category };
+module.exports = {
+  product_index,
+  add_product,
+  product_discount,
+  product_category,
+};
