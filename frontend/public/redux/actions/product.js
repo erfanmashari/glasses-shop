@@ -6,6 +6,14 @@ export const changeProductPageInfoFromBackend = (product) => {
     }
 }
 
+// action for changing similar products from backend
+export const changeSimilarProductFromBackend = (products) => {
+    return {
+        products,
+        type: "CHANGE_SIMILAR_PRODUCT_FROM_BACKEND"
+    }
+}
+
 // action for changing state specifications of selected product
 export const changeSelectedProductSpecificationsState = (state) => {
     return {
