@@ -1,6 +1,7 @@
 // action for changing products list from backend
-export const changeProductsListFromBackend = (products) => {
+export const changeProductsListFromBackend = (category, products) => {
     return {
+        category,
         products,
         type: "CHANGE_PRODUCTS_LIST_FROM_BACKEND"
     }
