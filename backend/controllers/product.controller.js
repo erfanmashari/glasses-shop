@@ -358,6 +358,8 @@ const add_product = async (req, res) => {
     "features",
     "images",
     "sellers",
+    "lensFeatures",
+    "comments",
   ];
 
   for (const field in body) {
