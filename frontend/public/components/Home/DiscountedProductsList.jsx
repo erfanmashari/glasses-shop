@@ -28,8 +28,8 @@ const DiscountedProductsList = () => {
           dispatch(changeDiscountedProductsFromBackend(res.data.products));
         }
       });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div
@@ -51,7 +51,11 @@ const DiscountedProductsList = () => {
       </div>
       <ul className="w-9/12 h-60 flex flex-row bg-white text-stone-900 shadow-md rounded-xl overflow-hidden">
         {discountedProducts.map((product, index) => (
-          <DiscountedProductsItem key={index} product={product} isLast={index === discountedProducts.length - 1 ? true : false} />
+          <DiscountedProductsItem
+            key={index}
+            product={product}
+            isLast={index === discountedProducts.length - 1 ? true : false}
+          />
         ))}
       </ul>
     </div>
