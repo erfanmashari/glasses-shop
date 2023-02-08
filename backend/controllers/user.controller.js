@@ -12,20 +12,44 @@ const user_index = async (req, res) => {
     });
 };
 
+const checkPhoneNumber = (phoneNumber, res) => {
+  if (phoneNumber.toString().length !== 10) {
+    res.status(406).json(
+      jsonResponse(406, {
+        message: "شماره همراه باید بدون صفر و تعداد کاراکتر آن ده تا باشد!",
+      })
+    );
+    return false;
+  } else {
+    return true;
+  }
+};
+
 const add_user = async (req, res) => {
   const body = req.body;
 
-  // make english text lower case
-  body.nameEn = body.nameEn.toLowerCase();
+  // to make phone number bumber type
+  body.phoneNumber = body.phoneNumber ? Number(body.phoneNumber) : 0;
+  // for that to make NaN to 0
+  body.phoneNumber = isNaN(body.phoneNumber) ? 0 : body.phoneNumber;
 
   if (
-    !checkDataExist(body, ["nameFa", "nameEn"], res)
+    !checkDataExist(
+      body,
+      ["phoneNumber", "firstName", "lastName", "gender"],
+      res
+    ) ||
+    !checkPhoneNumber(body.phoneNumber, res)
   ) {
     return null;
   }
 
+  if (!body.username) {
+    body.username = `${body.firstName} ${body.lastName}`;
+  }
+
   // create new user
-  const userIndex = await User.create(body);
+  await User.create(body);
 
   res
     .status(201)
