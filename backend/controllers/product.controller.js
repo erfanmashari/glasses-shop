@@ -9,6 +9,7 @@ const {
   checkArrayStringIndexes,
 } = require("../functions");
 
+// get all products
 const product_index = (req, res) => {
   Product.find()
     .sort({ createdAt: -1 })
@@ -20,6 +21,33 @@ const product_index = (req, res) => {
     });
 };
 
+// get all disounted products
+const product_discount = (req, res) => {
+  Product.find()
+    .sort({ updatedAt: -1 })
+    .then((products) => {
+      const discountedProducts = [];
+      for (const product of products) {
+        if (
+          product.discountPercent &&
+          product.discountedPrice &&
+          product.discountTime
+        ) {
+          const dateOfNow = new Date();
+          const dateOfDiscountTime = new Date(product.discountTime);
+          if (dateOfNow < dateOfDiscountTime) {
+            discountedProducts.push(product);
+          }
+        }
+      }
+      res.json(jsonResponse(200, { products: discountedProducts }));
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+// add product codes is bottom until the end of file
 function createRandomImageName(length) {
   let result = "";
   const characters =
@@ -250,7 +278,7 @@ const checkAvailabality = (colors, isAvailable, res) => {
   }
 };
 
-// check if discountPercent and discountedPrice are entered correctly
+// check if discountPercent and discountedPrice and discountTime are entered correctly
 const checkDiscount = (discountPercent, discountedPrice, discountTime, res) => {
   const dateOfNow = new Date();
   const dateOfDiscountTime = new Date(discountTime);
@@ -305,7 +333,7 @@ const add_product = async (req, res) => {
   const body = req.body;
   const files = req.files;
 
-  // // make number, boolean and object fields from string
+  // make number, boolean and object fields from string
   const numberFields = [
     "price",
     "stars",
@@ -421,12 +449,12 @@ const add_product = async (req, res) => {
   } else {
     // create new product
     const productsIndex = await Product.create(body);
-  
+
     // save images with unique name
     const savedFilesStatus = [];
     await files.forEach((file, index) => {
       const imageName = `${productsIndex.nameEn}_${createRandomImageName(10)}`;
-  
+
       // add image file name to image object saved in database
       const newImages = [...productsIndex.images];
       for (const img of newImages) {
@@ -434,7 +462,7 @@ const add_product = async (req, res) => {
           img.fileName = imageName;
         }
       }
-  
+
       fs.writeFile(
         `public/products/${imageName}.jpg`,
         file.buffer,
@@ -455,7 +483,7 @@ const add_product = async (req, res) => {
         }
       );
     });
-  
+
     res.status(201).json(
       jsonResponse(201, {
         message: "محصول جدید با موفقیت افزوده شد!",
@@ -464,4 +492,4 @@ const add_product = async (req, res) => {
   }
 };
 
-module.exports = { product_index, add_product };
+module.exports = { product_index, add_product, product_discount };
