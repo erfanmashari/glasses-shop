@@ -21,6 +21,18 @@ const product_index = (req, res) => {
     });
 };
 
+// get one product by nameFa
+const product_single = (req, res) => {
+  Product.findOne({ nameFa: req.params.name })
+    .sort({ createdAt: -1 })
+    .then((product) => {
+      res.json(jsonResponse(200, { product }));
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
 // get products which dont have discount by category name
 const product_category = (req, res) => {
   Product.find({ category: req.params.category })
@@ -526,4 +538,5 @@ module.exports = {
   add_product,
   product_discount,
   product_category,
+  product_single,
 };
