@@ -251,10 +251,24 @@ const checkAvailabality = (colors, isAvailable, res) => {
 };
 
 // check if discountPercent and discountedPrice are entered correctly
-const checkDiscount = (discountPercent, discountedPrice, res) => {
+const checkDiscount = (discountPercent, discountedPrice, discountTime, res) => {
+  const dateOfNow = new Date();
+  const dateOfDiscountTime = new Date(discountTime);
+
   if (
-    (discountPercent && discountedPrice) ||
-    (!discountPercent && !discountedPrice)
+    discountPercent &&
+    discountedPrice &&
+    discountTime &&
+    dateOfNow > dateOfDiscountTime
+  ) {
+    res.status(406).json(
+      jsonResponse(406, {
+        message: `زمان تخفیف معتبر نمی باشد!`,
+      })
+    );
+  } else if (
+    (discountPercent && discountedPrice && discountTime) ||
+    (!discountPercent && !discountedPrice && !discountTime)
   ) {
     return true;
   } else {
@@ -363,7 +377,12 @@ const add_product = async (req, res) => {
   );
   if (
     !checkAvailabality(body.frameColors, body.isAvailable, res) ||
-    !checkDiscount(body.discountPercent, body.discountedPrice, res) ||
+    !checkDiscount(
+      body.discountPercent,
+      body.discountedPrice,
+      body.discountTime,
+      res
+    ) ||
     !checkStrArrays(
       body,
       [
