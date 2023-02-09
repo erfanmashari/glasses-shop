@@ -3,11 +3,11 @@ const Schema = mongoose.Schema;
 
 const userSchema = new Schema(
   {
-    phoneNumber: { type: Number, unique: true, maxLength: 15, required: true },
     firstName: { type: String, maxLength: 50, required: true },
     lastName: { type: String, maxLength: 50, required: true },
     username: { type: String, maxLength: 80, required: true },
     gender: { type: String, maxLength: 10, required: true },
+    phoneNumber: { type: String, unique: true, maxLength: 15, required: true },
     rules: { type: Boolean },
     active: { type: Boolean, default: true },
     job: { type: String, maxLength: 60 },
