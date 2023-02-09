@@ -31,15 +31,13 @@ const checkImages = (image, imageFile, res) => {
     Number(image.size) !== imageFile.size ||
     image.type !== imageFile.mimetype
   ) {
-    res.status(406).json(
+    res.json(
       jsonResponse(406, {
         message: `اطلاعات عکس آپلود شده با اطلاعات عکس تطابق ندارد!`,
       })
     );
   } else if (!imageFile.buffer) {
-    res
-      .status(406)
-      .json(jsonResponse(406, { message: `عکس آپلود شده صحیح نمی باشد!` }));
+    res.json(jsonResponse(406, { message: `عکس آپلود شده صحیح نمی باشد!` }));
   } else {
     return true;
   }
@@ -58,8 +56,9 @@ const add_brand = async (req, res) => {
   body.nameEn = body.nameEn.toLowerCase();
 
   if (
-    !checkDataExist(body, ["nameFa", "nameEn", "origin"], res) ||
-    file ? !checkImages(body.image, file, res) : false
+    !checkDataExist(body, ["nameFa", "nameEn", "origin"], res) || file
+      ? !checkImages(body.image, file, res)
+      : false
   ) {
     return null;
   }
@@ -70,11 +69,11 @@ const add_brand = async (req, res) => {
   if (file) {
     // save images with unique name
     const imageName = `${brandIndex.nameEn}_${createRandomImageName(10)}`;
-  
+
     // add image file name to image object saved in database
-    const newImage = { ...brandIndex.image }
+    const newImage = { ...brandIndex.image };
     newImage.fileName = imageName;
-  
+
     fs.writeFile(
       `public/brands/${imageName}.jpg`,
       file.buffer,

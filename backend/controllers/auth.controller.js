@@ -6,14 +6,20 @@ const { userSinglePhoneNumber, registerUser } = require("./user.controller");
 
 // checking phine number if its correct or not
 const checkPhoneNumber = (phoneNumber, res) => {
-  if (phoneNumber.length !== 11) {
+  if (isNaN(Number(phoneNumber))) {
+    res.json(
+      jsonResponse(406, {
+        message: "شماره همراه نباید شامل حروف باشد!",
+      })
+    );
+  } else if (phoneNumber.length !== 11) {
     res.json(
       jsonResponse(406, {
         message: "شماره همراه باید شامل 11 کاراکتر باشد!",
       })
     );
   } else if (phoneNumber.charAt(0) !== "0") {
-    res.status(406).json(
+    res.json(
       jsonResponse(406, {
         message: "شماره همراه باید با 0 شروع شود!",
       })
@@ -44,7 +50,7 @@ const createVerficationCode = async (phoneNumber, res) => {
   });
 
   if (isValidCodeExist) {
-    res.status(406).json(
+    res.json(
       jsonResponse(406, {
         message: "کد ارسال شده قبلی هنوز معتبر است!",
         code: previousCode,
@@ -78,12 +84,13 @@ const createVerficationCode = async (phoneNumber, res) => {
 const login = async (req, res) => {
   const body = req.body;
 
+  if (!checkDataExist(body, ["phoneNumber"], res)) {
+    return null;
+  }
+
   body.phoneNumber = body.phoneNumber.toString();
 
-  if (
-    !checkDataExist(body, ["phoneNumber"], res) ||
-    !checkPhoneNumber(body.phoneNumber, res)
-  ) {
+  if (!checkPhoneNumber(body.phoneNumber, res)) {
     return null;
   }
 
@@ -149,10 +156,10 @@ const confirm_code = async (req, res) => {
     if (!checkDataExist(body, ["code", "phoneNumber"], res)) {
       return null;
     }
-  
+
     checkConfirmCode(req, { phoneNumber, code: body.code }, res);
   } else {
-    res.status(406).json(
+    res.json(
       jsonResponse(406, {
         message: "درخواست معتبر نمی باشد!",
       })
@@ -168,9 +175,9 @@ const register = async (req, res) => {
 
   // check if code confirmed
   if (codeValidateStatus && phoneNumber) {
-    registerUser(body, res)
+    registerUser(body, res);
   } else {
-    res.status(406).json(
+    res.json(
       jsonResponse(406, {
         message: "درخواست معتبر نمی باشد!",
       })

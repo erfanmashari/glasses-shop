@@ -105,7 +105,7 @@ const checkBrand = async (brand, res) => {
   if (brandIndex) {
     return true;
   } else {
-    res.status(406).json(
+    res.json(
       jsonResponse(406, {
         message: `برند وارد شده معتبر نمی باشد!`,
       })
@@ -126,7 +126,7 @@ const checkSellers = async (sellers, res) => {
   }
 
   if (!isSellersExist) {
-    res.status(406).json(
+    res.json(
       jsonResponse(406, {
         message: `فروشنده های ورودی معتبر نیستند!`,
       })
@@ -141,7 +141,7 @@ const checkSellers = async (sellers, res) => {
 const checkImages = (images, imagesFiles, res) => {
   // check length of images and files
   if (images.length !== imagesFiles.length) {
-    res.status(406).json(
+    res.json(
       jsonResponse(406, {
         message: `تعداد عکس های آپلود شده و اطلاعات عکس ها برابر نیست!`,
       })
@@ -169,13 +169,13 @@ const checkImages = (images, imagesFiles, res) => {
   });
 
   if (!isImagesBufferExist) {
-    res.status(406).json(
+    res.json(
       jsonResponse(406, {
         message: `عکس های آپلود شده مشکل دارند!`,
       })
     );
   } else if (listOfCorrectFiles.length !== images.length) {
-    res.status(406).json(
+    res.json(
       jsonResponse(406, {
         message: `عکس های آپلود شده و اطلاعات آنها تطبیق ندارند!`,
       })
@@ -208,7 +208,7 @@ const checkFrameColors = async (colors, numberOfProducts, sellers, res) => {
 
     if (!color.nameFa || !color.nameEn) {
       isColorsCorrect = false;
-      res.status(406).json(
+      res.json(
         jsonResponse(406, {
           message: `نام رنگ ها درست نیستند!`,
         })
@@ -216,7 +216,7 @@ const checkFrameColors = async (colors, numberOfProducts, sellers, res) => {
       break;
     } else if (!sellerIndex) {
       isColorsCorrect = false;
-      res.status(406).json(
+      res.json(
         jsonResponse(406, {
           message: `فروشنده مشخص شده برای رنگ ها صحیح نمی باشد!`,
         })
@@ -250,19 +250,19 @@ const checkFrameColors = async (colors, numberOfProducts, sellers, res) => {
   }
 
   if (numberOfProductsColors !== numberOfProducts) {
-    res.status(406).json(
+    res.json(
       jsonResponse(406, {
         message: `تعداد محصول هر رنگ با تعداد کل محصولات برابر نیستند!`,
       })
     );
   } else if (correctColorsList.length !== colors.length) {
-    res.status(406).json(
+    res.json(
       jsonResponse(406, {
         message: `رنگ های تکراری وجود دارد!`,
       })
     );
   } else if (colorsSellers.length !== sellers.length) {
-    res.status(406).json(
+    res.json(
       jsonResponse(406, {
         message: `تعداد فروشنده های ورودی با تعداد فروشنده های غیر تکراری رنگ ها برابر نیستند!`,
       })
@@ -285,7 +285,7 @@ const checkFrameColors = async (colors, numberOfProducts, sellers, res) => {
 
     const isSellersCorrect = correctSellersList.length === colorsSellers.length;
     if (!isSellersCorrect) {
-      res.status(406).json(
+      res.json(
         jsonResponse(406, {
           message: `تعداد فروشنده های ورودی با تعداد فروشنده هایغ یرتکراری رنگ ها برابر نیستند!`,
         })
@@ -306,7 +306,7 @@ const checkAvailabality = (colors, isAvailable, res) => {
   }
 
   if (isAvailable !== isColorAvailable) {
-    res.status(406).json(
+    res.json(
       jsonResponse(406, {
         message: `وضعیت موجودیت کالا با وضعیت موجودیت رنگ ها همخوانی ندارند!`,
       })
@@ -328,7 +328,7 @@ const checkDiscount = (discountPercent, discountedPrice, discountTime, res) => {
     discountTime &&
     dateOfNow > dateOfDiscountTime
   ) {
-    res.status(406).json(
+    res.json(
       jsonResponse(406, {
         message: `زمان تخفیف معتبر نمی باشد!`,
       })
@@ -339,7 +339,7 @@ const checkDiscount = (discountPercent, discountedPrice, discountTime, res) => {
   ) {
     return true;
   } else {
-    res.status(406).json(
+    res.json(
       jsonResponse(406, {
         message: `درصد تخفیف و قیمت تخفیف خورده یکسان نمی باشند!`,
       })
@@ -358,7 +358,7 @@ const checkStrArrays = (body, listOfArrays, res) => {
   }
 
   if (isHaveDuplicate) {
-    res.status(406).json(
+    res.json(
       jsonResponse(406, {
         message: `پارامتر های لیستی دارای آیتم تکراری می باشند!`,
       })
@@ -476,13 +476,13 @@ const add_product = async (req, res) => {
   const productNameFa = await Product.findOne({ nameFa: body.nameFa });
   const productNameEn = await Product.findOne({ nameEn: body.nameEn });
   if (productNameFa) {
-    res.status(406).json(
+    res.json(
       jsonResponse(406, {
         message: "محصولی با این نام فارسی وجود دارد!",
       })
     );
   } else if (productNameEn) {
-    res.status(406).json(
+    res.json(
       jsonResponse(406, {
         message: "محصولی با این نام انگلیسی وجود دارد!",
       })
