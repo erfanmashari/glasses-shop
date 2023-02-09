@@ -2,6 +2,8 @@
 import ProductsList from "./ProductsList";
 import SearchBox from "./SearchBox";
 
+import Link from "next/link";
+
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 
@@ -11,7 +13,7 @@ const Nav = () => {
       <nav
         className="w-full h-12 flex flex-row"
         style={{
-          backgroundColor: "#DBDDDC"
+          backgroundColor: "#DBDDDC",
           // backgroundImage: "linear-gradient(to left, #5a5a5a, #f7f7f7)",
         }}
       >
@@ -31,18 +33,19 @@ const Nav = () => {
           >
             <ShoppingBagOutlinedIcon /> سبد خرید
           </button>
-          <button
+          <Link
+            href={"login"}
             className="w-max h-fit flex flex-row justify-center items-center text-white text-sm rounded-lg gap-1 px-2.5 py-1.5"
             style={{ background: "#06291D" }}
           >
             <PersonOutlineOutlinedIcon /> ورود
-          </button>
+          </Link>
         </div>
       </nav>
       <div
         style={{
           height: "30px",
-          backgroundColor: "#DBDDDC"
+          backgroundColor: "#DBDDDC",
           // backgroundImage:
           //   "linear-gradient(to left, #DBDDDC, #E1E3E0, #DBDDDC)",
         }}
