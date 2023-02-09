@@ -33,6 +33,8 @@ const checkPhoneNumber = (phoneNumber, res) => {
 const add_user = async (req, res) => {
   const body = req.body;
 
+  body.phoneNumber = body.phoneNumber.toString()
+
   if (
     !checkDataExist(
       body,
