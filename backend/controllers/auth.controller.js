@@ -5,10 +5,10 @@ const { registerUser } = require("./user.controller");
 
 // checking phine number if its correct or not
 const checkPhoneNumber = (phoneNumber, res) => {
-  if (phoneNumber.length !== 10) {
-    res.status(406).json(
+  if (phoneNumber.length !== 11) {
+    res.json(
       jsonResponse(406, {
-        message: "شماره همراه باید حداقل شامل 10 کاراکتر باشد!",
+        message: "شماره همراه باید شامل 11 کاراکتر باشد!",
       })
     );
   } else if (phoneNumber.charAt(0) !== "0") {
@@ -17,33 +17,38 @@ const checkPhoneNumber = (phoneNumber, res) => {
         message: "شماره همراه باید با 0 شروع شود!",
       })
     );
+  } else {
+    return true;
   }
 };
 
 const createVerficationCode = async (phoneNumber, res) => {
   // get all codes with related phone number
-  const codes = await Code.find({ phoneNumber }).exec();
+  const codes = await Code.find({ phoneNumber });
 
   const date = new Date();
   const nowTime = date.getTime();
-
+  console.log("nowTime: ", nowTime)
   let isValidCodeExist = false;
-  codes
-    ? codes
-    : [].forEach((code) => {
+  let previousCode = ""
+  codes.forEach((code) => {
+      console.log("code: ", code)
         if (
           code.type === "authentication" &&
           code.expiredAt !== 0 &&
-          code.expiredAt <= nowTime
+          code.expiredAt > nowTime
         ) {
+          previousCode = code.code
           isValidCodeExist = true;
         }
       });
 
   if (isValidCodeExist) {
-    res.status(406).json(
-      jsonResponse(406, { message: "کد ارسال شده قبلی هنوز معتبر است!" })
-    );
+    res
+      .status(406)
+      .json(
+        jsonResponse(406, { message: "کد ارسال شده قبلی هنوز معتبر است!", code: previousCode })
+      );
   } else {
     // create 6 digits number
     const verificationCode = Math.floor(
@@ -60,9 +65,11 @@ const createVerficationCode = async (phoneNumber, res) => {
       expiredAt: codeExp,
     });
 
-    res.status(200).json(
-      jsonResponse(200, { message: "کد تایید جدید با موفقیت ارسال شد!" })
-    );
+    res
+      .status(200)
+      .json(
+        jsonResponse(200, { message: "کد تایید جدید با موفقیت ارسال شد!", code: verificationCode })
+      );
   }
 };
 
@@ -73,72 +80,72 @@ const login = async (req, res) => {
 
   if (
     !checkDataExist(body, ["phoneNumber"], res) ||
-    !checkPhoneNumber(bodyphoneNumber, res)
+    !checkPhoneNumber(body.phoneNumber, res)
   ) {
     return null;
   }
 
-  req.session.loginPhoneNumberLPN8463 = phoneNumber;
+  req.session.loginPhoneNumberLPN8463 = body.phoneNumber;
 
-  createVerficationCode(phoneNumber, res);
+  createVerficationCode(body.phoneNumber, res);
 };
 
-// const confirm_code = async (req, res) => {
-//   const body = req.body;
-//   const phoneNumber = req.session.loginPhoneNumberLPN8463;
+const generateJWTToken = (payload) => {
+  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1d" });
+};
 
-//   checkDataExist(body, ["code"], res);
+// check if code exist or not expired
+const validateConfirmCode = async (payload, res) => {
+  const codeFilter = {
+    ...payload,
+    type: "authentication",
+  };
+  const code = await Code.findOne(codeFilter);
 
-//   validateConfirmCode({ phoneNumber, code: body.code }, res);
-// };
+  const date = new Date();
+  const nowTime = date.getTime();
 
-// const register = async (req, res) => {
-//   const body = req.body;
-//   const phoneNumber = req.session.loginPhoneNumberLPN8463;
+  if (code && code.expiredAt !== 0 && code.expiredAt >= nowTime) {
+    // set code expire time to 0
+    await Code.findOneAndUpdate(codeFilter, { expiredAt: 0 });
 
-//   checkDataExist(body, ["code"], res);
+    // create user with that phone number
+    await registerUser(payload.phoneNumber);
 
-//   validateConfirmCode({ phoneNumber, code: body.code }, res);
-// };
+    res.json(
+      jsonResponse(200, {
+        message: "کد معتبر است!",
+        token: generateJWTToken({
+          sub: code._id,
+          phoneNumber: payload.phoneNumber,
+        }),
+      })
+    );
+  } else if (code && code.expiredAt === 0) {
+    res.json(jsonResponse(406, { message: "کد قبلا استفاده شده است!" }));
+  } else if (code && code.expiredAt < nowTime) {
+    res.json(jsonResponse(406, { message: "کد منقضی شده است!" }));
+  } else {
+    res.json(jsonResponse(404, { message: "کد مورد نظر پیدا نشد!" }));
+  }
+};
 
-// // check if code exist or not expired
-// const validateConfirmCode = async (payload, res) => {
-//   const codeFilter = {
-//     ...payload,
-//     type: "authenticationRegister",
-//   };
-//   const code = await Code.findOne(codeFilter);
+const confirm_code = async (req, res) => {
+  const body = req.body;
+  const phoneNumber = req.session.loginPhoneNumberLPN8463;
 
-//   const date = new Date();
-//   const nowTime = date.getTime();
+  checkDataExist(body, ["code"], res);
 
-//   if (code && code.expiredAt !== 0 && code.expiredAt >= nowTime) {
-//     // set code expire time to 0
-//     await Code.findOneAndUpdate(codeFilter, { expiredAt: 0 });
+  validateConfirmCode({ phoneNumber, code: body.code }, res);
+};
 
-//     // create user with that phone number
-//     await registerUser(payload.phoneNumber);
+const register = async (req, res) => {
+  const body = req.body;
+  const phoneNumber = req.session.loginPhoneNumberLPN8463;
 
-//     res.json(
-//       jsonResponse(200, {
-//         message: "کد معتبر است!",
-//         token: generateJWTToken({
-//           sub: code._id,
-//           phoneNumber: payload.phoneNumber,
-//         }),
-//       })
-//     );
-//   } else if (code && code.expiredAt === 0) {
-//     res.json(jsonResponse(406, { message: "کد قبلا استفاده شده است!" }));
-//   } else if (code && code.expiredAt < nowTime) {
-//     res.json(jsonResponse(406, { message: "کد منقضی شده است!" }));
-//   } else {
-//     res.json(jsonResponse(404, { message: "کد مورد نظر پیدا نشد!" }));
-//   }
-// };
+  checkDataExist(body, ["code"], res);
 
-// const generateJWTToken = (payload) => {
-//   return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1d" });
-// };
+  validateConfirmCode({ phoneNumber, code: body.code }, res);
+};
 
 module.exports = { login, confirm_code, register };
