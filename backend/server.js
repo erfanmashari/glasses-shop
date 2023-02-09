@@ -9,6 +9,7 @@ const productRoutes = require("./routes/product.routes");
 const brandRoutes = require("./routes/brand.routes");
 const sellerRoutes = require("./routes/seller.routes");
 const userRoutes = require("./routes/user.routes");
+const authRoutes = require("./routes/auth.routes");
 
 // express app
 const app = express();
@@ -62,3 +63,4 @@ app.use("/products", productRoutes);
 app.use("/brands", brandRoutes);
 app.use("/sellers", sellerRoutes);
 app.use("/users", userRoutes);
+app.use("/auth", authRoutes);
