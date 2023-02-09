@@ -2,7 +2,7 @@ const Code = require("../models/code.model");
 const User = require("../models/user.model");
 const jwt = require("jsonwebtoken");
 const { jsonResponse, checkDataExist } = require("../functions");
-const { userSinglePhoneNumber } = require("./user.controller");
+const { userSinglePhoneNumber, registerUser } = require("./user.controller");
 
 // checking phine number if its correct or not
 const checkPhoneNumber = (phoneNumber, res) => {
@@ -44,14 +44,12 @@ const createVerficationCode = async (phoneNumber, res) => {
   });
 
   if (isValidCodeExist) {
-    res
-      .status(406)
-      .json(
-        jsonResponse(406, {
-          message: "کد ارسال شده قبلی هنوز معتبر است!",
-          code: previousCode,
-        })
-      );
+    res.status(406).json(
+      jsonResponse(406, {
+        message: "کد ارسال شده قبلی هنوز معتبر است!",
+        code: previousCode,
+      })
+    );
   } else {
     // create 6 digits number
     const verificationCode = Math.floor(
@@ -68,14 +66,12 @@ const createVerficationCode = async (phoneNumber, res) => {
       expiredAt: codeExp,
     });
 
-    res
-      .status(200)
-      .json(
-        jsonResponse(200, {
-          message: "کد تایید جدید با موفقیت ارسال شد!",
-          code: verificationCode,
-        })
-      );
+    res.status(200).json(
+      jsonResponse(200, {
+        message: "کد تایید جدید با موفقیت ارسال شد!",
+        code: verificationCode,
+      })
+    );
   }
 };
 
@@ -101,7 +97,7 @@ const generateJWTToken = (payload) => {
 };
 
 // check if code exist or not expired
-const checkConfirmCode = async (payload, res) => {
+const checkConfirmCode = async (req, payload, res) => {
   const codeFilter = {
     ...payload,
     type: "authentication",
@@ -128,6 +124,7 @@ const checkConfirmCode = async (payload, res) => {
         })
       );
     } else {
+      req.session.loginCodeValidateStatusOPQ868 = true;
       res.status(200).json(
         jsonResponse(200, {
           message: "کد معتبر است و کاربری با این شماره همراه وجود ندارد!",
@@ -146,21 +143,39 @@ const checkConfirmCode = async (payload, res) => {
 const confirm_code = async (req, res) => {
   const body = req.body;
   const phoneNumber = req.session.loginPhoneNumberLPN8463;
+  body.phoneNumber = phoneNumber;
 
-  if (!checkDataExist(body, ["code"], res)) {
-    return null;
+  if (phoneNumber) {
+    if (!checkDataExist(body, ["code", "phoneNumber"], res)) {
+      return null;
+    }
+  
+    checkConfirmCode(req, { phoneNumber, code: body.code }, res);
+  } else {
+    res.status(406).json(
+      jsonResponse(406, {
+        message: "درخواست معتبر نمی باشد!",
+      })
+    );
   }
-
-  checkConfirmCode({ phoneNumber, code: body.code }, res);
 };
 
 const register = async (req, res) => {
   const body = req.body;
   const phoneNumber = req.session.loginPhoneNumberLPN8463;
+  body.phoneNumber = phoneNumber;
+  const codeValidateStatus = req.session.loginCodeValidateStatusOPQ868;
 
-  checkDataExist(body, ["code"], res);
-
-  validateConfirmCode({ phoneNumber, code: body.code }, res);
+  // check if code confirmed
+  if (codeValidateStatus && phoneNumber) {
+    registerUser(body, res)
+  } else {
+    res.status(406).json(
+      jsonResponse(406, {
+        message: "درخواست معتبر نمی باشد!",
+      })
+    );
+  }
 };
 
 module.exports = { login, confirm_code, register };

@@ -30,9 +30,7 @@ const checkPhoneNumber = (phoneNumber, res) => {
   }
 };
 
-const add_user = async (req, res) => {
-  const body = req.body;
-
+const registerUser = async (body, res) => {
   body.phoneNumber = body.phoneNumber.toString()
 
   if (
@@ -58,4 +56,9 @@ const add_user = async (req, res) => {
     .json(jsonResponse(201, { message: "کاربر جدید با موفقیت افزوده شد!" }));
 };
 
-module.exports = { user_index, add_user };
+// export functions
+const userSinglePhoneNumber = async (phoneNumber) => {
+  return await User.findOne({ phoneNumber })
+};
+
+module.exports = { user_index, registerUser, userSinglePhoneNumber };

@@ -11,7 +11,7 @@ const userSchema = new Schema(
     rules: { type: Boolean },
     active: { type: Boolean, default: true },
     job: { type: String, maxLength: 60 },
-    email: { type: String, unique: true },
+    email: { type: String, default: null, index: { unique: true, sparse: true } },
     password: { type: String },
     birthday: { type: Date },
     addresses: { type: [Object], default: [] },
