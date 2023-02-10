@@ -123,10 +123,12 @@ const checkConfirmCode = async (req, payload, res) => {
     res.json(
       jsonResponse(200, {
         message: "کد معتبر است!",
-        token: user ? generateJWTToken({
-          sub: user._id,
-          phoneNumber: payload.phoneNumber,
-        }) : undefined,
+        token: user
+          ? generateJWTToken({
+              sub: user._id,
+              phoneNumber: payload.phoneNumber,
+            })
+          : undefined,
       })
     );
   } else if (code && code.expiredAt === 0) {
@@ -159,11 +161,17 @@ const confirm_code = async (req, res) => {
 
 const register = async (req, res) => {
   const body = req.body;
-  const phoneNumber = body.phoneNumber;
-  const code = body.code;
+  if (!checkPhoneNumber(body.phoneNumber, res)) {
+    return null;
+  }
+  const code = await Code.findOne({
+    code: body.code,
+    type: "authentication",
+    expiredAt: 0,
+  });
 
-  // check if code confirmed
-  if (code && phoneNumber) {
+  // check if code exist
+  if (code) {
     registerUser(body, res);
   } else {
     res.json(
