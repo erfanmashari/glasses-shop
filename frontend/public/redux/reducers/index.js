@@ -1,5 +1,6 @@
 import { combineReducers } from "redux";
 import isLoggedIn from "./login/isLoggedIn";
+import loginInfo from "./login/loginInfo";
 import discountedProducts from "./home/discountedProducts";
 import productsList from "./home/productsList";
 import productInfo from "./product/productInfo";
@@ -9,6 +10,7 @@ import selectedProductSpecifications from "./product/selectedProductSpecificatio
 
 const allReducers = combineReducers({
     isLoggedIn,
+    loginInfo,
     discountedProducts,
     productsList,
     productInfo,
