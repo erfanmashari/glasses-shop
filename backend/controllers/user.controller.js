@@ -2,11 +2,24 @@ const User = require("../models/user.model");
 const jwt = require("jsonwebtoken");
 const { jsonResponse, checkDataExist } = require("../functions");
 
+// get all users
 const user_index = async (req, res) => {
   await User.find()
     .sort({ createdAt: -1 })
     .then((users) => {
       res.json(jsonResponse(200, { users }));
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+// get one user by id
+const user_index_id = async (req, res) => {
+  await User.findOne({ _id: req.params.id })
+    .sort({ createdAt: -1 })
+    .then((user) => {
+      res.json(jsonResponse(200, { user }));
     })
     .catch((err) => {
       console.log(err);
@@ -72,4 +85,4 @@ const userSinglePhoneNumber = async (phoneNumber) => {
   return await User.findOne({ phoneNumber });
 };
 
-module.exports = { user_index, registerUser, userSinglePhoneNumber };
+module.exports = { user_index, user_index_id, registerUser, userSinglePhoneNumber };
