@@ -14,3 +14,10 @@ export const changeLoginInfo = (parameter, value) => {
         type: "CHANGE_LOGIN_INFO"
     }
 }
+
+// action for changing login info for user login
+export const resetLoginInfo = () => {
+    return {
+        type: "RESET_LOGIN_INFO"
+    }
+}
