@@ -4,7 +4,8 @@ import Link from "next/link";
 
 import { useState } from "react";
 
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { resetLoginInfo } from "../../redux/actions/login";
 
 import axiosApp from "../../utils/axiosConfig";
 import { checkFetchResponse } from "../../functions";
@@ -12,6 +13,8 @@ import { checkFetchResponse } from "../../functions";
 import { toastAlert } from "../../functions";
 
 const LoginForm = () => {
+  const dispatch = useDispatch();
+
   // get login info from redux/reducer/login/loginInfo.js
   const loginInfo = useSelector((state) => state.loginInfo);
 
@@ -30,6 +33,13 @@ const LoginForm = () => {
       if (!isCodeHidden && res.ok) {
         if (res.data.token) {
           toastAlert(res.data.message, "success");
+
+          document.cookie = `token=${res.data.token}; path=${process.env.COOKIE_PATH}`;
+          document.cookie = `phoneNumber=${loginInfo.phoneNumber}; path=${process.env.COOKIE_PATH}`;
+
+          // reset login info
+          dispatch(resetLoginInfo())
+
           const homePageLink = document.querySelector("#to-home-page-l");
           if (homePageLink) {
             homePageLink.click();
