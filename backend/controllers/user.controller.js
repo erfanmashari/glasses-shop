@@ -1,6 +1,5 @@
 const User = require("../models/user.model");
 const { jsonResponse, checkDataExist } = require("../functions");
-const { generateJWTToken } = require("./auth.controller");
 
 const user_index = async (req, res) => {
   await User.find()
@@ -55,10 +54,14 @@ const registerUser = async (body, res) => {
   res.status(201).json(
     jsonResponse(201, {
       message: "ثبت نام با موفقیت انجام شد!",
-      token: generateJWTToken({
-        sub: newUser._id,
-        phoneNumber: body.phoneNumber,
-      }),
+      token: jwt.sign(
+        {
+          sub: newUser._id,
+          phoneNumber: body.phoneNumber,
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: "1d" }
+      ),
     })
   );
 };

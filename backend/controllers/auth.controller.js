@@ -182,4 +182,4 @@ const register = async (req, res) => {
   }
 };
 
-module.exports = { login, confirm_code, register, generateJWTToken };
+module.exports = { login, confirm_code, register };
