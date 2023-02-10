@@ -120,24 +120,15 @@ const checkConfirmCode = async (req, payload, res) => {
 
     const user = await userSinglePhoneNumber(payload.phoneNumber);
 
-    if (user) {
-      res.status(200).json(
-        jsonResponse(200, {
-          message: "کد معتبر است و کاربر قبلا ثبت نام کرده است!",
-          token: generateJWTToken({
-            sub: code._id,
-            phoneNumber: payload.phoneNumber,
-          }),
-        })
-      );
-    } else {
-      req.session.loginCodeValidateStatusOPQ868 = true;
-      res.status(200).json(
-        jsonResponse(200, {
-          message: "کد معتبر است و کاربری با این شماره همراه وجود ندارد!",
-        })
-      );
-    }
+    res.json(
+      jsonResponse(200, {
+        message: "کد معتبر است!",
+        token: user ? generateJWTToken({
+          sub: code._id,
+          phoneNumber: payload.phoneNumber,
+        }) : undefined,
+      })
+    );
   } else if (code && code.expiredAt === 0) {
     res.json(jsonResponse(406, { message: "کد قبلا استفاده شده است!" }));
   } else if (code && code.expiredAt < nowTime) {
@@ -149,8 +140,7 @@ const checkConfirmCode = async (req, payload, res) => {
 
 const confirm_code = async (req, res) => {
   const body = req.body;
-  const phoneNumber = req.session.loginPhoneNumberLPN8463;
-  body.phoneNumber = phoneNumber;
+  const phoneNumber = body.phoneNumber;
 
   if (phoneNumber) {
     if (!checkDataExist(body, ["code", "phoneNumber"], res)) {
@@ -169,12 +159,11 @@ const confirm_code = async (req, res) => {
 
 const register = async (req, res) => {
   const body = req.body;
-  const phoneNumber = req.session.loginPhoneNumberLPN8463;
-  body.phoneNumber = phoneNumber;
-  const codeValidateStatus = req.session.loginCodeValidateStatusOPQ868;
+  const phoneNumber = body.phoneNumber;
+  const code = body.code;
 
   // check if code confirmed
-  if (codeValidateStatus && phoneNumber) {
+  if (code && phoneNumber) {
     registerUser(body, res);
   } else {
     res.json(
