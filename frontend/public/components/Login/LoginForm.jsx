@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { useSelector, useDispatch } from "react-redux";
-import { resetLoginInfo } from "../../redux/actions/login";
+import { resetLoginInfo, changeLoginStatus } from "../../redux/actions/login";
 
 import axiosApp from "../../utils/axiosConfig";
 import { checkFetchResponse } from "../../functions";
@@ -39,6 +39,9 @@ const LoginForm = () => {
 
           // reset login info
           dispatch(resetLoginInfo())
+
+          // set login status to true which means user logged in
+          dispatch(changeLoginStatus(true));
 
           const homePageLink = document.querySelector("#to-home-page-l");
           if (homePageLink) {

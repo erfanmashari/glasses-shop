@@ -14,9 +14,8 @@ import { changeLoginStatus } from "../../redux/actions/login";
 import { decodeJwt } from "jose";
 
 import {
-  // cookiePaths,
   getTokenFromCookie,
-  getEmailFromCookie,
+  getPhoneNumberFromCookie,
 } from "../../functions";
 
 import { ToastContainer } from "react-toastify";
@@ -34,17 +33,17 @@ const Layout = ({ children }) => {
       try {
         hideInfo = decodeJwt(token);
       } catch (e) {
-        // document.cookie = `token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${cookiePaths}`;
-        // document.cookie = `email=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${cookiePaths}`;
+        document.cookie = `token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${process.env.COOKIE_PATH}`;
+        document.cookie = `email=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${process.env.COOKIE_PATH}`;
         // eslint-disable-next-line no-restricted-globals
         location.reload();
       }
 
-      if (hideInfo.user_id === getEmailFromCookie()) {
+      if (hideInfo.phoneNumber === getPhoneNumberFromCookie()) {
         dispatch(changeLoginStatus(true));
       } else {
-        // document.cookie = `token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${cookiePaths}`;
-        // document.cookie = `email=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${cookiePaths}`;
+        document.cookie = `token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${process.env.COOKIE_PATH}`;
+        document.cookie = `email=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${process.env.COOKIE_PATH}`;
         // eslint-disable-next-line no-restricted-globals
         location.reload();
       }

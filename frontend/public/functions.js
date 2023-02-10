@@ -15,19 +15,19 @@ export function getTokenFromCookie() {
   return token;
 }
 
-// get email from cookie
-export function getEmailFromCookie() {
-  // get email from cookie
+// get phoneNumber from cookie
+export function getPhoneNumberFromCookie() {
+  // get phoneNumber from cookie
   const allCookies = document.cookie.split(";");
-  let email = null;
+  let phoneNumber = null;
   allCookies.forEach((element) => {
-    if (element.includes("email")) {
-      const emailSplit = element.split("=");
-      email = emailSplit[1];
+    if (element.includes("phoneNumber")) {
+      const phoneNumberSplit = element.split("=");
+      phoneNumber = phoneNumberSplit[1];
     }
   });
 
-  return email;
+  return phoneNumber;
 }
 
 export function checkFetchResponse (response) {
