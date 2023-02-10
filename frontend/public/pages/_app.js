@@ -1,6 +1,8 @@
 // import components
 import Layout from "../components/Layout";
 
+import { ToastContainer } from "react-toastify";
+
 import { useRouter } from "next/router";
 
 // import redux tools
@@ -16,9 +18,11 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <Provider store={store}>
-      {router.pathname === "/login" ||
-      router.pathname === "/register" ? (
-        <Component {...pageProps} />
+      {router.pathname === "/login" || router.pathname === "/register" ? (
+        <>
+          <Component {...pageProps} />
+          <ToastContainer rtl={true} />
+        </>
       ) : (
         <Layout>
           <Component {...pageProps} />
