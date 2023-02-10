@@ -2,9 +2,19 @@ import FormFieldsContainer from "./FormFieldsContainer";
 import FormInput from "./FormInput";
 import FormSelector from "./FormSelector";
 
+import { useSelector, useDispatch } from "react-redux";
+import { changeProfilePersonalInfo } from "../../../redux/actions/profile";
+
 const PersonalInfoForm = () => {
-  const formFields = null;
-  const changeFormField = null;
+  const dispatch = useDispatch();
+
+  // get personal info from reduc/reducer/profile/personalInfo.js
+  const personalInfo = useSelector((state) => state.personalInfo);
+
+  const changeInputValue = (parameter, value) => {
+    dispatch(changeProfilePersonalInfo(parameter, value));
+  };
+
   return (
     <form className="w-9/12 flex flex-col justify-center self items-center border-t-2 border-blue-600 shadow-md rounded-lg gap-4 px-16 py-12">
       <FormFieldsContainer>
@@ -50,10 +60,10 @@ const PersonalInfoForm = () => {
         <div className="w-full flex flex-col gap-2">
           <label className="text-md font-bold text-stone-600">تاریخ تولد</label>
           <input
-            //   value={formFields[birthday]}
-            //   onChange={(e) => changeFormField(e.target.value, parameter)}
+            value={personalInfo["birthday"] ? personalInfo["birthday"] : ""}
+            onChange={(e) => changeInputValue("birthday", e.target.value)}
             type={"date"}
-            //   required={required}
+            required={true}
             placeholder={"تاریخ تولد"}
             className="w-full px-5 py-2.5 border-none outline-none rounded-3xl shadow-sm shadow-stone-400"
           />
