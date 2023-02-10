@@ -15,8 +15,8 @@ const user_index = async (req, res) => {
 };
 
 // get one user by id
-const user_index_id = async (req, res) => {
-  await User.findOne({ _id: req.params.id })
+const user_index_phone_number = async (req, res) => {
+  await User.findOne({ phoneNumber: req.params.phoneNumber })
     .sort({ createdAt: -1 })
     .then((user) => {
       res.json(jsonResponse(200, { user }));
@@ -85,4 +85,4 @@ const userSinglePhoneNumber = async (phoneNumber) => {
   return await User.findOne({ phoneNumber });
 };
 
-module.exports = { user_index, user_index_id, registerUser, userSinglePhoneNumber };
+module.exports = { user_index, user_index_phone_number, registerUser, userSinglePhoneNumber };
