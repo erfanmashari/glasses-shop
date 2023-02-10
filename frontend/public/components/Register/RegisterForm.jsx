@@ -58,7 +58,6 @@ const RegisterForm = () => {
         backgroundImage: "linear-gradient(to bottom, #f7e7e7, #d6b8b8)",
       }}
     >
-      <Link className="hidden" href={"login"} id="to-login-page"></Link>
       <Link className="hidden" href={"/"} id="to-home-page-r"></Link>
       <FormInput
         label={"نام"}
