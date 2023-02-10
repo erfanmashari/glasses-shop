@@ -4,10 +4,15 @@ import SearchBox from "./SearchBox";
 
 import Link from "next/link";
 
+import { useSelector } from "react-redux";
+
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 
 const Nav = () => {
+  // get user login status from redux/reducer/login/isLoggedIn.js
+  const isLoggedIn = useSelector((state) => state.isLoggedIn);
+
   return (
     <>
       <nav
@@ -34,11 +39,15 @@ const Nav = () => {
             <ShoppingBagOutlinedIcon /> سبد خرید
           </button>
           <Link
-            href={"login"}
-            className="w-max h-fit flex flex-row justify-center items-center text-white text-sm rounded-lg gap-1 px-2.5 py-1.5"
-            style={{ background: "#06291D" }}
+            href={isLoggedIn ? "profile" : "login"}
+            className="w-max h-fit flex flex-row justify-center items-center text-sm rounded-lg gap-1 px-2.5 py-1"
+            style={{
+              background: isLoggedIn ? "inherit" : "#06291D",
+              color: isLoggedIn ? "#06291D" : "#fff",
+              border: "2px solid #06291D",
+            }}
           >
-            <PersonOutlineOutlinedIcon /> ورود
+            <PersonOutlineOutlinedIcon /> {isLoggedIn ? "حساب کاربری" : "ورود"}
           </Link>
         </div>
       </nav>
