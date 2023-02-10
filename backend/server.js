@@ -60,49 +60,6 @@ app.use(
     }
   })
 );
-// app.use(
-//   session({
-//     secret: process.env.SESSION_SECRET,
-//     saveUninitialized: true,
-//     cookie: { secure: false, maxAge: oneDay, sameSite: true },
-//     resave: false,
-//     store: new RedisStore({ client: redisClient }),
-//   })
-// );
-// app.use(
-//   session({
-//     // secret: process.env.SESSION_SECRET,
-//     // resave: false,
-//     // saveUninitialized: true,
-//     // cookie: { secure: false, maxAge: 20 * 60 * 1000 },
-//     name: "sessionID",
-//     cookie: {
-//       maxAge: 20 * 60 * 1000,
-//       sameSite: "none", // in order to response to both first-party and cross-site requests
-//       secure: "auto", // it should set automatically to secure if is https.
-//       httpOnly: true,
-//     },
-//     resave: false,
-//     secret: process.env.SESSION_SECRET,
-//     saveUninitialized: false,
-//     // store: redisStore,
-//   })
-// );
-// app.use(express.json());
-// app.use(express.static("public"));
-// app.use(express.urlencoded({ extended: true }));
-
-// app.use(function(req, res, next) {
-//   res.header("Access-Control-Allow-Origin", "localhost"); // update to match the domain you will make the request from
-//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-//   next();
-// });
-
-// for parsing application/json
-// app.use(bodyParser.json());
-
-// // for parsing application/xwww-
-// app.use(bodyParser.urlencoded({ extended: true }));
 //form-urlencoded
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
