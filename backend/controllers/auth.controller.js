@@ -124,7 +124,7 @@ const checkConfirmCode = async (req, payload, res) => {
       jsonResponse(200, {
         message: "کد معتبر است!",
         token: user ? generateJWTToken({
-          sub: code._id,
+          sub: user._id,
           phoneNumber: payload.phoneNumber,
         }) : undefined,
       })
@@ -174,4 +174,4 @@ const register = async (req, res) => {
   }
 };
 
-module.exports = { login, confirm_code, register };
+module.exports = { login, confirm_code, register, generateJWTToken };

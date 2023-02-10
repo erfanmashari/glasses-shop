@@ -1,5 +1,6 @@
 const User = require("../models/user.model");
 const { jsonResponse, checkDataExist } = require("../functions");
+const { generateJWTToken } = require("./auth.controller");
 
 const user_index = async (req, res) => {
   await User.find()
@@ -31,7 +32,7 @@ const checkPhoneNumber = (phoneNumber, res) => {
 };
 
 const registerUser = async (body, res) => {
-  body.phoneNumber = body.phoneNumber.toString()
+  body.phoneNumber = body.phoneNumber.toString();
 
   if (
     !checkDataExist(
@@ -49,16 +50,22 @@ const registerUser = async (body, res) => {
   }
 
   // create new user
-  await User.create(body);
+  const newUser = await User.create(body);
 
-  res
-    .status(201)
-    .json(jsonResponse(201, { message: "کاربر جدید با موفقیت افزوده شد!" }));
+  res.status(201).json(
+    jsonResponse(201, {
+      message: "ثبت نام با موفقیت انجام شد!",
+      token: generateJWTToken({
+        sub: newUser._id,
+        phoneNumber: body.phoneNumber,
+      }),
+    })
+  );
 };
 
 // export functions
 const userSinglePhoneNumber = async (phoneNumber) => {
-  return await User.findOne({ phoneNumber })
+  return await User.findOne({ phoneNumber });
 };
 
 module.exports = { user_index, registerUser, userSinglePhoneNumber };
