@@ -14,7 +14,7 @@ const userSchema = new Schema(
     email: { type: String, default: null, index: { unique: true, sparse: true } },
     password: { type: String },
     birthday: { type: Date },
-    addresses: { type: [Object], default: [] },
+    addresses: [{ type: Schema.Types.ObjectId, ref: 'Address' }],
     cart: { type: [Object], default: [] },
     purchaseHistory: { type: [Object], default: [] },
     favoriteProducts: { type: [Object], default: [] },
