@@ -26,6 +26,101 @@ const user_index_phone_number = async (req, res) => {
     });
 };
 
+// edit only personal informations of user
+const edit_personal_info = (req, res) => {
+  const body = req.body;
+  body.email = body.email ? body.email.toLowerCase() : null;
+
+  if (
+    !checkDataExist(
+      body,
+      ["phoneNumber", "firstName", "lastName", "username", "gender"],
+      res
+    ) ||
+    !checkPhoneNumber(body.phoneNumber, res) ||
+    !checkGender(body.gender, res) ||
+    (body.email && !checkEmail(body.email, res)) ||
+    (body.birthday && !checkBirthday(body.birthday, res))
+  ) {
+    return null;
+  }
+
+  body.username = body.username.toLowerCase();
+
+  User.findOneAndUpdate(
+    { phoneNumber: body.phoneNumber },
+    {
+      firstName: body.firstName,
+      lastName: body.lastName,
+      username: body.username,
+      birthday: body.birthday,
+      email: body.email,
+      job: body.job,
+      phoneNumber: body.phoneNumber,
+      gender: body.gender,
+    }
+  )
+    .then((response) => {
+      res.json(
+        jsonResponse(200, { message: "اطلاعات شما با موفقیت به روز شد!" })
+      );
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+const checkBirthday = (birthday, res) => {
+  // const birthdaySplit = birthday.split("-");
+  let isCorrect = false;
+
+  // yesterday date
+  const date = new Date();
+  date.setDate(date.getDate() - 1);
+  // birthday date
+  const birthdayDate = new Date(birthday);
+
+  if (
+    birthdayDate &&
+    birthdayDate instanceof Date &&
+    !isNaN(birthdayDate) &&
+    birthdayDate < date
+  ) {
+    isCorrect = true;
+  }
+
+  if (!isCorrect) {
+    res.json(jsonResponse(406, { message: "تاریخ تولد معتبر نمی باشد!" }));
+  }
+
+  return isCorrect;
+};
+
+const checkEmail = (email, res) => {
+  const isEmailCorrect = email.match(
+    /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  )
+    ? true
+    : false;
+
+  if (!isEmailCorrect) {
+    res.json(jsonResponse(406, { message: "ایمیل معتبر نمی باشد!" }));
+  }
+  return isEmailCorrect;
+};
+
+const checkGender = (gender, res) => {
+  if (gender === "مرد" || gender === "زن" || gender === "سایر") {
+    return true;
+  } else {
+    res.json(
+      jsonResponse(406, {
+        message: "جنسیت وارد شده با مقادیر پیش فرض تطابق ندارد!",
+      })
+    );
+  }
+};
+
 const checkPhoneNumber = (phoneNumber, res) => {
   if (phoneNumber.length !== 11) {
     res.json(
@@ -53,13 +148,16 @@ const registerUser = async (body, res) => {
       ["phoneNumber", "firstName", "lastName", "gender"],
       res
     ) ||
-    !checkPhoneNumber(body.phoneNumber, res)
+    !checkPhoneNumber(body.phoneNumber, res) ||
+    !checkGender(body.gender, res)
   ) {
     return null;
   }
 
   if (!body.username) {
-    body.username = `${body.firstName} ${body.lastName}`;
+    body.username = `${body.firstName.toLowerCase()} ${body.lastName.toLowerCase()}`;
+  } else {
+    body.username = req.username.toLowerCase();
   }
 
   // create new user
@@ -85,4 +183,10 @@ const userSinglePhoneNumber = async (phoneNumber) => {
   return await User.findOne({ phoneNumber });
 };
 
-module.exports = { user_index, user_index_phone_number, registerUser, userSinglePhoneNumber };
+module.exports = {
+  user_index,
+  user_index_phone_number,
+  edit_personal_info,
+  registerUser,
+  userSinglePhoneNumber,
+};
