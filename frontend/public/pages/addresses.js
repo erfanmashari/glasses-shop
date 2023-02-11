@@ -1,4 +1,4 @@
-import AddressesComponent from "../components/Addresses";
+import AddressesComponent from "../components/Profile/Addresses";
 
 import ErrorPage from "next/error";
 

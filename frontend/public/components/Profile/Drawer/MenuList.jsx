@@ -28,6 +28,7 @@ const MenuList = () => {
       <MenuItem
         icon={<TbAddressBook className="w-6 h-6 relative left-1" />}
         title={"آدرس ها"}
+        href={"addresses"}
       />
       <MenuItem
         icon={
