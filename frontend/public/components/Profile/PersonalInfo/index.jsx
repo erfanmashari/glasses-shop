@@ -2,8 +2,23 @@ import FormFieldsContainer from "./FormFieldsContainer";
 import FormInput from "./FormInput";
 import FormSelector from "./FormSelector";
 
+import Link from "next/link";
+
+import { useEffect } from "react";
+
 import { useSelector, useDispatch } from "react-redux";
-import { changeProfilePersonalInfo } from "../../../redux/actions/profile";
+import {
+  setProfilePersonalInfoFromBackend,
+  changeProfilePersonalInfo,
+} from "../../../redux/actions/profile";
+import { changeLoginStatus } from "../../../redux/actions/login";
+
+import axiosApp from "../../../utils/axiosConfig";
+import {
+  checkFetchResponse,
+  toastAlert,
+  getPhoneNumberFromCookie,
+} from "../../../functions";
 
 const PersonalInfoForm = () => {
   const dispatch = useDispatch();
@@ -15,24 +30,42 @@ const PersonalInfoForm = () => {
     dispatch(changeProfilePersonalInfo(parameter, value));
   };
 
+  useEffect(() => {
+    axiosApp.get(`users/${getPhoneNumberFromCookie()}`).then((response) => {
+      const res = checkFetchResponse(response);
+
+      if (res.ok && res.data.user) {
+        dispatch(setProfilePersonalInfoFromBackend(res.data.user));
+      } else {
+        document.cookie = `token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${process.env.COOKIE_PATH}`;
+        document.cookie = `phoneNumber=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${process.env.COOKIE_PATH}`;
+
+        dispatch(changeLoginStatus(false));
+
+        const homePageLink = document.querySelector("#to-home-page-p");
+        if (homePageLink) {
+          homePageLink.click();
+        }
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <form className="w-9/12 flex flex-col justify-center self items-center border-t-2 border-blue-600 shadow-md rounded-lg gap-4 px-16 py-12">
+      <Link className="hidden" href={"/"} id="to-home-page-p"></Link>
       <FormFieldsContainer>
         <FormInput
           label={"نام"}
           placeholder={"نام"}
           type={"text"}
           parameter={"firstName"}
-          formFields={formFields}
-          changeFormField={changeFormField}
         />
         <FormInput
           label={"نام خانوادگی"}
           placeholder={"نام خانوادگی"}
           type={"text"}
           parameter={"lastName"}
-          formFields={formFields}
-          changeFormField={changeFormField}
         />
       </FormFieldsContainer>
       <FormFieldsContainer>
@@ -41,8 +74,6 @@ const PersonalInfoForm = () => {
           placeholder={"نام کاربری"}
           type={"text"}
           parameter={"username"}
-          formFields={formFields}
-          changeFormField={changeFormField}
         />
         <FormSelector
           label={"جنسیت"}
@@ -52,8 +83,6 @@ const PersonalInfoForm = () => {
             { value: "زن", text: "زن" },
             { value: "سایر", text: "سایر" },
           ]}
-          formFields={formFields}
-          changeFormField={changeFormField}
         />
       </FormFieldsContainer>
       <FormFieldsContainer>
@@ -73,8 +102,6 @@ const PersonalInfoForm = () => {
           placeholder={"شغل"}
           type={"text"}
           parameter={"job"}
-          formFields={formFields}
-          changeFormField={changeFormField}
         />
       </FormFieldsContainer>
       <FormFieldsContainer>
@@ -83,16 +110,12 @@ const PersonalInfoForm = () => {
           placeholder={"ایمیل"}
           type={"email"}
           parameter={"email"}
-          formFields={formFields}
-          changeFormField={changeFormField}
         />
         <FormInput
           label={"شماره همراه"}
           placeholder={"شماره همراه"}
           type={"text"}
           parameter={"phoneNumber"}
-          formFields={formFields}
-          changeFormField={changeFormField}
         />
       </FormFieldsContainer>
       <button

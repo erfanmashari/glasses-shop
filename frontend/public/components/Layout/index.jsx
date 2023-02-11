@@ -34,7 +34,7 @@ const Layout = ({ children }) => {
         hideInfo = decodeJwt(token);
       } catch (e) {
         document.cookie = `token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${process.env.COOKIE_PATH}`;
-        document.cookie = `email=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${process.env.COOKIE_PATH}`;
+        document.cookie = `phoneNumber=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${process.env.COOKIE_PATH}`;
         // eslint-disable-next-line no-restricted-globals
         location.reload();
       }
@@ -43,7 +43,7 @@ const Layout = ({ children }) => {
         dispatch(changeLoginStatus(true));
       } else {
         document.cookie = `token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${process.env.COOKIE_PATH}`;
-        document.cookie = `email=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${process.env.COOKIE_PATH}`;
+        document.cookie = `phoneNumber=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${process.env.COOKIE_PATH}`;
         // eslint-disable-next-line no-restricted-globals
         location.reload();
       }
