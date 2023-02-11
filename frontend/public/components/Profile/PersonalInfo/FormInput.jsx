@@ -1,7 +1,7 @@
 import { useSelector, useDispatch } from "react-redux";
 import { changeProfilePersonalInfo } from "../../../redux/actions/profile";
 
-const FormInput = ({ label, type, placeholder, parameter }) => {
+const FormInput = ({ label, type, placeholder, parameter, required }) => {
   const dispatch = useDispatch();
 
   // get personal info from reduc/reducer/profile/personalInfo.js
@@ -18,7 +18,7 @@ const FormInput = ({ label, type, placeholder, parameter }) => {
         value={personalInfo[parameter] ? personalInfo[parameter] : ""}
         onChange={(e) => changeInputValue(e.target.value)}
         type={type}
-        required={true}
+        required={required ? required : false}
         placeholder={placeholder}
         className="w-full px-5 py-2.5 border-none outline-none rounded-3xl shadow-sm shadow-stone-400"
       />

@@ -31,6 +31,11 @@ const PersonalInfoForm = () => {
   };
 
   useEffect(() => {
+    getUserInfo();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const getUserInfo = () => {
     axiosApp.get(`users/${getPhoneNumberFromCookie()}`).then((response) => {
       const res = checkFetchResponse(response);
 
@@ -48,11 +53,28 @@ const PersonalInfoForm = () => {
         }
       }
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  };
+
+  const changePersonalInfo = (e) => {
+    e.preventDefault();
+
+    axiosApp.put(`users/edit`, personalInfo).then((response) => {
+      const res = checkFetchResponse(response);
+
+      if (res.ok) {
+        toastAlert(res.data.message, "success");
+        getUserInfo();
+      } else {
+        toastAlert(res.message, "error");
+      }
+    });
+  };
 
   return (
-    <form className="w-9/12 flex flex-col justify-center self items-center border-t-2 border-blue-600 shadow-md rounded-lg gap-4 px-16 py-12">
+    <form
+      onSubmit={changePersonalInfo}
+      className="w-9/12 flex flex-col justify-center self items-center border-t-2 border-blue-600 shadow-md rounded-lg gap-4 px-16 py-12"
+    >
       <Link className="hidden" href={"/"} id="to-home-page-p"></Link>
       <FormFieldsContainer>
         <FormInput
@@ -60,12 +82,14 @@ const PersonalInfoForm = () => {
           placeholder={"نام"}
           type={"text"}
           parameter={"firstName"}
+          required={true}
         />
         <FormInput
           label={"نام خانوادگی"}
           placeholder={"نام خانوادگی"}
           type={"text"}
           parameter={"lastName"}
+          required={true}
         />
       </FormFieldsContainer>
       <FormFieldsContainer>
@@ -74,6 +98,7 @@ const PersonalInfoForm = () => {
           placeholder={"نام کاربری"}
           type={"text"}
           parameter={"username"}
+          required={true}
         />
         <FormSelector
           label={"جنسیت"}
@@ -89,10 +114,9 @@ const PersonalInfoForm = () => {
         <div className="w-full flex flex-col gap-2">
           <label className="text-md font-bold text-stone-600">تاریخ تولد</label>
           <input
-            value={personalInfo["birthday"] ? personalInfo["birthday"] : ""}
+            value={personalInfo["birthday"] ? personalInfo["birthday"].split("T")[0] : ""}
             onChange={(e) => changeInputValue("birthday", e.target.value)}
             type={"date"}
-            required={true}
             placeholder={"تاریخ تولد"}
             className="w-full px-5 py-2.5 border-none outline-none rounded-3xl shadow-sm shadow-stone-400"
           />
@@ -116,6 +140,7 @@ const PersonalInfoForm = () => {
           placeholder={"شماره همراه"}
           type={"text"}
           parameter={"phoneNumber"}
+          required={true}
         />
       </FormFieldsContainer>
       <button
