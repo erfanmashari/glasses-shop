@@ -18,10 +18,10 @@ const address_index = async (req, res) => {
 const add_address = async (req, res) => {
   const body = req.body;
 
-  const checkReceiverStatus = await checkReceiver(
+  const checkReceiverStatus = body.isMeReceiver ? await checkReceiver(
     body.receiverSpecifications,
     res
-  );
+  ) : false;
   if (
     !checkDataExist(
       body,
@@ -34,7 +34,7 @@ const add_address = async (req, res) => {
       res
     ) ||
     !checkPhoneNumber(body.receiverSpecifications.phoneNumber, res) ||
-    (body.isMeReceiver && !checkReceiverStatus)
+    checkReceiverStatus
   ) {
     return null;
   }
