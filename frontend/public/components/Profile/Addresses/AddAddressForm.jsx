@@ -35,7 +35,7 @@ const AddAddressForm = () => {
     province: [],
     city: [],
   });
-  console.log("addressForm: ", addressForm)
+
   const changeReceiverValue = (checked) => {
     if (checked) {
       dispatch(
@@ -72,6 +72,22 @@ const AddAddressForm = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // send add new address request to backend
+  const addNewAddress = (e) => {
+    e.preventDefault();
+
+    const reqData = { ...addressForm, userId: personalInfo._id };
+    axiosApp.post("addresses", reqData).then((response) => {
+      const res = checkFetchResponse(response);
+
+      if (res.ok) {
+        toastAlert(res.data.message, "success");
+      } else {
+        toastAlert(res.message, "error");
+      }
+    });
+  };
+
   useEffect(() => {
     if (addressForm.province) {
       // get cities of iran from an api
@@ -91,7 +107,10 @@ const AddAddressForm = () => {
   }, [addressForm.province]);
 
   return (
-    <form className="w-full flex flex-col justify-center items-center gap-4">
+    <form
+      onSubmit={addNewAddress}
+      className="w-full flex flex-col justify-center items-center gap-4"
+    >
       <h3 className="w-full text-xl font-bold text-stone-800">
         افزودن آدرس جدید
       </h3>
