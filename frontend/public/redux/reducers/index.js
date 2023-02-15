@@ -8,6 +8,8 @@ import similarProducts from "./product/similarProducts";
 import cartList from "./cart/cartList";
 import selectedProductSpecifications from "./product/selectedProductSpecifications";
 import personalInfo from "./profile/personalInfo";
+import addressForm from "./profile/addressForm";
+import addressList from "./profile/addressList";
 
 const allReducers = combineReducers({
     isLoggedIn,
@@ -19,6 +21,8 @@ const allReducers = combineReducers({
     cartList,
     selectedProductSpecifications,
     personalInfo,
+    addressForm,
+    addressList,
 })
 
 export default allReducers;
