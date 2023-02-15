@@ -2,12 +2,29 @@ import Image from "next/image";
 
 import Countdown from "react-countdown";
 
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { changeSelectedProductProperties } from "../../redux/actions/product";
 
 import { Tooltip } from "flowbite-react";
 
 const BuyForm = () => {
+  const dispatch = useDispatch();
+
+  // get product info from redux/reducers/product/productInfo.js
   const productInfo = useSelector((state) => state.productInfo);
+
+  // get selected product info from redux/reducers/product/selectedProduct.js
+  const selectedProduct = useSelector((state) => state.selectedProduct);
+
+  const chooseProductColor = (color) => {
+    if (color.isAvailable === "true" || color.isAvailable === true) {
+      dispatch(changeSelectedProductProperties("frameColor", color));
+    }
+  };
+
+  const chooseProductSize = (size) => {
+    dispatch(changeSelectedProductProperties("size", size));
+  };
 
   return (
     <form
@@ -93,9 +110,17 @@ const BuyForm = () => {
         {productInfo.frameColors.map((color, index) => (
           <Tooltip key={index} content={color.nameFa}>
             <button
+              onClick={() => chooseProductColor(color)}
               data-tooltip-target="tooltip-default"
               type="button"
-              className="w-8 h-8 border-2 border-stone-800"
+              className={`w-8 h-8 border-2 ${
+                selectedProduct.frameColor &&
+                selectedProduct.frameColor.nameFa === color.nameFa &&
+                selectedProduct.frameColor.nameEn === color.nameEn &&
+                selectedProduct.frameColor.color === color.color
+                  ? "border-blue-600"
+                  : "border-stone-800"
+              }`}
               style={{
                 background: `${
                   color.color
@@ -124,9 +149,20 @@ const BuyForm = () => {
         {productInfo.sizes.map((size, index) => (
           <button
             Key={index}
+            onClick={() => chooseProductSize(size)}
             type="button"
-            className="text-white text-sm font-bold rounded-md py-1.5 px-3"
-            style={{ background: "#d39d4e" }}
+            className="text-sm font-bold rounded-md py-1.5 px-3"
+            style={{
+              border: "2px solid #d39d4e",
+              background:
+                selectedProduct && selectedProduct.size === size
+                  ? "#d39d4e"
+                  : "#fff",
+              color:
+                selectedProduct && selectedProduct.size === size
+                  ? "#fff"
+                  : "#d39d4e",
+            }}
           >
             {size}
           </button>
