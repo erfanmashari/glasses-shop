@@ -2,24 +2,17 @@ import FormFieldsContainer from "./FormFieldsContainer";
 import FormInput from "./FormInput";
 import FormSelector from "./FormSelector";
 
-import Link from "next/link";
-
 import { useState, useEffect } from "react";
 
 import { useSelector, useDispatch } from "react-redux";
 import {
-  setProfilePersonalInfoFromBackend,
+  resetAddressesFormFields,
   changeAddressesFormFields,
 } from "../../../redux/actions/profile";
-import { changeLoginStatus } from "../../../redux/actions/login";
 
 import axios from "axios";
 import axiosApp from "../../../utils/axiosConfig";
-import {
-  checkFetchResponse,
-  toastAlert,
-  getPhoneNumberFromCookie,
-} from "../../../functions";
+import { checkFetchResponse, toastAlert } from "../../../functions";
 
 const AddAddressForm = () => {
   const dispatch = useDispatch();
@@ -58,6 +51,23 @@ const AddAddressForm = () => {
     setSelectorsValues(items);
   };
 
+  // send add new address request to backend
+  const addNewAddress = (e) => {
+    e.preventDefault();
+
+    const reqData = { ...addressForm, userId: personalInfo._id };
+    axiosApp.post("addresses", reqData).then((response) => {
+      const res = checkFetchResponse(response);
+
+      if (res.ok) {
+        toastAlert(res.data.message, "success");
+        dispatch(resetAddressesFormFields());
+      } else {
+        toastAlert(res.message, "error");
+      }
+    });
+  };
+
   useEffect(() => {
     // get provices of iran from an json file in public folder
     axios.get("http://localhost:3000/provinces.json").then((res) => {
@@ -71,22 +81,6 @@ const AddAddressForm = () => {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // send add new address request to backend
-  const addNewAddress = (e) => {
-    e.preventDefault();
-
-    const reqData = { ...addressForm, userId: personalInfo._id };
-    axiosApp.post("addresses", reqData).then((response) => {
-      const res = checkFetchResponse(response);
-
-      if (res.ok) {
-        toastAlert(res.data.message, "success");
-      } else {
-        toastAlert(res.message, "error");
-      }
-    });
-  };
 
   useEffect(() => {
     if (addressForm.province) {

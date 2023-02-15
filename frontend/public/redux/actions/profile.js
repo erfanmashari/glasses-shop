@@ -38,3 +38,10 @@ export const changeAddressesFormFields = (parameter, value) => {
         type: "CHANGE_ADDRESSES_FORM_FIELDS"
     }
 }
+
+// action for resetting addresses form fields
+export const resetAddressesFormFields = () => {
+    return {
+        type: "RESET_ADDRESSES_FORM_FIELDS"
+    }
+}
