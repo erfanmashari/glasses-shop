@@ -18,6 +18,10 @@ const address_index = async (req, res) => {
 const add_address = async (req, res) => {
   const body = req.body;
 
+  const checkReceiverStatus = await checkReceiver(
+    body.receiverSpecifications,
+    res
+  );
   if (
     !checkDataExist(
       body,
@@ -29,25 +33,40 @@ const add_address = async (req, res) => {
       ["firstName", "phoneNumber", "lastName"],
       res
     ) ||
-    !checkPhoneNumber(body.receiverSpecifications.phoneNumber, res)
+    !checkPhoneNumber(body.receiverSpecifications.phoneNumber, res) ||
+    (body.isMeReceiver && !checkReceiverStatus)
   ) {
     return null;
   }
 
-  Address.create(body).then(result => {
-    User.findOne({ _id: body.userId }, (err, user) => {
+  Address.create(body)
+    .then((result) => {
+      User.findOne({ _id: body.userId }, (err, user) => {
         if (user) {
-            // The below two lines will add the newly saved address's 
-            // ObjectID to the the User's addresses array field
-            user.addresses.push(result);
-            user.save();
-            res.json(jsonResponse(200, { message: "آدرس جدید با موفقیت افزوده شد!" }));
+          // The below two lines will add the newly saved address's
+          // ObjectID to the the User's addresses array field
+          user.addresses.push(result);
+          user.save();
+          res.json(
+            jsonResponse(200, { message: "آدرس جدید با موفقیت افزوده شد!" })
+          );
         }
+      });
+    })
+    .catch((error) => {
+      res.status(500).json({ error });
     });
-  })
-  .catch((error) => {
-    res.status(500).json({ error });
-  });
+};
+
+// check if the receiver is user himeself and he is exist or not
+const checkReceiver = async (receiverSpecifications, res) => {
+  const receiverUser = await User.findOne(receiverSpecifications);
+
+  if (!receiverUser) {
+    res.json(jsonResponse(406, { message: "گیرنده محصول معتبر نیست!" }));
+  }
+
+  return receiverUser ? true : false;
 };
 
 const checkPhoneNumber = (phoneNumber, res) => {
