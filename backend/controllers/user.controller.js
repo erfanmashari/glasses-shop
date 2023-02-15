@@ -1,4 +1,5 @@
 const User = require("../models/user.model");
+const Address = require("../models/address.model");
 const jwt = require("jsonwebtoken");
 const { jsonResponse, checkDataExist } = require("../functions");
 
@@ -16,14 +17,15 @@ const user_index = async (req, res) => {
 
 // get one user by id
 const user_index_phone_number = async (req, res) => {
-  await User.findOne({ phoneNumber: req.params.phoneNumber })
-    .sort({ createdAt: -1 })
-    .then((user) => {
-      res.json(jsonResponse(200, { user }));
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  const user = await User.findOne({ phoneNumber: req.params.phoneNumber }).sort(
+    { createdAt: -1 }
+  );
+  user.addresses = await getAddresses(user.addresses);
+  console.log(
+    "getAddresses(user.addresses): ",
+    await getAddresses(user.addresses)
+  );
+  res.json(jsonResponse(200, { user }));
 };
 
 // edit only personal informations of user
@@ -68,6 +70,16 @@ const edit_personal_info = (req, res) => {
     .catch((err) => {
       console.log(err);
     });
+};
+
+// get addresses of a user
+const getAddresses = async (addresses) => {
+  const adressesList = [];
+  for (const address of addresses) {
+    const addressIndex = await Address.findOne({ _id: address });
+    adressesList.push(addressIndex);
+  }
+  return adressesList;
 };
 
 const checkBirthday = (birthday, res) => {
