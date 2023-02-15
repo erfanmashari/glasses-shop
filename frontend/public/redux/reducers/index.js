@@ -6,7 +6,7 @@ import productsList from "./home/productsList";
 import productInfo from "./product/productInfo";
 import similarProducts from "./product/similarProducts";
 import cartList from "./cart/cartList";
-import selectedProductSpecifications from "./product/selectedProductSpecifications";
+import selectedProduct from "./product/selectedProduct";
 import personalInfo from "./profile/personalInfo";
 import addressForm from "./profile/addressForm";
 import addressList from "./profile/addressList";
@@ -19,7 +19,7 @@ const allReducers = combineReducers({
     productInfo,
     similarProducts,
     cartList,
-    selectedProductSpecifications,
+    selectedProduct,
     personalInfo,
     addressForm,
     addressList,

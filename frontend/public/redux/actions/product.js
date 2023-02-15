@@ -14,19 +14,19 @@ export const changeSimilarProductFromBackend = (products) => {
     }
 }
 
-// action for changing state specifications of selected product
-export const changeSelectedProductSpecificationsState = (state) => {
+// action for setting selected product info
+export const setSelectedProductInfo = (product) => {
     return {
-        state,
-        type: "CHANGE_SELECTED_PRODUCT_SPECIFICATIONS_STATE"
+        product,
+        type: "SET_SELECTED_PRODUCT_INFO"
     }
 }
 
-// action for changing specifications of selected product
-export const changeSelectedProductSpecifications = (parameter, value) => {
+// action for changing peroperties of selected product
+export const changeSelectedProductProperties = (parameter, value) => {
     return {
         parameter,
         value,
-        type: "CHANGE_SELECTED_PRODUCT_SPECIFICATIONS"
+        type: "CHANGE_SELECTED_PRODUCT_PROPERTIES"
     }
 }
