@@ -32,12 +32,13 @@ const Nav = () => {
           <SearchBox />
         </div>
         <div className="w-max h-full flex flex-row justify-center items-center gap-2 py-2 px-8">
-          <button
+          <Link
+            href={"cart"}
             className="w-max h-fit flex flex-row justify-center items-center text-sm rounded-lg gap-1.5 px-2.5 py-1"
             style={{ color: "rgb(117, 131, 122)" }}
           >
             <ShoppingBagOutlinedIcon /> سبد خرید
-          </button>
+          </Link>
           <Link
             href={isLoggedIn ? "profile" : "login"}
             className="w-max h-fit flex flex-row justify-center items-center text-sm rounded-lg gap-1 px-2.5 py-1"
