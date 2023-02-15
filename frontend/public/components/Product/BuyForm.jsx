@@ -5,10 +5,16 @@ import Countdown from "react-countdown";
 import { useSelector, useDispatch } from "react-redux";
 import { changeSelectedProductProperties } from "../../redux/actions/product";
 
+import axiosApp from "../../utils/axiosConfig";
+import { checkFetchResponse, toastAlert } from "../../functions";
+
 import { Tooltip } from "flowbite-react";
 
 const BuyForm = () => {
   const dispatch = useDispatch();
+
+  // get personal info from reduc/reducer/profile/personalInfo.js
+  const personalInfo = useSelector((state) => state.personalInfo);
 
   // get product info from redux/reducers/product/productInfo.js
   const productInfo = useSelector((state) => state.productInfo);
@@ -26,8 +32,25 @@ const BuyForm = () => {
     dispatch(changeSelectedProductProperties("size", size));
   };
 
+  // send add product to cart request
+  const addProductToCart = (e) => {
+    e.preventDefault();
+
+    const selectedProductInfo = { ...selectedProduct };
+    selectedProductInfo.userId = personalInfo._id;
+    axiosApp.post("cart", selectedProductInfo).then((response) => {
+      const res = checkFetchResponse(response);
+      if (res.ok) {
+        toastAlert(res.data.message, "success");
+      } else {
+        toastAlert(res.message, "error");
+      }
+    });
+  };
+
   return (
     <form
+      onSubmit={addProductToCart}
       className="w-1/3 flex flex-col justify-start items-start gap-3 p-4"
       style={{ background: "#f8f8f8" }}
     >
@@ -55,7 +78,9 @@ const BuyForm = () => {
       <div className="w-full flex flex-row justify-between items-center border-b-2 border-stone-200 pb-2">
         <h4>فروشنده</h4>
         <span className="font-bold">
-          {productInfo.frameColors[0].seller.nameFa}
+          {selectedProduct.frameColor
+            ? selectedProduct.frameColor.seller.nameFa
+            : "مشخص نشده"}
         </span>
       </div>
       <h2 className="w-full text-md font-bold border-b-2 border-stone-200 pb-2">
@@ -175,6 +200,7 @@ const BuyForm = () => {
         {productInfo.isAvailable ? "موجود در انبار" : "ناموجود"}
       </p>
       <button
+        type="submit"
         className="w-full text-white text-xl font-bold rounded-md py-2.5 px-5"
         style={{ background: "#d39d4e" }}
       >
@@ -185,6 +211,7 @@ const BuyForm = () => {
           <p className="w-full text-center text-sm">یا</p>
           <p className="w-full text-center text-sm">تست رایگان در منزل</p>
           <button
+            type="button"
             className="w-full bg-white text-xl rounded-md py-2.5 px-5"
             style={{ color: "#d39d4e", border: "2px solid #d39d4e" }}
           >

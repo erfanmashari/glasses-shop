@@ -19,7 +19,6 @@ const SimilarProductsList = () => {
 
   useEffect(() => {
     // get discount products from backend
-    console.log("test: ", `${process.env.NEXT_PUBLIC_SERVER}products/${productInfo.category}`)
     axios
       .get(`${process.env.NEXT_PUBLIC_SERVER}products/${productInfo.category}`)
       .then((response) => {
