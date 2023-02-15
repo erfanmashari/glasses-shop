@@ -14,14 +14,6 @@ export const changeSimilarProductFromBackend = (products) => {
     }
 }
 
-// action for setting selected product info
-export const setSelectedProductInfo = (product) => {
-    return {
-        product,
-        type: "SET_SELECTED_PRODUCT_INFO"
-    }
-}
-
 // action for changing peroperties of selected product
 export const changeSelectedProductProperties = (parameter, value) => {
     return {

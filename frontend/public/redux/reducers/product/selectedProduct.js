@@ -1,6 +1,6 @@
 const selectedProduct = (state = {}, action) => {
     switch (action.type) {
-        case "SET_SELECTED_PRODUCT_INFO":
+        case "CHANGE_PRODUCT_PAGE_INFO_FROM_BACKEND":
             state = action.product;
             return state;
         case "CHANGE_SELECTED_PRODUCT_PROPERTIES":
