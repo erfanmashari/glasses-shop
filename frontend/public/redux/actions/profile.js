@@ -21,3 +21,20 @@ export const resetProfilePersonalInfo = () => {
         type: "RESET_PROFILE_PERSONAL_INFO"
     }
 }
+
+// action for setting addresses list from backend
+export const setAddressesListFromBackend = (addresses) => {
+    return {
+        addresses,
+        type: "SET_ADDRESSES_LIST_FROM_BACKEND"
+    }
+}
+
+// action for changing addresses form fields
+export const changeAddressesFormFields = (parameter, value) => {
+    return {
+        parameter,
+        value,
+        type: "CHANGE_ADDRESSES_FORM_FIELDS"
+    }
+}
