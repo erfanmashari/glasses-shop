@@ -24,6 +24,9 @@ import {
 const AddAddressForm = () => {
   const dispatch = useDispatch();
 
+  // get personal info from reduc/reducer/profile/personalInfo.js
+  const personalInfo = useSelector((state) => state.personalInfo);
+
   // get add new address form fields from reduc/reducer/profile/addressForm.js
   const addressForm = useSelector((state) => state.addressForm);
 
@@ -32,9 +35,20 @@ const AddAddressForm = () => {
     province: [],
     city: [],
   });
-
-  const changeInputValue = (parameter, value) => {
-    dispatch(changeAddressesFormFields(parameter, value));
+  console.log("addressForm: ", addressForm)
+  const changeReceiverValue = (checked) => {
+    if (checked) {
+      dispatch(
+        changeAddressesFormFields("receiverSpecifications", {
+          firstName: personalInfo.firstName,
+          lastName: personalInfo.lastName,
+          phoneNumber: personalInfo.phoneNumber,
+        })
+      );
+    } else {
+      dispatch(changeAddressesFormFields("receiverSpecifications", {}));
+    }
+    dispatch(changeAddressesFormFields("isMeReceiver", checked));
   };
 
   // change selector values options
@@ -46,37 +60,32 @@ const AddAddressForm = () => {
 
   useEffect(() => {
     // get provices of iran from an json file in public folder
-      axios
-      .get("http://localhost:3000/provinces.json").then(res => {
-        if (res.status === 200 && res.data && res.data.length) {
-          const provinceArray = [{ text: "انتخاب استان", value: "" }];
-          res.data.forEach((province) => {
-            provinceArray.push({ text: province.name, value: province.name });
-          });
-          changeSelectorsValues("province", provinceArray);
-        }
-      })
+    axios.get("http://localhost:3000/provinces.json").then((res) => {
+      if (res.status === 200 && res.data && res.data.length) {
+        const provinceArray = [{ text: "انتخاب استان", value: "" }];
+        res.data.forEach((province) => {
+          provinceArray.push({ text: province.name, value: province.name });
+        });
+        changeSelectorsValues("province", provinceArray);
+      }
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (addressForm.province) {
       // get cities of iran from an api
-      axios
-        .get(
-          `http://localhost:3000/cities.json`
-        )
-        .then((res) => {
-          if (res.status === 200 && res.data && res.data.length) {
-            const cityArray = [{ text: "انتخاب شهرستان", value: "" }];
-            res.data.forEach((city) => {
-              if (addressForm.province === city.province) {
-                cityArray.push({ text: city.name, value: city.name });
-              }
-            });
-            changeSelectorsValues("city", cityArray);
-          }
-        });
+      axios.get(`http://localhost:3000/cities.json`).then((res) => {
+        if (res.status === 200 && res.data && res.data.length) {
+          const cityArray = [{ text: "انتخاب شهرستان", value: "" }];
+          res.data.forEach((city) => {
+            if (addressForm.province === city.province) {
+              cityArray.push({ text: city.name, value: city.name });
+            }
+          });
+          changeSelectorsValues("city", cityArray);
+        }
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addressForm.province]);
@@ -136,9 +145,11 @@ const AddAddressForm = () => {
           <input
             type="checkbox"
             value={
-              addressForm["isMeReceiver"] ? addressForm["isMeReceiver"] : ""
+              addressForm["isMeReceiver"] === true
+                ? addressForm["isMeReceiver"]
+                : false
             }
-            onChange={(e) => changeInputValue("isMeReceiver", e.target.value)}
+            onChange={(e) => changeReceiverValue(e.target.checked)}
           />
           <label className="text-md font-bold text-stone-600">
             گیرنده محصول خودم هستم.
@@ -152,6 +163,7 @@ const AddAddressForm = () => {
           type={"text"}
           parameter={"firstName"}
           required={true}
+          disabled={addressForm.isMeReceiver}
           isReceiverSpecifications={true}
         />
         <FormInput
@@ -160,6 +172,7 @@ const AddAddressForm = () => {
           type={"text"}
           parameter={"lastName"}
           required={true}
+          disabled={addressForm.isMeReceiver}
           isReceiverSpecifications={true}
         />
         <FormInput
@@ -168,6 +181,7 @@ const AddAddressForm = () => {
           type={"text"}
           parameter={"phoneNumber"}
           required={true}
+          disabled={addressForm.isMeReceiver}
           isReceiverSpecifications={true}
         />
       </FormFieldsContainer>
