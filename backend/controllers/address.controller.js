@@ -17,7 +17,7 @@ const address_index = async (req, res) => {
 // create new addrss for user
 const add_address = async (req, res) => {
   const body = req.body;
-    console.log("body: ", body)
+
   if (
     !checkDataExist(
       body,

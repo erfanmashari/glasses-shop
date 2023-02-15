@@ -11,9 +11,9 @@ const addressSchema = new Schema(
     postalCode: { type: String, maxLength: 12, required: true },
     isMeReceiver: { type: Boolean },
     receiverSpecifications: {
-      firstName: { type: String, maxLength: 50 },
-      lastName: { type: String, maxLength: 50 },
-      phoneNumber: { type: String, maxLength: 15 },
+      firstName: { type: String, maxLength: 50, required: true },
+      lastName: { type: String, maxLength: 50, required: true },
+      phoneNumber: { type: String, maxLength: 15, required: true },
     },
     unit: { type: String, maxLength: 5 },
   },
