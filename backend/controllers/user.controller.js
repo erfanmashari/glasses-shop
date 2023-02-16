@@ -20,12 +20,12 @@ const user_index_phone_number = async (req, res) => {
   const user = await User.findOne({ phoneNumber: req.params.phoneNumber }).sort(
     { createdAt: -1 }
   );
-  user.addresses = await getAddresses(user.addresses);
-  console.log(
-    "getAddresses(user.addresses): ",
-    await getAddresses(user.addresses)
-  );
-  res.json(jsonResponse(200, { user }));
+  if (user) {
+    user.addresses = await getAddresses(user.addresses);
+    res.json(jsonResponse(200, { user }));
+  } else {
+    res.json(jsonResponse(404, { message: "کاربری با این شماره همراه وجود ندارد!" }));
+  }
 };
 
 // edit only personal informations of user
