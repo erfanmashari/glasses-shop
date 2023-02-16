@@ -11,7 +11,7 @@ const CartItem = ({ isLast, product }) => {
     : dateOfNow;
 
   return (
-    <div
+    <li
       className="w-full flex flex-row justify-between items-center gap-4 p-2"
       style={{
         height: "160px",
@@ -29,26 +29,34 @@ const CartItem = ({ isLast, product }) => {
           />
         </div>
         <div className="flex flex-col justify-between items-start">
-          <h3 className="text-stone-900 font-bold text-xl">{product.nameFa}</h3>
+          <div className="flex flex-row gap-2">
+          <h3 className="text-stone-900 font-bold text-xl">
+            {product.nameFa}
+          </h3>
+          <h3 className="text-stone-900 font-bold text-xl">
+            {product.number}x
+          </h3>
+          </div>
           <div className="flex flex-row gap-2">
             <span>رنگ: {product.frameColor.nameFa}</span>
             <span>سایز: {product.size}</span>
           </div>
-          {!product.discountPercent &&
-          !product.discountedPrice &&
-          !product.discountTime &&
+          {product.discountPercent &&
+          product.discountedPrice &&
           product.discountTime &&
           dateOfNow < dateOfDiscountTime ? (
             <div className="flex flex-row gap-2">
               <span className="text-stone-400 font-bold line-through">
-                {product.price}
+                {product.price} تومان
               </span>
               <span className="text-stone-600 font-bold">
-                {product.discountedPrice}
+                {product.discountedPrice} تومان
               </span>
             </div>
           ) : (
-            <span className="text-stone-400 font-bold">{product.price}</span>
+            <span className="text-stone-400 font-bold">
+              {product.price} تومان
+            </span>
           )}
         </div>
       </div>
@@ -60,7 +68,7 @@ const CartItem = ({ isLast, product }) => {
           <DeleteOutlineIcon className="w-7 h-7 text-slate-500" />
         </button>
       </div>
-    </div>
+    </li>
   );
 };
 
