@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 
 const cartSchema = new Schema(
   {
+    userId: { type: Schema.Types.ObjectId, required: true },
     isAvailable: { type: Boolean, required: true },
     nameFa: {  type: String, required: true, maxLength: 200, unique: true },
     nameEn: { type: String, required: true, maxLength: 200, unique: true },
