@@ -39,23 +39,31 @@ const add_address = async (req, res) => {
     return null;
   }
 
-  Address.create(body)
-    .then((result) => {
-      User.findOne({ _id: body.userId }, (err, user) => {
-        if (user) {
-          // The below two lines will add the newly saved address's
-          // ObjectID to the the User's addresses array field
-          user.addresses.push(result._id);
-          user.save();
-          res.json(
-            jsonResponse(200, { message: "آدرس جدید با موفقیت افزوده شد!" })
-          );
-        }
+  const previousAddress = await Address.findOne(body);
+
+  if (previousAddress) {
+    Address.create(body)
+      .then((result) => {
+        User.findOne({ _id: body.userId }, (err, user) => {
+          if (user) {
+            // The below two lines will add the newly saved address's
+            // ObjectID to the the User's addresses array field
+            user.addresses.push(result._id);
+            user.save();
+            res.json(
+              jsonResponse(200, { message: "آدرس جدید با موفقیت افزوده شد!" })
+            );
+          }
+        });
+      })
+      .catch((error) => {
+        res.status(500).json({ error });
       });
-    })
-    .catch((error) => {
-      res.status(500).json({ error });
-    });
+  } else {
+    res.json(
+      jsonResponse(406, { message: "این آدرس وجود دارد!" })
+    );
+  }
 };
 
 // check if the receiver is user himeself and he is exist or not
