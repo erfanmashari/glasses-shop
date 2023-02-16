@@ -13,7 +13,7 @@ const NewestProductsItem = ({ product }) => {
   return (
     <li className="w-1/4 flex flex-col justify-center items-center">
       <Link
-        href={`product/${product.nameFa}`}
+        href={`/product/${product.nameFa}`}
         className="w-full flex flex-col justify-center items-center cursor-pointer"
       >
         <header className="w-full text-center text-black font-bold text-lg border-b-2 pb-1">

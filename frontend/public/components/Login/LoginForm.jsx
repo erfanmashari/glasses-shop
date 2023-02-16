@@ -71,7 +71,7 @@ const LoginForm = () => {
         backgroundImage: "linear-gradient(to bottom, #f7e7e7, #d6b8b8)",
       }}
     >
-      <Link className="hidden" href={"register"} id="to-register-page"></Link>
+      <Link className="hidden" href={"/register"} id="to-register-page"></Link>
       <Link className="hidden" href={"/"} id="to-home-page-l"></Link>
       {isCodeHidden && (
         <FormInput

@@ -76,14 +76,14 @@ const Nav = () => {
         </div>
         <div className="w-max h-full flex flex-row justify-center items-center gap-2 py-2 px-8">
           <Link
-            href={"cart"}
+            href={"/cart"}
             className="w-max h-fit flex flex-row justify-center items-center text-sm rounded-lg gap-1.5 px-2.5 py-1"
             style={{ color: "rgb(117, 131, 122)" }}
           >
             <ShoppingBagOutlinedIcon /> سبد خرید
           </Link>
           <Link
-            href={isLoggedIn ? "profile" : "login"}
+            href={isLoggedIn ? "/profile" : "/login"}
             className="w-max h-fit flex flex-row justify-center items-center text-sm rounded-lg gap-1 px-2.5 py-1"
             style={{
               background: isLoggedIn ? "inherit" : "#06291D",

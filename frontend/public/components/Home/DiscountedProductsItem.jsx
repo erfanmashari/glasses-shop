@@ -14,7 +14,7 @@ const DiscountedProductsItem = ({ isLast, product }) => {
 
   return (
     <Link
-      href={`product/${product.nameFa}`}
+      href={`/product/${product.nameFa}`}
       className={`${
         !isLast && "border-l-2 border-blue-600"
       } w-1/5 h-full relative flex flex-col justify-between items-end cursor-pointer p-2 pb-6`}
