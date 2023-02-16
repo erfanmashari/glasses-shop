@@ -45,7 +45,7 @@ const add_address = async (req, res) => {
         if (user) {
           // The below two lines will add the newly saved address's
           // ObjectID to the the User's addresses array field
-          user.addresses.push(result);
+          user.addresses.push(result._id);
           user.save();
           res.json(
             jsonResponse(200, { message: "آدرس جدید با موفقیت افزوده شد!" })

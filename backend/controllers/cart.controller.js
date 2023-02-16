@@ -44,30 +44,38 @@ const add_product_to_cart = async (req, res) => {
         isFreeDelivery: product.isFreeDelivery,
         testAtHome: product.testAtHome,
         model: product.model,
+        number: 1,
         discountPercent: product.discountPercent,
         discountedPrice: product.discountedPrice,
         discountTime: product.discountTime,
       };
 
-      Cart.create(cartProduct)
-        .then((result) => {
-          User.findOne({ _id: body.userId }, (err, user) => {
-            if (user) {
-              // The below two lines will add the newly saved cart's
-              // ObjectID to the the User's cart array field
-              user.cart.push(result);
-              user.save();
-              res.json(
-                jsonResponse(201, {
-                  message: "محصول جدید با موفقیت به سبد خرید افزوده شد!",
-                })
-              );
-            }
+      const savedCart = await Cart.findOne(cartProduct);
+      if (!savedCart) {
+        Cart.create(cartProduct)
+          .then((result) => {
+            User.findOne({ _id: body.userId }, (err, user) => {
+              if (user) {
+                // The below two lines will add the newly saved cart's
+                // ObjectID to the the User's cart array field
+                user.cart.push(result._id);
+                user.save();
+                res.json(
+                  jsonResponse(201, {
+                    message: "محصول جدید با موفقیت به سبد خرید افزوده شد!",
+                  })
+                );
+              }
+            });
+          })
+          .catch((error) => {
+            res.status(500).json({ error });
           });
-        })
-        .catch((error) => {
-          res.status(500).json({ error });
-        });
+      } else {
+        res.json(
+          jsonResponse(406, { message: "این محصول در سبد خرید شما وجود دارد!" })
+        );
+      }
     } else {
       res.json(jsonResponse(406, { message: "فروشنده محصول معتبر نمی باشد!" }));
     }

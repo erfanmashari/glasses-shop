@@ -1,5 +1,6 @@
 const User = require("../models/user.model");
 const Address = require("../models/address.model");
+const Cart = require("../models/cart.model");
 const jwt = require("jsonwebtoken");
 const { jsonResponse, checkDataExist } = require("../functions");
 
@@ -22,6 +23,7 @@ const user_index_phone_number = async (req, res) => {
   );
   if (user) {
     user.addresses = await getAddresses(user.addresses);
+    user.cart = await getCart(user.cart);
     res.json(jsonResponse(200, { user }));
   } else {
     res.json(jsonResponse(404, { message: "کاربری با این شماره همراه وجود ندارد!" }));
@@ -70,6 +72,16 @@ const edit_personal_info = (req, res) => {
     .catch((err) => {
       console.log(err);
     });
+};
+
+// get cart product of a user
+const getCart = async (cartList) => {
+  const cart = [];
+  for (const product of cartList) {
+    const cartIndex = await Cart.findOne({ _id: product });
+    cart.push(cartIndex);
+  }
+  return cart;
 };
 
 // get addresses of a user

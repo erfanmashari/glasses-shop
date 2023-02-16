@@ -5,8 +5,8 @@ const cartSchema = new Schema(
   {
     userId: { type: Schema.Types.ObjectId, required: true },
     isAvailable: { type: Boolean, required: true },
-    nameFa: {  type: String, required: true, maxLength: 200, unique: true },
-    nameEn: { type: String, required: true, maxLength: 200, unique: true },
+    nameFa: {  type: String, required: true, maxLength: 200 },
+    nameEn: { type: String, required: true, maxLength: 200 },
     category: { type: String, required: true },
     price: { type: Number, required: true },
     brand: { type: Object, required: true },
@@ -19,6 +19,7 @@ const cartSchema = new Schema(
     isFreeDelivery: { type: Boolean, default: false },
     testAtHome: { type: Boolean, default: false },
     model: { type: String },
+    number: { type: Number, default: 1 },
     discountPercent: { type: Number, default: 0 },
     discountedPrice: { type: Number, default: 0 },
     discountTime: { type: Date },
