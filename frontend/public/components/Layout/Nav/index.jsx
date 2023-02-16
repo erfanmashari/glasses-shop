@@ -34,23 +34,26 @@ const Nav = () => {
   }, []);
 
   const getUserInfo = () => {
-    axiosApp.get(`users/${getPhoneNumberFromCookie()}`).then((response) => {
-      const res = checkFetchResponse(response);
-
-      if (res.ok && res.data.user) {
-        dispatch(setProfilePersonalInfoFromBackend(res.data.user));
-      } else {
-        document.cookie = `token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${process.env.COOKIE_PATH}`;
-        document.cookie = `phoneNumber=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${process.env.COOKIE_PATH}`;
-
-        dispatch(changeLoginStatus(false));
-
-        const homePageLink = document.querySelector("#to-home-page-p");
-        if (homePageLink) {
-          homePageLink.click();
+    const phoneNumber = getPhoneNumberFromCookie();
+    if (phoneNumber) {
+      axiosApp.get(`users/${phoneNumber}`).then((response) => {
+        const res = checkFetchResponse(response);
+  
+        if (res.ok && res.data.user) {
+          dispatch(setProfilePersonalInfoFromBackend(res.data.user));
+        } else {
+          document.cookie = `token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${process.env.COOKIE_PATH}`;
+          document.cookie = `phoneNumber=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${process.env.COOKIE_PATH}`;
+  
+          dispatch(changeLoginStatus(false));
+  
+          const homePageLink = document.querySelector("#to-home-page-p");
+          if (homePageLink) {
+            homePageLink.click();
+          }
         }
-      }
-    });
+      });
+    }
   };
 
   return (
