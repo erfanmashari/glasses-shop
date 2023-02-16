@@ -14,6 +14,7 @@ const userRoutes = require("./routes/user.routes");
 const authRoutes = require("./routes/auth.routes");
 const addressRoutes = require("./routes/address.routes");
 const cartRoutes = require("./routes/cart.routes");
+const orderRoutes = require("./routes/order.routes");
 
 // express app
 const app = express();
@@ -80,3 +81,4 @@ app.use("/users", userRoutes);
 app.use("/auth", authRoutes);
 app.use("/addresses", addressRoutes);
 app.use("/cart", cartRoutes);
+app.use("/orders", orderRoutes);
