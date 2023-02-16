@@ -13,7 +13,7 @@ import { Tooltip } from "flowbite-react";
 const BuyForm = () => {
   const dispatch = useDispatch();
 
-  // get personal info from reduc/reducer/profile/personalInfo.js
+  // get personal info from redux/reducer/profile/personalInfo.js
   const personalInfo = useSelector((state) => state.personalInfo);
 
   // get product info from redux/reducers/product/productInfo.js
