@@ -38,14 +38,20 @@ const BuyForm = () => {
 
     const selectedProductInfo = { ...selectedProduct };
     selectedProductInfo.userId = personalInfo._id;
-    axiosApp.post("cart", selectedProductInfo).then((response) => {
-      const res = checkFetchResponse(response);
-      if (res.ok) {
-        toastAlert(res.data.message, "success");
-      } else {
-        toastAlert(res.message, "error");
-      }
-    });
+    if (!selectedProductInfo.frameColor) {
+      toastAlert("رنگ محصول را انتخاب کنید!", "error")
+    } else if (!selectedProductInfo.size) {
+      toastAlert("سایز محصول را انتخاب کنید!", "error")
+    } else {
+      axiosApp.post("cart", selectedProductInfo).then((response) => {
+        const res = checkFetchResponse(response);
+        if (res.ok) {
+          toastAlert(res.data.message, "success");
+        } else {
+          toastAlert(res.message, "error");
+        }
+      });
+    }
   };
 
   return (
