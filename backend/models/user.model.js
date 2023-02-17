@@ -17,7 +17,7 @@ const userSchema = new Schema(
     addresses: [{ type: Schema.Types.ObjectId, ref: 'Address' }],
     cart: { type: [Object], default: [] },
     orders: { type: [Object], default: [] },
-    favoriteProducts: { type: [Object], default: [] },
+    favorites: { type: [Object], default: [] },
     comments: { type: [Object], default: [] },
     notifications: { type: [Object], default: [] },
   },
