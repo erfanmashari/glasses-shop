@@ -109,6 +109,15 @@ const checkAddress = async (addressId, res) => {
 
 // check if products are real or not and match total price with products prices
 const checkProducts = async (products, totalPrice, res) => {
+  if (!products.length) {
+    res.json(
+      jsonResponse(406, {
+        message: "حداقل یک محصول باید برای هر سفارش وجود داشته باشد!",
+      })
+    );
+    return false;
+  }
+
   let isCorrect = true;
   let productsTotalPrice = 0;
 
