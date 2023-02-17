@@ -4,7 +4,7 @@ const baseURL = process.env.NODE_ENV === "development"
   ? "http://localhost:8000/"
   : "http://example.com"
 
-const axiosConfig = axios.create({
+const axiosApp = axios.create({
     baseURL,
     // withCredentials: true
 })
@@ -26,4 +26,4 @@ const axiosConfig = axios.create({
 //   error => (Promise.reject(error.response ? error.response.data.err : "null"))
 // )
 
-export default axiosConfig;
+export default axiosApp;

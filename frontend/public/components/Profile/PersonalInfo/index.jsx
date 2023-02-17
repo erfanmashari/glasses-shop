@@ -7,17 +7,13 @@ import Link from "next/link";
 import { useEffect } from "react";
 
 import { useSelector, useDispatch } from "react-redux";
-import {
-  setProfilePersonalInfoFromBackend,
-  changeProfilePersonalInfo,
-} from "../../../redux/actions/profile";
-import { changeLoginStatus } from "../../../redux/actions/login";
+import { changeProfilePersonalInfo } from "../../../redux/actions/profile";
 
 import axiosApp from "../../../utils/axiosConfig";
 import {
   checkFetchResponse,
   toastAlert,
-  getPhoneNumberFromCookie,
+  getUserInfo,
 } from "../../../functions";
 
 const PersonalInfoForm = () => {
@@ -31,32 +27,9 @@ const PersonalInfoForm = () => {
   };
 
   useEffect(() => {
-    getUserInfo();
+    getUserInfo(document.querySelector("#to-home-page-p"));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const getUserInfo = () => {
-    const phoneNumber = getPhoneNumberFromCookie();
-    if (phoneNumber) {
-      axiosApp.get(`users/${phoneNumber}`).then((response) => {
-        const res = checkFetchResponse(response);
-
-        if (res.ok && res.data.user) {
-          dispatch(setProfilePersonalInfoFromBackend(res.data.user));
-        } else {
-          document.cookie = `token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${process.env.COOKIE_PATH}`;
-          document.cookie = `phoneNumber=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${process.env.COOKIE_PATH}`;
-
-          dispatch(changeLoginStatus(false));
-
-          const homePageLink = document.querySelector("#to-home-page-p");
-          if (homePageLink) {
-            homePageLink.click();
-          }
-        }
-      });
-    }
-  };
 
   const changePersonalInfo = (e) => {
     e.preventDefault();

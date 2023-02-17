@@ -6,7 +6,7 @@ import Link from "next/link";
 
 import { useSelector } from "react-redux";
 
-import axiosApp from "../../utils/axiosConfig";
+import axiosApp from "../../utils/axiosApp";
 import { checkFetchResponse } from "../../functions";
 
 import { toastAlert } from "../../functions";

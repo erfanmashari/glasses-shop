@@ -1,3 +1,8 @@
+import axiosConfig from "./utils/axiosApp";
+import { useDispatch } from "react-redux";
+import { setProfilePersonalInfoFromBackend } from "./redux/actions/profile";
+import { changeLoginStatus } from "./redux/actions/login";
+
 import { toast } from "react-toastify";
 
 // get token from cookie
@@ -46,3 +51,26 @@ export function toastAlert (text, type) {
     autoClose: 5000,
   });
 }
+
+// get user informations from backend
+export const getUserInfo = (homePageLink) => {
+  const phoneNumber = getPhoneNumberFromCookie();
+  if (phoneNumber) {
+    axiosApp.get(`users/${phoneNumber}`).then((response) => {
+      const res = checkFetchResponse(response);
+
+      if (res.ok && res.data.user) {
+        dispatch(setProfilePersonalInfoFromBackend(res.data.user));
+      } else {
+        document.cookie = `token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${process.env.COOKIE_PATH}`;
+        document.cookie = `phoneNumber=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${process.env.COOKIE_PATH}`;
+
+        dispatch(changeLoginStatus(false));
+
+        if (homePageLink) {
+          homePageLink.click();
+        }
+      }
+    });
+  }
+};
