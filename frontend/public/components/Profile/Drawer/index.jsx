@@ -11,7 +11,7 @@ const Drawer = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    getUserInfo(document.querySelector("#to-home-page-p"));
+    getUserInfo(dispatch, document.querySelector("#to-home-page-p"));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

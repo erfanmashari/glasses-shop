@@ -1,5 +1,4 @@
-import axiosConfig from "./utils/axiosApp";
-import { useDispatch } from "react-redux";
+import axiosApp from "./utils/axiosApp";
 import { setProfilePersonalInfoFromBackend } from "./redux/actions/profile";
 import { changeLoginStatus } from "./redux/actions/login";
 
@@ -35,15 +34,15 @@ export function getPhoneNumberFromCookie() {
   return phoneNumber;
 }
 
-export function checkFetchResponse (response) {
+export function checkFetchResponse(response) {
   if (response.data.status === 200 || response.data.status === 201) {
     return { ok: true, data: response.data.data };
   } else {
     return { ok: false, message: response.data.data.message };
   }
-};
+}
 
-export function toastAlert (text, type) {
+export function toastAlert(text, type) {
   toast(text, {
     position: "top-center",
     type,
@@ -53,7 +52,7 @@ export function toastAlert (text, type) {
 }
 
 // get user informations from backend
-export const getUserInfo = (homePageLink) => {
+export const getUserInfo = (dispatch, homePageLink) => {
   const phoneNumber = getPhoneNumberFromCookie();
   if (phoneNumber) {
     axiosApp.get(`users/${phoneNumber}`).then((response) => {
@@ -69,6 +68,8 @@ export const getUserInfo = (homePageLink) => {
 
         if (homePageLink) {
           homePageLink.click();
+        } else {
+          location.reload();
         }
       }
     });

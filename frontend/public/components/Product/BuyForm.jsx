@@ -46,7 +46,7 @@ const BuyForm = () => {
       axiosApp.post("cart", selectedProductInfo).then((response) => {
         const res = checkFetchResponse(response);
         if (res.ok) {
-          getUserInfo();
+          getUserInfo(dispatch);
           toastAlert(res.data.message, "success");
         } else {
           toastAlert(res.message, "error");

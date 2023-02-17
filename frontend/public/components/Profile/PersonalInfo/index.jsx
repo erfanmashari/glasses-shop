@@ -39,7 +39,7 @@ const PersonalInfoForm = () => {
 
       if (res.ok) {
         toastAlert(res.data.message, "success");
-        getUserInfo();
+        getUserInfo(dispatch);
       } else {
         toastAlert(res.message, "error");
       }
