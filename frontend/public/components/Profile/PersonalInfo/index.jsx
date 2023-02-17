@@ -2,10 +2,6 @@ import FormFieldsContainer from "./FormFieldsContainer";
 import FormInput from "./FormInput";
 import FormSelector from "./FormSelector";
 
-import Link from "next/link";
-
-import { useEffect } from "react";
-
 import { useSelector, useDispatch } from "react-redux";
 import { changeProfilePersonalInfo } from "../../../redux/actions/profile";
 
@@ -25,11 +21,6 @@ const PersonalInfoForm = () => {
   const changeInputValue = (parameter, value) => {
     dispatch(changeProfilePersonalInfo(parameter, value));
   };
-
-  useEffect(() => {
-    getUserInfo(dispatch, document.querySelector("#to-home-page-p"));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const changePersonalInfo = (e) => {
     e.preventDefault();
@@ -51,7 +42,6 @@ const PersonalInfoForm = () => {
       onSubmit={changePersonalInfo}
       className="w-9/12 flex flex-col justify-center self items-center border-t-2 border-blue-600 shadow-md rounded-lg gap-4 px-16 py-12"
     >
-      <Link className="hidden" href={"/"} id="to-home-page-p"></Link>
       <FormFieldsContainer>
         <FormInput
           label={"نام"}

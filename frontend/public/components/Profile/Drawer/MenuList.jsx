@@ -19,7 +19,7 @@ const MenuList = () => {
       <MenuItem
         icon={<MdFavoriteBorder className="w-6 h-6 relative left-1" />}
         title={"مورد علاقه ها"}
-        href={"favourites"}
+        href={"favorites"}
       />
       <MenuItem
         icon={<FaRegComment className="w-5 h-5 relative left-1.5" />}

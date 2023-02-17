@@ -1,4 +1,4 @@
-import FavouritesComponent from "../components/Profile/Favourites";
+import FavoritesComponent from "../components/Profile/Favorites";
 
 import ErrorPage from "next/error";
 
@@ -9,7 +9,7 @@ const Favourites = () => {
   const isLoggedIn = useSelector((state) => state.isLoggedIn);
 
   return (
-    <>{isLoggedIn ? <FavouritesComponent /> : <ErrorPage statusCode={404} />}</>
+    <>{isLoggedIn ? <FavoritesComponent /> : <ErrorPage statusCode={404} />}</>
   );
 };
 

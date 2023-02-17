@@ -1,11 +1,11 @@
 import Drawer from "../Drawer"
-import FavouritesList from "./FavouritesList"
+import Favorites from "./FavoritesList"
 
 const Favourites = () => {
   return (
     <main className="w-full flex flex-row justify-center items-start gap-6 p-8">
         <Drawer />
-        <FavouritesList />
+        <Favorites />
     </main>
   )
 }

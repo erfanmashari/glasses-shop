@@ -10,7 +10,7 @@ import { checkFetchResponse, toastAlert, getUserInfo } from "../../functions";
 
 import { Tooltip } from "flowbite-react";
 
-import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
+import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 
 const BuyForm = () => {
   const dispatch = useDispatch();
@@ -57,6 +57,22 @@ const BuyForm = () => {
     }
   };
 
+  // send add faviorite product request to backend
+  const addFavorite = () => {
+    axiosApp.post("favorites", {
+      userId: personalInfo._id,
+      productId: productInfo._id,
+    }).then((response) => {
+      const res = checkFetchResponse(response);
+      if (res.ok) {
+        getUserInfo(dispatch);
+        toastAlert(res.data.message, "success");
+      } else {
+        toastAlert(res.message, "error");
+      }
+    });
+  };
+
   return (
     <form
       onSubmit={addProductToCart}
@@ -67,7 +83,9 @@ const BuyForm = () => {
         <span className="text-sm" style={{ color: "#6e6e6e" }}>
           خانه / {productInfo.category}
         </span>
-        <button><FavoriteBorderOutlinedIcon /></button>
+        <button type="button" onClick={addFavorite}>
+          <FavoriteBorderOutlinedIcon />
+        </button>
       </div>
       <h2 className="w-full text-lg font-bold">{productInfo.nameFa}</h2>
       <h2 className="w-full text-md border-b-2 border-stone-200 text-stone-500 font-bold pb-2">
