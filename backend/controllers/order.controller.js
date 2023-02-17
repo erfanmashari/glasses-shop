@@ -1,7 +1,7 @@
 const Order = require("../models/order.model");
 const User = require("../models/user.model");
 const Address = require("../models/address.model");
-const Product = require("../models/product.model");
+const Cart = require("../models/cart.model");
 const { jsonResponse, checkDataExist } = require("../functions");
 
 const add_order = async (req, res) => {
@@ -24,29 +24,24 @@ const add_order = async (req, res) => {
     return null;
   }
 
-  let trackingCode = "";
-  let checkTrackingCodeStatus = "";
-  do {
+  let trackingCode = createTrackingCode();
+  let checkTrackingCodeStatus = await checkTrackingCode(trackingCode);
+  while (checkTrackingCodeStatus) {
     trackingCode = createTrackingCode();
     checkTrackingCodeStatus = await checkTrackingCode(trackingCode);
-  } while (!checkTrackingCodeStatus);
+  }
+  body.trackingCode = trackingCode;
   const checkUserStatus = await checkUser(body.userId, res);
   const checkAddressStatus = await checkAddress(body.address, res);
   // check products and set total price
-  const checkProductsStatus = await checkProducts(
-    body,
-    body.products,
-    body.totalPrice,
-    res
-  );
+  const checkProductsStatus = await checkProducts(body, body.products, res);
   if (
-    !checkTotalPriceType(body.totalPrice, res) ||
     !checkUserStatus ||
     !checkAddressStatus ||
     !checkProductsStatus ||
     !checkOrderStatus(body.status, res) ||
-    !checkPaymentStatus(body.paymentStatus, res) ||
-    !checkPaymentMethod(body.paymentMethod, res)
+    !checkPaymentMethod(body.paymentMethod, res) ||
+    !checkSendingMethod(body.sendingMethod, res)
   ) {
     return null;
   }
@@ -65,12 +60,8 @@ const createTrackingCode = () => {
 };
 
 // check if tracking code exist in database or not
-const checkTrackingCode = async (trackingCode, res) => {
+const checkTrackingCode = async (trackingCode) => {
   const trackingCodeIndex = await Order.findOne({ trackingCode });
-
-  if (!trackingCodeIndex) {
-    res.json(jsonResponse(406, { message: "کاربر مورد نظر معتبر نمی باشد!" }));
-  }
 
   return trackingCodeIndex ? true : false;
 };
@@ -98,7 +89,7 @@ const checkAddress = async (addressId, res) => {
 };
 
 // check if products are real or not and set total price
-const checkProducts = async (body, products, totalPrice, res) => {
+const checkProducts = async (body, products, res) => {
   if (!products.length) {
     res.json(
       jsonResponse(406, {
@@ -110,14 +101,37 @@ const checkProducts = async (body, products, totalPrice, res) => {
 
   let isCorrect = true;
   let productsTotalPrice = 0;
+  const productsList = [];
 
   const dateOfNow = new Date();
   for (const productId of products) {
-    const product = await Product.findOne({ _id: productId });
+    const product = await Cart.findOne({ _id: productId }).exec();
     if (!product) {
       isCorrect = false;
       break;
     } else {
+      productsList.push({
+        userId: product.userId,
+        isAvailable: product.isAvailable,
+        nameFa: product.nameFa,
+        nameEn: product.nameEn,
+        category: product.category,
+        price: product.price,
+        brand: product.brand,
+        size: product.size,
+        image: product.image,
+        seller: product.seller,
+        frameColor: product.frameColor,
+        isOriginal: product.isOriginal,
+        isSpecialSale: product.isSpecialSale,
+        isFreeDelivery: product.isFreeDelivery,
+        testAtHome: product.testAtHome,
+        model: product.model,
+        number: product.number,
+        discountPercent: product.discountPercent,
+        discountedPrice: product.discountedPrice,
+        discountTime: product.discountTime,
+      });
       const dateOfDiscountTime = product.discountTime
         ? new Date(product.discountTime)
         : dateOfNow;
@@ -132,6 +146,8 @@ const checkProducts = async (body, products, totalPrice, res) => {
       } else {
         productsTotalPrice += product.price;
       }
+      // remove product from cart
+      await Cart.findOneAndDelete({ _id: productId }).exec();
     }
   }
 
@@ -141,6 +157,7 @@ const checkProducts = async (body, products, totalPrice, res) => {
     );
   } else {
     body.totalPrice = productsTotalPrice;
+    body.products = productsList;
   }
 
   return isCorrect;
@@ -149,7 +166,7 @@ const checkProducts = async (body, products, totalPrice, res) => {
 // check order status to be a particular value
 const checkOrderStatus = async (status, res) => {
   let isCorrect = true;
-  if (status !== "unpaid" || status !== "packing" || status !== "posted") {
+  if (status !== "unpaid" && status !== "packing" && status !== "posted") {
     isCorrect = false;
     res.json(jsonResponse(406, { message: "وضعیت سفارش معتبر نیست!" }));
   }
