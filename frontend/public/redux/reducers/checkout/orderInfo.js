@@ -5,6 +5,9 @@ const orderInfo = (state = {}, action) => {
             items[action.parameter] = action.value;
             state = items;
             return state;
+        case "RESET_ORDER_INFO":
+            state = {};
+            return state;
         default:
             return state;
     }
