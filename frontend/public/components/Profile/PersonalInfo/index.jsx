@@ -9,7 +9,7 @@ import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { changeProfilePersonalInfo } from "../../../redux/actions/profile";
 
-import axiosApp from "../../../utils/axiosConfig";
+import axiosApp from "../../../utils/axiosApp";
 import {
   checkFetchResponse,
   toastAlert,
@@ -27,7 +27,7 @@ const PersonalInfoForm = () => {
   };
 
   useEffect(() => {
-    getUserInfo(document.querySelector("#to-home-page-p"));
+    getUserInfo(dispatch, document.querySelector("#to-home-page-p"));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
