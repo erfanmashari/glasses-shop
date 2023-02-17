@@ -26,7 +26,7 @@ const PaymentMethod = () => {
             dispatch(
               changeOrderInfo(
                 "paymentMethod",
-                e.target.checked ? "zarinpal" : undefined
+                e.target.checked ? "زرین پال" : undefined
               )
             )
           }

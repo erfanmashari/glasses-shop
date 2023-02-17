@@ -48,9 +48,9 @@ const Checkout = () => {
       userId: personalInfo._id,
       address: orderInfo.address,
       products: productsIds,
-      status: "unpaid",
+      status: "پرداخت نشده",
       paymentMethod: orderInfo.paymentMethod,
-      sendingMethod: "express mail",
+      sendingMethod: "پست پیشتاز",
     };
     axiosApp.post("orders", fecthBody).then((response) => {
       const res = checkFetchResponse(response);
