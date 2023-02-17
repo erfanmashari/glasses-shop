@@ -6,6 +6,7 @@ import Link from "next/link";
 
 import { useSelector } from "react-redux";
 
+import axios from "axios";
 import axiosApp from "../../utils/axiosApp";
 import { checkFetchResponse } from "../../functions";
 
@@ -57,10 +58,44 @@ const Checkout = () => {
 
       if (res.ok) {
         toastAlert(res.data.message, "success");
+        // zarinpalPostRequest();
       } else {
         toastAlert(res.message, "error");
       }
     });
+  };
+
+  // end a request to zarinpal for the payment gateway
+  const zarinpalPostRequest = (amount, trackingCode) => {
+    const fetchBody = {
+      merchant_id: "45sw86r3-s777-231s-68ss-ery458964oop",
+      amount: 10000,
+      callback_url: "http://localhost:3000",
+      description: `پرداخت سفارش با کد پیگیری 000000000`,
+      metadata: { mobile: personalInfo.phoneNumber, email: personalInfo.email },
+    };
+    fetch("https://sandbox.zarinpal.com/pg/v4/payment/request.json", {
+      method: "POST",
+      // mode: "no-cors",
+      headers: new Headers({
+        "Access-Control-Allow-Origin": "*",
+        // "Content-Type": "application/json",
+        // accept: "application/json",
+      }),
+      body: JSON.stringify(fetchBody),
+    })
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then((res) => {
+        console.log("res: ", res);
+        // const data = res.data;
+        // if (data.code && data.authority) {
+        //   location.href = `https://sandbox.zarinpal.com/pg/StartPay/${data.authority}`;
+        // }
+      });
   };
 
   return (
