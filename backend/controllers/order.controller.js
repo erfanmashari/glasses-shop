@@ -14,7 +14,6 @@ const add_order = async (req, res) => {
         "userId",
         "address",
         "products",
-        "totalPrice",
         "status",
         "paymentMethod",
         "sendingMethod",
@@ -33,7 +32,9 @@ const add_order = async (req, res) => {
   } while (!checkTrackingCodeStatus);
   const checkUserStatus = await checkUser(body.userId, res);
   const checkAddressStatus = await checkAddress(body.address, res);
+  // check products and set total price
   const checkProductsStatus = await checkProducts(
+    body,
     body.products,
     body.totalPrice,
     res
@@ -54,17 +55,6 @@ const add_order = async (req, res) => {
   await Order.create(body);
 
   res.json(jsonResponse(201, { message: "سفارش جدید با موفقیت افزوده شد!" }));
-};
-
-// checking type of total price to be number
-const checkTotalPriceType = (totalPrice, res) => {
-  let isCorrect = true;
-  if (isNaN(Number(totalPrice))) {
-    isCorrect = false;
-    res.json(jsonResponse(406, { message: "قیمت کل باید شماره باشد!" }));
-  }
-
-  return isCorrect;
 };
 
 // create a 12 digits tracking code
@@ -107,8 +97,8 @@ const checkAddress = async (addressId, res) => {
   return address ? true : false;
 };
 
-// check if products are real or not and match total price with products prices
-const checkProducts = async (products, totalPrice, res) => {
+// check if products are real or not and set total price
+const checkProducts = async (body, products, totalPrice, res) => {
   if (!products.length) {
     res.json(
       jsonResponse(406, {
@@ -149,9 +139,8 @@ const checkProducts = async (products, totalPrice, res) => {
     res.json(
       jsonResponse(406, { message: "محصولات مورد نظر معتبر نمی باشد!" })
     );
-  } else if (productsTotalPrice !== totalPrice) {
-    isCorrect = false;
-    res.json(jsonResponse(406, { message: "قیمت کل محصولات درست نمی باشد!" }));
+  } else {
+    body.totalPrice = productsTotalPrice;
   }
 
   return isCorrect;
