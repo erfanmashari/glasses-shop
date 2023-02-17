@@ -33,8 +33,13 @@ const add_order = async (req, res) => {
   } while (!checkTrackingCodeStatus);
   const checkUserStatus = await checkUser(body.userId, res);
   const checkAddressStatus = await checkAddress(body.address, res);
-  const checkProductsStatus = await checkProducts(body.products, res);
+  const checkProductsStatus = await checkProducts(
+    body.products,
+    body.totalPrice,
+    res
+  );
   if (
+    !checkTotalPriceType(body.totalPrice, res) ||
     !checkUserStatus ||
     !checkAddressStatus ||
     !checkProductsStatus ||
@@ -49,6 +54,17 @@ const add_order = async (req, res) => {
   await Order.create(body);
 
   res.json(jsonResponse(201, { message: "سفارش جدید با موفقیت افزوده شد!" }));
+};
+
+// checking type of total price to be number
+const checkTotalPriceType = (totalPrice, res) => {
+  let isCorrect = true;
+  if (isNaN(Number(totalPrice))) {
+    isCorrect = false;
+    res.json(jsonResponse(406, { message: "قیمت کل باید شماره باشد!" }));
+  }
+
+  return isCorrect;
 };
 
 // create a 12 digits tracking code
@@ -91,13 +107,32 @@ const checkAddress = async (addressId, res) => {
   return address ? true : false;
 };
 
-// check if products are real or not
-const checkProducts = async (products, res) => {
+// check if products are real or not and match total price with products prices
+const checkProducts = async (products, totalPrice, res) => {
   let isCorrect = true;
+  let productsTotalPrice = 0;
+
+  const dateOfNow = new Date();
   for (const productId of products) {
     const product = await Product.findOne({ _id: productId });
     if (!product) {
       isCorrect = false;
+      break;
+    } else {
+      const dateOfDiscountTime = product.discountTime
+        ? new Date(product.discountTime)
+        : dateOfNow;
+
+      if (
+        product.discountPercent &&
+        product.discountedPrice &&
+        product.discountTime &&
+        dateOfNow < dateOfDiscountTime
+      ) {
+        productsTotalPrice += product.discountedPrice;
+      } else {
+        productsTotalPrice += product.price;
+      }
     }
   }
 
@@ -105,6 +140,9 @@ const checkProducts = async (products, res) => {
     res.json(
       jsonResponse(406, { message: "محصولات مورد نظر معتبر نمی باشد!" })
     );
+  } else if (productsTotalPrice !== totalPrice) {
+    isCorrect = false;
+    res.json(jsonResponse(406, { message: "قیمت کل محصولات درست نمی باشد!" }));
   }
 
   return isCorrect;
@@ -113,11 +151,7 @@ const checkProducts = async (products, res) => {
 // check order status to be a particular value
 const checkOrderStatus = async (status, res) => {
   let isCorrect = true;
-  if (
-    status !== "unpaid" ||
-    status !== "packing" ||
-    status !== "posted"
-  ) {
+  if (status !== "unpaid" || status !== "packing" || status !== "posted") {
     isCorrect = false;
     res.json(jsonResponse(406, { message: "وضعیت سفارش معتبر نیست!" }));
   }
