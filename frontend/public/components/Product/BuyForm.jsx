@@ -5,10 +5,12 @@ import Countdown from "react-countdown";
 import { useSelector, useDispatch } from "react-redux";
 import { changeSelectedProductProperties } from "../../redux/actions/product";
 
-import axiosApp from "../../utils/axiosConfig";
+import axiosApp from "../../utils/axiosApp";
 import { checkFetchResponse, toastAlert, getUserInfo } from "../../functions";
 
 import { Tooltip } from "flowbite-react";
+
+import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 
 const BuyForm = () => {
   const dispatch = useDispatch();
@@ -61,9 +63,12 @@ const BuyForm = () => {
       className="w-1/3 flex flex-col justify-start items-start gap-3 p-4"
       style={{ background: "#f8f8f8" }}
     >
-      <span className="text-sm" style={{ color: "#6e6e6e" }}>
-        خانه / {productInfo.category}
-      </span>
+      <div className="w-full flex flex-row justify-between items-center">
+        <span className="text-sm" style={{ color: "#6e6e6e" }}>
+          خانه / {productInfo.category}
+        </span>
+        <button><FavoriteBorderOutlinedIcon /></button>
+      </div>
       <h2 className="w-full text-lg font-bold">{productInfo.nameFa}</h2>
       <h2 className="w-full text-md border-b-2 border-stone-200 text-stone-500 font-bold pb-2">
         {productInfo.nameEn}
