@@ -194,9 +194,11 @@ const removeProductsFromCart = async (id) => {
 const checkOrderStatus = async (status, res) => {
   let isCorrect = true;
   if (
-    status !== "پرداخت نشده" &&
+    status !== "جاری" &&
     status !== "بسته بندی" &&
-    status !== "ارسال شده"
+    status !== "ارسال شده" &&
+    status !== "مرجوع شده" &&
+    status !== "لغو شده" 
   ) {
     isCorrect = false;
     res.json(jsonResponse(406, { message: "وضعیت سفارش معتبر نیست!" }));
