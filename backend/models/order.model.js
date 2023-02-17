@@ -8,9 +8,8 @@ const orderSchema = new Schema(
     products: { type: [Schema.Types.ObjectId], required: true },
     totalPrice: { type: Number, required: true },
     trackingCode: { type: Number, required: true, unique: true },
-    paymentStatus: { type: String, required: true }, // unpaid - paid 
+    status: { type: String, required: true }, // unpaid - packing - posted
     paymentMethod: { type: String, required: true }, // zarinpal
-    sendingStatus: { type: String, required: true }, // packing - posted
     sendingMethod: { type: String, required: true }, // express mail
   },
   { timestamps: true, collection: "orders" }

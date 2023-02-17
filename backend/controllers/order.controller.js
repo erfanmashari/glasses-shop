@@ -6,7 +6,7 @@ const { jsonResponse, checkDataExist } = require("../functions");
 
 const add_order = async (req, res) => {
   const body = req.body;
-  
+
   if (
     !checkDataExist(
       body,
@@ -15,9 +15,8 @@ const add_order = async (req, res) => {
         "address",
         "products",
         "totalPrice",
-        "paymentStatus",
+        "status",
         "paymentMethod",
-        "sendingStatus",
         "sendingMethod",
       ],
       res
@@ -39,10 +38,9 @@ const add_order = async (req, res) => {
     !checkUserStatus ||
     !checkAddressStatus ||
     !checkProductsStatus ||
-    !checkPaymentStatus(body.paymentStatus) ||
-    !checkPaymentMethod(body.paymentMethod) ||
-    !checkSendingStatus(body.sendingStatus) ||
-    !checkSendingMethod(body.sendingMethod)
+    !checkOrderStatus(body.status, res) ||
+    !checkPaymentStatus(body.paymentStatus, res) ||
+    !checkPaymentMethod(body.paymentMethod, res)
   ) {
     return null;
   }
@@ -112,12 +110,16 @@ const checkProducts = async (products, res) => {
   return isCorrect;
 };
 
-// check payment status to be a particular value
-const checkPaymentStatus = async (paymentStatus, res) => {
+// check order status to be a particular value
+const checkOrderStatus = async (status, res) => {
   let isCorrect = true;
-  if (paymentStatus !== "unpaid" || paymentStatus !== "paid") {
+  if (
+    status !== "unpaid" ||
+    status !== "packing" ||
+    status !== "posted"
+  ) {
     isCorrect = false;
-    res.json(jsonResponse(406, { message: "وضعیت پرداخت معتبر نیست!" }));
+    res.json(jsonResponse(406, { message: "وضعیت سفارش معتبر نیست!" }));
   }
 
   return isCorrect;
@@ -129,17 +131,6 @@ const checkPaymentMethod = async (paymentMethod, res) => {
   if (paymentMethod !== "zarinpal") {
     isCorrect = false;
     res.json(jsonResponse(406, { message: "شیوه پرداخت معتبر نیست!" }));
-  }
-
-  return isCorrect;
-};
-
-// check sending status to be a particular value
-const checkSendingStatus = async (sendingStatus, res) => {
-  let isCorrect = true;
-  if (sendingStatus !== "packing" || sendingStatus !== "posted") {
-    isCorrect = false;
-    res.json(jsonResponse(406, { message: "وضعیت ارسال معتبر نیست!" }));
   }
 
   return isCorrect;
