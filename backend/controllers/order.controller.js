@@ -58,7 +58,11 @@ const add_order = async (req, res) => {
           user.orders.push(result._id);
           user.save();
           res.json(
-            jsonResponse(201, { message: "سفارش جدید با موفقیت افزوده شد!" })
+            jsonResponse(201, {
+              message: "سفارش جدید با موفقیت افزوده شد!",
+              trackingCode: result.trackingCode,
+              totalPrice: result.totalPrice,
+            })
           );
         }
       });
@@ -189,7 +193,11 @@ const removeProductsFromCart = async (id) => {
 // check order status to be a particular value
 const checkOrderStatus = async (status, res) => {
   let isCorrect = true;
-  if (status !== "پرداخت نشده" && status !== "بسته بندی" && status !== "ارسال شده") {
+  if (
+    status !== "پرداخت نشده" &&
+    status !== "بسته بندی" &&
+    status !== "ارسال شده"
+  ) {
     isCorrect = false;
     res.json(jsonResponse(406, { message: "وضعیت سفارش معتبر نیست!" }));
   }
