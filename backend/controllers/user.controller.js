@@ -1,6 +1,7 @@
 const User = require("../models/user.model");
 const Address = require("../models/address.model");
 const Cart = require("../models/cart.model");
+const Order = require("../models/order.model");
 const jwt = require("jsonwebtoken");
 const { jsonResponse, checkDataExist } = require("../functions");
 
@@ -24,6 +25,7 @@ const user_index_phone_number = async (req, res) => {
   if (user) {
     user.addresses = await getAddresses(user.addresses);
     user.cart = await getCart(user.cart);
+    user.orders = await getOrders(user.orders);
     res.json(jsonResponse(200, { user }));
   } else {
     res.json(jsonResponse(404, { message: "کاربری با این شماره همراه وجود ندارد!" }));
@@ -74,6 +76,18 @@ const edit_personal_info = (req, res) => {
     });
 };
 
+// get addresses of a user
+const getAddresses = async (addresses) => {
+  const adressesList = [];
+  for (const address of addresses) {
+    const addressIndex = await Address.findOne({ _id: address });
+    if (addressIndex) {
+      adressesList.push(addressIndex);
+    }
+  }
+  return adressesList;
+};
+
 // get cart product of a user
 const getCart = async (cartList) => {
   const cart = [];
@@ -86,16 +100,16 @@ const getCart = async (cartList) => {
   return cart;
 };
 
-// get addresses of a user
-const getAddresses = async (addresses) => {
-  const adressesList = [];
-  for (const address of addresses) {
-    const addressIndex = await Address.findOne({ _id: address });
-    if (addressIndex) {
-      adressesList.push(addressIndex);
+// get orders of a user
+const getOrders = async (orders) => {
+  const ordersList = [];
+  for (const order of orders) {
+    const orderIndex = await Order.findOne({ _id: order });
+    if (orderIndex) {
+      ordersList.push(orderIndex);
     }
   }
-  return adressesList;
+  return ordersList;
 };
 
 const checkBirthday = (birthday, res) => {
