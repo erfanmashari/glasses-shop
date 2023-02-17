@@ -79,7 +79,9 @@ const getCart = async (cartList) => {
   const cart = [];
   for (const product of cartList) {
     const cartIndex = await Cart.findOne({ _id: product });
-    cart.push(cartIndex);
+    if (cartIndex) {
+      cart.push(cartIndex);
+    }
   }
   return cart;
 };
@@ -89,7 +91,9 @@ const getAddresses = async (addresses) => {
   const adressesList = [];
   for (const address of addresses) {
     const addressIndex = await Address.findOne({ _id: address });
-    adressesList.push(addressIndex);
+    if (addressIndex) {
+      adressesList.push(addressIndex);
+    }
   }
   return adressesList;
 };

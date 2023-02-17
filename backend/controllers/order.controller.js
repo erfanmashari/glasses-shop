@@ -46,10 +46,26 @@ const add_order = async (req, res) => {
     return null;
   }
 
-  // create new order
-  await Order.create(body);
+  await clearUserCart();
 
-  res.json(jsonResponse(201, { message: "سفارش جدید با موفقیت افزوده شد!" }));
+  // create new order
+  await Order.create(body)
+    .then((result) => {
+      User.findOne({ _id: body.userId }, (err, user) => {
+        if (user) {
+          // The below two lines will add the newly saved order's
+          // ObjectID to the the User's orders array field
+          user.orders.push(result._id);
+          user.save();
+          res.json(
+            jsonResponse(201, { message: "سفارش جدید با موفقیت افزوده شد!" })
+          );
+        }
+      });
+    })
+    .catch((error) => {
+      res.status(500).json({ error });
+    });
 };
 
 // create a 12 digits tracking code
@@ -132,6 +148,7 @@ const checkProducts = async (body, products, res) => {
         discountedPrice: product.discountedPrice,
         discountTime: product.discountTime,
       });
+
       const dateOfDiscountTime = product.discountTime
         ? new Date(product.discountTime)
         : dateOfNow;
@@ -146,8 +163,8 @@ const checkProducts = async (body, products, res) => {
       } else {
         productsTotalPrice += product.price;
       }
-      // remove product from cart
-      await Cart.findOneAndDelete({ _id: productId }).exec();
+
+      await removeProductsFromCart(productId);
     }
   }
 
@@ -163,10 +180,16 @@ const checkProducts = async (body, products, res) => {
   return isCorrect;
 };
 
+// remove products from cart
+const removeProductsFromCart = async (id) => {
+  // remove product from cart model in databse
+  await Cart.findOneAndDelete({ _id: id });
+};
+
 // check order status to be a particular value
 const checkOrderStatus = async (status, res) => {
   let isCorrect = true;
-  if (status !== "unpaid" && status !== "packing" && status !== "posted") {
+  if (status !== "پرداخت نشده" && status !== "بسته بندی" && status !== "ارسال شده") {
     isCorrect = false;
     res.json(jsonResponse(406, { message: "وضعیت سفارش معتبر نیست!" }));
   }
@@ -177,7 +200,7 @@ const checkOrderStatus = async (status, res) => {
 // check payment method to be a particular value
 const checkPaymentMethod = async (paymentMethod, res) => {
   let isCorrect = true;
-  if (paymentMethod !== "zarinpal") {
+  if (paymentMethod !== "زرین پال") {
     isCorrect = false;
     res.json(jsonResponse(406, { message: "شیوه پرداخت معتبر نیست!" }));
   }
@@ -188,12 +211,17 @@ const checkPaymentMethod = async (paymentMethod, res) => {
 // check sending method to be a particular value
 const checkSendingMethod = async (sendingMethod, res) => {
   let isCorrect = true;
-  if (sendingMethod !== "express mail") {
+  if (sendingMethod !== "پست پیشتاز") {
     isCorrect = false;
     res.json(jsonResponse(406, { message: "شیوه ارسال معتبر نیست!" }));
   }
 
   return isCorrect;
+};
+
+// clear cart property of user
+const clearUserCart = async (id) => {
+  await User.findOneAndUpdate({ _id: id }).exec();
 };
 
 module.exports = { add_order };

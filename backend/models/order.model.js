@@ -7,9 +7,9 @@ const orderSchema = new Schema(
     address: { type: Schema.Types.ObjectId, required: true },
     totalPrice: { type: Number, required: true },
     trackingCode: { type: Number, required: true, unique: true },
-    status: { type: String, required: true }, // unpaid - packing - posted
-    paymentMethod: { type: String, required: true }, // zarinpal
-    sendingMethod: { type: String, required: true }, // express mail
+    status: { type: String, required: true }, // پرداخت نشده - بسته بندی - ارسال شده
+    paymentMethod: { type: String, required: true }, // زرین پال
+    sendingMethod: { type: String, required: true }, // پست پیشتاز
     products: { type: [Object], required: true },
   },
   { timestamps: true, collection: "orders" }
