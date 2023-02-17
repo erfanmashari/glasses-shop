@@ -2,6 +2,7 @@ const User = require("../models/user.model");
 const Address = require("../models/address.model");
 const Cart = require("../models/cart.model");
 const Order = require("../models/order.model");
+const Product = require("../models/product.model");
 const jwt = require("jsonwebtoken");
 const { jsonResponse, checkDataExist } = require("../functions");
 
@@ -26,6 +27,7 @@ const user_index_phone_number = async (req, res) => {
     user.addresses = await getAddresses(user.addresses);
     user.cart = await getCart(user.cart);
     user.orders = await getOrders(user.orders);
+    user.favorites = await getFavorites(user.favorites);
     res.json(jsonResponse(200, { user }));
   } else {
     res.json(jsonResponse(404, { message: "کاربری با این شماره همراه وجود ندارد!" }));
@@ -110,6 +112,18 @@ const getOrders = async (orders) => {
     }
   }
   return ordersList;
+};
+
+// get favorites products of a user
+const getFavorites = async (favorites) => {
+  const favoritesList = [];
+  for (const product of favorites) {
+    const productIndex = await Product.findOne({ _id: product });
+    if (productIndex) {
+      favoritesList.push(productIndex);
+    }
+  }
+  return favoritesList;
 };
 
 const checkBirthday = (birthday, res) => {
