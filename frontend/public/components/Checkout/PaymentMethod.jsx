@@ -1,6 +1,11 @@
 import Image from "next/image";
 
+import { useDispatch } from "react-redux";
+import { changeOrderInfo } from "../../redux/actions/checkout";
+
 const PaymentMethod = () => {
+  const dispatch = useDispatch();
+
   return (
     <div
       className="w-full flex flex-col justify-start items-start rounded-md gap-6 p-4"
@@ -14,7 +19,18 @@ const PaymentMethod = () => {
           alt={"zarinpal"}
           src="/images/zarinpal.png"
         />
-        <input type="radio" name="payment-method" />
+        <input
+          type="radio"
+          name="payment-method"
+          onChange={(e) =>
+            dispatch(
+              changeOrderInfo(
+                "paymentMethod",
+                e.target.checked ? "zarinpal" : undefined
+              )
+            )
+          }
+        />
       </div>
     </div>
   );
