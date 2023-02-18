@@ -7,7 +7,7 @@ import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { resetLoginInfo, changeLoginStatus } from "../../redux/actions/login";
 
-import axiosApp from "../../utils/axiosConfig";
+import axiosApp from "../../utils/axiosApp";
 import { checkFetchResponse } from "../../functions";
 
 import { toastAlert } from "../../functions";

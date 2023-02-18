@@ -52,7 +52,7 @@ export function toastAlert(text, type) {
 }
 
 // get user informations from backend
-export const getUserInfo = (dispatch, homePageLink) => {
+export function getUserInfo(dispatch, homePageLink) {
   const phoneNumber = getPhoneNumberFromCookie();
   if (phoneNumber) {
     axiosApp.get(`users/${phoneNumber}`).then((response) => {
@@ -74,4 +74,4 @@ export const getUserInfo = (dispatch, homePageLink) => {
       }
     });
   }
-};
+}

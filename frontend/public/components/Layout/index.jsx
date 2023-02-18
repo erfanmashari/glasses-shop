@@ -16,6 +16,7 @@ import { decodeJwt } from "jose";
 import {
   getTokenFromCookie,
   getPhoneNumberFromCookie,
+  getUserInfo,
 } from "../../functions";
 
 import { ToastContainer } from "react-toastify";
@@ -48,6 +49,8 @@ const Layout = ({ children }) => {
         location.reload();
       }
     }
+  
+    getUserInfo(dispatch);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

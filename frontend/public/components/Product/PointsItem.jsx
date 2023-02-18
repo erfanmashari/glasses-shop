@@ -13,7 +13,7 @@ const PointsItem = ({ parameter, title }) => {
         </span>
         <p>{title}</p>
       </div>
-      <button>
+      <button type="button">
         <DeleteOutlineOutlinedIcon className="text-red-600" />
       </button>
     </li>

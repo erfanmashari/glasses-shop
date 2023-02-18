@@ -4,9 +4,7 @@ import SearchBox from "./SearchBox";
 
 import Link from "next/link";
 
-import { useEffect } from "react";
-
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 
 import { getUserInfo } from "../../../functions";
 
@@ -14,15 +12,8 @@ import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 
 const Nav = () => {
-  const dispatch = useDispatch();
-
   // get user login status from redux/reducer/login/isLoggedIn.js
   const isLoggedIn = useSelector((state) => state.isLoggedIn);
-
-  useEffect(() => {
-    getUserInfo(dispatch, document.querySelector("#to-home-page-p"));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <>
