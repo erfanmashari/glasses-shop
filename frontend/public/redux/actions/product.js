@@ -22,3 +22,12 @@ export const changeSelectedProductProperties = (parameter, value) => {
         type: "CHANGE_SELECTED_PRODUCT_PROPERTIES"
     }
 }
+
+// action for changing new comment informations
+export const changeNewCommentInfo = (parameter, value) => {
+    return {
+        parameter,
+        value,
+        type: "CHANGE_NEW_COMMENT_INFO"
+    }
+}
