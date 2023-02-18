@@ -1,6 +1,7 @@
 const Product = require("../models/product.model");
 const Brand = require("../models/brand.model");
 const Seller = require("../models/seller.model");
+const Comment = require("../models/comment.model");
 const path = require("path");
 const fs = require("fs");
 const {
@@ -22,15 +23,20 @@ const product_index = (req, res) => {
 };
 
 // get one product by nameFa
-const product_single = (req, res) => {
-  Product.findOne({ nameFa: req.params.name })
-    .sort({ createdAt: -1 })
-    .then((product) => {
-      res.json(jsonResponse(200, { product }));
+const product_single = async (req, res) => {
+  const product = await Product.findOne({ nameFa: req.params.name })
+    .sort({
+      createdAt: -1,
     })
-    .catch((err) => {
-      console.log(err);
-    });
+    .exec();
+  if (product) {
+    const comments = await getComments(product.comments);
+    res.json(
+      jsonResponse(200, { product: { ...{ ...product }._doc, comments } })
+    );
+  } else {
+    res.json(jsonResponse(404, { message: "محصولی با این نام وجود ندارد!" }));
+  }
 };
 
 // get products which dont have discount by category name
@@ -84,6 +90,18 @@ const product_discount = (req, res) => {
     .catch((err) => {
       console.log(err);
     });
+};
+
+// get comments of a user
+const getComments = async (comments) => {
+  const commentsList = [];
+  for (const comment of comments) {
+    const commentIndex = await Comment.findOne({ _id: comment });
+    if (commentIndex) {
+      commentsList.push(commentIndex);
+    }
+  }
+  return commentsList;
 };
 
 // add product codes is bottom until the end of file
