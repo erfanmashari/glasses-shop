@@ -2,6 +2,7 @@ const Product = require("../models/product.model");
 const Brand = require("../models/brand.model");
 const Seller = require("../models/seller.model");
 const Comment = require("../models/comment.model");
+const User = require("../models/user.model");
 const fs = require("fs");
 const {
   jsonResponse,
@@ -97,7 +98,14 @@ const getComments = async (comments) => {
   for (const comment of comments) {
     const commentIndex = await Comment.findOne({ _id: comment });
     if (commentIndex) {
-      commentsList.push(commentIndex);
+      // get user that created the comment
+      const userIndex = await User.findOne({ _id: commentIndex.userId });
+      commentIndex.userId = userIndex;
+      const newComment = { ...commentIndex }._doc;
+      newComment.userId = undefined;
+      newComment.user = { ...userIndex }._doc;
+
+      commentsList.push(newComment);
     }
   }
   return commentsList;
