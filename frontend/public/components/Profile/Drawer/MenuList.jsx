@@ -30,12 +30,13 @@ const MenuList = () => {
         icon={<TbAddressBook className="w-6 h-6 relative left-1" />}
         title={"آدرس ها"}
         href={"addresses"}
-      />
+        />
       <MenuItem
         icon={
           <IoMdNotificationsOutline className="w-6 h-6 relative left-1.5" />
         }
         title={"پیغام ها"}
+        href={"notifications"}
       />
       <MenuItem
         icon={<RiLockPasswordLine className="w-6 h-6 relative left-1.5" />}
