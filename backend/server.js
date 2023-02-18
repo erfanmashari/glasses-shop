@@ -16,6 +16,7 @@ const addressRoutes = require("./routes/address.routes");
 const cartRoutes = require("./routes/cart.routes");
 const orderRoutes = require("./routes/order.routes");
 const favoriteRoutes = require("./routes/favorite.routes");
+const commentRouter = require("./routes/comment.routes");
 
 // express app
 const app = express();
@@ -84,3 +85,4 @@ app.use("/addresses", addressRoutes);
 app.use("/cart", cartRoutes);
 app.use("/orders", orderRoutes);
 app.use("/favorites", favoriteRoutes);
+app.use("/comments", commentRouter);
