@@ -4,6 +4,7 @@ const Cart = require("../models/cart.model");
 const Order = require("../models/order.model");
 const Product = require("../models/product.model");
 const Comment = require("../models/comment.model");
+const Notification = require("../models/notification.model");
 const jwt = require("jsonwebtoken");
 const { jsonResponse, checkDataExist } = require("../functions");
 
@@ -30,6 +31,7 @@ const user_index_phone_number = async (req, res) => {
     user.orders = await getOrders(user.orders);
     user.favorites = await getFavorites(user.favorites);
     user.comments = await getComments(user.comments);
+    user.notifications = await getNotifications(user.notifications);
     res.json(jsonResponse(200, { user }));
   } else {
     res.json(jsonResponse(404, { message: "کاربری با این شماره همراه وجود ندارد!" }));
@@ -138,6 +140,18 @@ const getComments = async (comments) => {
     }
   }
   return commentsList;
+};
+
+// get notifications of a user
+const getNotifications = async (notifications) => {
+  const notificationsList = [];
+  for (const notification of notifications) {
+    const notificationIndex = await Notification.findOne({ _id: notification });
+    if (notificationIndex) {
+      notificationsList.push(notificationIndex);
+    }
+  }
+  return notificationsList;
 };
 
 const checkBirthday = (birthday, res) => {
