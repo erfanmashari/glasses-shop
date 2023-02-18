@@ -3,17 +3,17 @@ const Schema = mongoose.Schema;
 
 const productSchema = new Schema(
   {
+    brand: { type: Schema.Types.ObjectId, required: true },
+    sellers: { type: [Schema.Types.ObjectId], required: true }, // -----
     isAvailable: { type: Boolean, required: true },
     nameFa: {  type: String, required: true, maxLength: 200, unique: true },
     nameEn: { type: String, required: true, maxLength: 200, unique: true },
     category: { type: String, required: true },
     price: { type: Number, required: true },
     numberOfProducts: { type: Number, required: true },
-    brand: { type: Object, required: true },
     genders: { type: [String], required: true },
     sizes: { type: [String], required: true },
     images: { type: [Object], required: true }, // -----
-    sellers: { type: [Object], required: true }, // -----
     frameColors: { type: [Object], required: true }, // { nameFa, nameEn, color, isAvailable }
     isOriginal: { type: Boolean, default: false },
     isSpecialSale: { type: Boolean, default: false },
@@ -38,7 +38,7 @@ const productSchema = new Schema(
     frameShapes: { type: [String], default: [] },
     faceShapes: { type: [String], default: [] },
     lensFeatures: { type: [String], default: [] },
-    comments: { type: [Object], default: [] },
+    comments: { type: [Schema.Types.ObjectId], default: [] },
   },
   { timestamps: true, collection: "products" }
 );
