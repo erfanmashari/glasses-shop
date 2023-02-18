@@ -28,6 +28,7 @@ const user_index_phone_number = async (req, res) => {
     user.cart = await getCart(user.cart);
     user.orders = await getOrders(user.orders);
     user.favorites = await getFavorites(user.favorites);
+    user.comments = await getComments(user.comments);
     res.json(jsonResponse(200, { user }));
   } else {
     res.json(jsonResponse(404, { message: "کاربری با این شماره همراه وجود ندارد!" }));
@@ -124,6 +125,18 @@ const getFavorites = async (favorites) => {
     }
   }
   return favoritesList;
+};
+
+// get comments of a user
+const getComments = async (comments) => {
+  const commentsList = [];
+  for (const comment of comments) {
+    const commentIndex = await Comment.findOne({ _id: comment });
+    if (commentIndex) {
+      commentsList.push(commentIndex);
+    }
+  }
+  return commentsList;
 };
 
 const checkBirthday = (birthday, res) => {

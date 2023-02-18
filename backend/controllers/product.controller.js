@@ -92,7 +92,7 @@ const product_discount = (req, res) => {
     });
 };
 
-// get comments of a user
+// get comments of a product
 const getComments = async (comments) => {
   const commentsList = [];
   for (const comment of comments) {
