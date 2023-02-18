@@ -9,6 +9,7 @@ const commentSchema = new Schema(
     description: { type: String, required: true },
     status: { type: String, required: true }, // در حال بررسی - تایید شده- رد شده
     stars: { type: Number, required: true }, // 1 - 2 - 3 - 4 - 5
+    unknown: { type: Boolean, default: false },
     positivePoints: { type: [String] },
     negativePoints: { type: [String] },
   },
