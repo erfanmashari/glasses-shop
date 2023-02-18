@@ -24,6 +24,7 @@ const MenuList = () => {
       <MenuItem
         icon={<FaRegComment className="w-5 h-5 relative left-1.5" />}
         title={"دیدگاه ها"}
+        href={"comments"}
       />
       <MenuItem
         icon={<TbAddressBook className="w-6 h-6 relative left-1" />}
