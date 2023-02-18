@@ -1,4 +1,6 @@
 import ProductSpecification from "./ProductSpecification";
+import AddCommentForm from "./AddCommentForm";
+import CommentsList from "./CommentsList";
 
 import { useSelector } from "react-redux";
 
@@ -69,9 +71,24 @@ const ProductInfo = () => {
         />
         <ProductSpecification label={"مدل"} value={productInfo.model} />
       </ul>
-      <h4 className="w-fit text-black text-xl font-bold border-b-2 border-black pb-1">
-        نظرات
-      </h4>
+      <div className="w-full flex flex-row justify-between items-center">
+        <h4 className="w-fit text-black text-xl font-bold border-b-2 border-black pb-1">
+          نظرات
+        </h4>
+        <button
+          // onClick={addOrder}
+          className="w-max h-fit flex flex-row justify-center items-center text-md font-bold rounded-lg gap-1 px-3 py-1.5 mt-4"
+          style={{
+            background: "inherit",
+            color: "#06291D",
+            border: "2px solid #06291D",
+          }}
+        >
+          ثبت نظر
+        </button>
+      </div>
+      <AddCommentForm />
+      <CommentsList />
     </div>
   );
 };
