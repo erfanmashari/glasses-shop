@@ -76,16 +76,19 @@ const Checkout = () => {
     };
     fetch("https://sandbox.zarinpal.com/pg/v4/payment/request.json", {
       method: "POST",
-      // mode: "no-cors",
+      // url: "https://sandbox.zarinpal.com/pg/v4/payment/request.json",
       headers: new Headers({
         "Access-Control-Allow-Origin": "*",
-        // "Content-Type": "application/json",
-        // accept: "application/json",
+        "Access-Control-Allow-Methods": "DELETE, POST, GET, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
+        "Content-Type": "application/json",
+        accept: "application/json",
       }),
       body: JSON.stringify(fetchBody),
     })
       .then((response) => {
         if (response.ok) {
+          console.log("response: ", response)
           return response.json();
         }
       })
