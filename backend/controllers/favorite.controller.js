@@ -23,7 +23,7 @@ const add_favorite_product = async (req, res) => {
       user.save();
       res.json(
         jsonResponse(200, {
-          message: "محضول مورد علاقه جدید با موفقیت افزوده شد!",
+          message: "محصول مورد علاقه جدید با موفقیت افزوده شد!",
         })
       );
     }
