@@ -2,7 +2,6 @@ const Product = require("../models/product.model");
 const Brand = require("../models/brand.model");
 const Seller = require("../models/seller.model");
 const Comment = require("../models/comment.model");
-const path = require("path");
 const fs = require("fs");
 const {
   jsonResponse,
