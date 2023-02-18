@@ -10,7 +10,9 @@ import { checkFetchResponse, getUserInfo } from "../../functions";
 
 import { toastAlert } from "../../functions";
 
-const AddCommentForm = () => {
+import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
+
+const AddCommentForm = ({ addCommentDisplay, setAddCommentDisplay }) => {
   const dispatch = useDispatch();
 
   // get personal info from redux/reducer/profile/personalInfo.js
@@ -60,9 +62,14 @@ const AddCommentForm = () => {
         onSubmit={addComment}
         className="w-4/12 max-h-4/6 flex flex-col justify-center items-center bg-white rounded-lg ovrflow-y-scroll gap-4 p-6"
       >
-        <h3 className="w-full text-lg font-bold text-stone-900 border-b-2 border-stone-200 pb-2">
-          ثبت نظر جدید
-        </h3>
+        <div className="w-full flex flex-row justify-between ietms-center border-b-2 border-stone-200 pb-2">
+          <h3 className="w-full text-lg font-bold text-stone-900">
+            ثبت نظر جدید
+          </h3>
+          <button onClick={() => setAddCommentDisplay(false)} type="button">
+            <CloseOutlinedIcon />
+          </button>
+        </div>
         <div className="w-full flex flex-col justify-center items-center gap-2">
           <label className="text-md font-bold text-stone-600">
             تعداد ستاره برای این محصول

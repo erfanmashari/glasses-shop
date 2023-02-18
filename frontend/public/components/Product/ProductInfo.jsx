@@ -2,9 +2,14 @@ import ProductSpecification from "./ProductSpecification";
 import AddCommentForm from "./AddCommentForm";
 import CommentsList from "./CommentsList";
 
+import { useState } from "react";
+
 import { useSelector } from "react-redux";
 
 const ProductInfo = () => {
+  // dispay add comment form status
+  const [addCommentDisplay, setAddCommentDisplay] = useState(false);
+
   const productInfo = useSelector((state) => state.productInfo);
 
   return (
@@ -76,7 +81,7 @@ const ProductInfo = () => {
           نظرات
         </h4>
         <button
-          // onClick={addOrder}
+          onClick={() => setAddCommentDisplay(true)}
           className="w-max h-fit flex flex-row justify-center items-center text-md font-bold rounded-lg gap-1 px-3 py-1.5 mt-4"
           style={{
             background: "inherit",
@@ -87,7 +92,12 @@ const ProductInfo = () => {
           ثبت نظر
         </button>
       </div>
-      <AddCommentForm />
+      {addCommentDisplay && (
+        <AddCommentForm
+          addCommentDisplay={addCommentDisplay}
+          setAddCommentDisplay={setAddCommentDisplay}
+        />
+      )}
       <CommentsList />
     </div>
   );
