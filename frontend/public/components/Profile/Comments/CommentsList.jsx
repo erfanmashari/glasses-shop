@@ -1,28 +1,28 @@
-import FavoritesItem from "./FavoritesItem";
+import FavoritesItem from "./CommentsItem";
 
 import { useSelector } from "react-redux";
 
-const FavoritesList = () => {
+const CommentsList = () => {
   // get personal info from reduc/reducer/profile/personalInfo.js
   const personalInfo = useSelector((state) => state.personalInfo);
-  const favorites = personalInfo.favorites ? personalInfo.favorites : [];
+  const comments = personalInfo.comments ? personalInfo.comments : [];
 
   return (
     <div className="w-9/12 flex flex-col justify-center items-center border-2 border-gray-200 rounded-lg gap-4 p-6">
-      <h3 className="w-full text-xl font-bold text-stone-800">موردعلاقه ها</h3>
+      <h3 className="w-full text-xl font-bold text-stone-800">نظرات</h3>
       <table className="w-full">
         <thead>
           <tr className="w-full text-stone-800 border-b-2 border-gray-200">
             <th className="w-1/12 py-4">ردیف</th>
-            <th className="w-5/12 py-4">نام محصول</th>
-            <th className="w-3/12 py-4">گروه محصول</th>
-            <th className="w-2/12 py-4">قیمت</th>
+            <th className="w-5/12 py-4">عنوان نظر</th>
+            <th className="w-3/12 py-4">تاریخ ثبت</th>
+            <th className="w-2/12 py-4">وضعیت</th>
             <th className="w-1/12 py-4">اطلاعات</th>
           </tr>
         </thead>
         <tbody>
-          {favorites.map((product, index) => (
-            <FavoritesItem key={index} product={product} index={index} />
+          {comments.map((comment, index) => (
+            <FavoritesItem key={index} comment={comment} index={index} />
           ))}
         </tbody>
       </table>
@@ -30,4 +30,4 @@ const FavoritesList = () => {
   );
 };
 
-export default FavoritesList;
+export default CommentsList;
