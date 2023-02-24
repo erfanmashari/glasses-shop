@@ -68,8 +68,6 @@ const add_order = async (req, res) => {
           res.json(
             jsonResponse(201, {
               message: "سفارش جدید با موفقیت افزوده شد!",
-              trackingCode: result.trackingCode,
-              totalPrice: result.totalPrice,
             })
           );
         }

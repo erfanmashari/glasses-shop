@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const orderSchema = new Schema(
+const transactionSchema = new Schema(
   {
     user: { type: Schema.Types.ObjectId, required: true },
     order: { type: Schema.Types.ObjectId, required: true, unique: true },
@@ -12,9 +12,9 @@ const orderSchema = new Schema(
     trackingCode: { type: Number, required: true, unique: true },
     expireDate: { type: String, required: true },
   },
-  { timestamps: true, collection: "orders" }
+  { timestamps: true, collection: "transactions" }
 );
 
-const Order = mongoose.model("Order", orderSchema);
+const Transaction = mongoose.model("Transaction", transactionSchema);
 
-module.exports = Order;
+module.exports = Transaction;
