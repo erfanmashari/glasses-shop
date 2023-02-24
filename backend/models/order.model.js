@@ -10,8 +10,9 @@ const orderSchema = new Schema(
     status: { type: String, required: true }, // جاری - بسته بندی - ارسال شده - مرجوع شده - لغو شده
     paymentMethod: { type: String, required: true }, // زرین پال
     sendingMethod: { type: String, required: true }, // پست پیشتاز
-    transaction: { type: Schema.Types.ObjectId },
     products: { type: [Object], required: true },
+    transaction: { type: Schema.Types.ObjectId },
+    postalTrackingCode: { type: Number, unique: true },
   },
   { timestamps: true, collection: "orders" }
 );

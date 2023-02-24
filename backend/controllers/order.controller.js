@@ -6,13 +6,10 @@ const { jsonResponse, checkDataExist } = require("../functions");
 
 // get single order by id
 const order_single = async (req, res) => {
-  Order.findById(req.params.id)
-    .then((order) => {
-      res.json(jsonResponse(200, { order }));
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  const orderIndex = await Order.findById(req.params.id);
+  const order = { ...orderIndex }._doc;
+  order.address = await getAddress(order.address);
+  res.json(jsonResponse(200, { order }));
 };
 
 const add_order = async (req, res) => {
@@ -81,6 +78,13 @@ const add_order = async (req, res) => {
     .catch((error) => {
       res.status(500).json({ error });
     });
+};
+
+// get order address
+const getAddress = async (addressId, res) => {
+  const address = await Address.findOne({ _id: addressId });
+
+  return address;
 };
 
 // create a 12 digits tracking code
