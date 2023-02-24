@@ -12,6 +12,7 @@ import addressForm from "./profile/addressForm";
 import addressList from "./profile/addressList";
 import orderInfo from "./checkout/orderInfo";
 import newCommentInfo from "./product/newCommentInfo";
+import selectedOrder from "./profile/selectedOrder";
 
 const allReducers = combineReducers({
     isLoggedIn,
@@ -27,6 +28,7 @@ const allReducers = combineReducers({
     addressList,
     orderInfo,
     newCommentInfo,
+    selectedOrder,
 })
 
 export default allReducers;

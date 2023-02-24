@@ -45,3 +45,11 @@ export const resetAddressesFormFields = () => {
         type: "RESET_ADDRESSES_FORM_FIELDS"
     }
 }
+
+// action for setting selected order info
+export const setSelectedOrderInfo = (order) => {
+    return {
+        order,
+        type: "SET_SELECTED_ORDER_INFO"
+    }
+}
