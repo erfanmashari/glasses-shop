@@ -2,17 +2,20 @@ import DeliveryAddressList from "./DeliveryAddressList";
 import PaymentMethod from "./PaymentMethod";
 import SendingMethod from "./SendingMethod";
 
-import Link from "next/link";
+import { useRouter } from "next/router";
 
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { changeTransactionInfo } from "../../redux/actions/payment";
 
-import axios from "axios";
 import axiosApp from "../../utils/axiosApp";
 import { checkFetchResponse } from "../../functions";
 
 import { toastAlert } from "../../functions";
 
 const Checkout = () => {
+  const router = useRouter();
+  const dispatch = useDispatch();
+
   // get order info from redux/reducer/checkout/orderInfo.js
   const orderInfo = useSelector((state) => state.orderInfo);
 
@@ -58,47 +61,20 @@ const Checkout = () => {
 
       if (res.ok) {
         toastAlert(res.data.message, "success");
-        // zarinpalPostRequest();
+        setTransactionFields(res.data.order, res.data.amount);
       } else {
         toastAlert(res.message, "error");
       }
     });
   };
 
-  // end a request to zarinpal for the payment gateway
-  const zarinpalPostRequest = (amount, trackingCode) => {
-    const fetchBody = {
-      merchant_id: "45sw86r3-s777-231s-68ss-ery458964oop",
-      amount: 10000,
-      callback_url: "http://localhost:3000",
-      description: `پرداخت سفارش با کد پیگیری 000000000`,
-      metadata: { mobile: personalInfo.phoneNumber, email: personalInfo.email },
-    };
-    fetch("https://sandbox.zarinpal.com/pg/v4/payment/request.json", {
-      method: "POST",
-      // url: "https://sandbox.zarinpal.com/pg/v4/payment/request.json",
-      headers: new Headers({
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "DELETE, POST, GET, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
-        "Content-Type": "application/json",
-        accept: "application/json",
-      }),
-      body: JSON.stringify(fetchBody),
-    })
-      .then((response) => {
-        if (response.ok) {
-          console.log("response: ", response)
-          return response.json();
-        }
-      })
-      .then((res) => {
-        console.log("res: ", res);
-        // const data = res.data;
-        // if (data.code && data.authority) {
-        //   location.href = `https://sandbox.zarinpal.com/pg/StartPay/${data.authority}`;
-        // }
-      });
+  // set some of transaction fields in redux
+  const setTransactionFields = (order, amount) => {
+    dispatch(changeTransactionInfo("order", order));
+    dispatch(changeTransactionInfo("amount", amount));
+
+    // move user to payment page
+    router.push("/payment");
   };
 
   return (
@@ -131,7 +107,6 @@ const Checkout = () => {
         >
           ثبت سفارش و پرداخت
         </button>
-        <Link className="hidden" href={"/checkout"}></Link>
       </div>
     </main>
   );
