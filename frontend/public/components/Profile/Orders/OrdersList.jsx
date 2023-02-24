@@ -2,7 +2,7 @@ import OrdersItem from "./OrdersItem";
 
 import { useSelector } from "react-redux";
 
-const OrdersList = () => {
+const OrdersList = ({ setOrderDetailsDisplay }) => {
   // get personal info from reduc/reducer/profile/personalInfo.js
   const personalInfo = useSelector((state) => state.personalInfo);
   const orders = personalInfo.orders ? personalInfo.orders : [];
@@ -22,7 +22,13 @@ const OrdersList = () => {
           </tr>
         </thead>
         <tbody>
-          {orders.map((order, index) => <OrdersItem key={index} order={order} />)}
+          {orders.map((order, index) => (
+            <OrdersItem
+              key={index}
+              order={order}
+              setOrderDetailsDisplay={setOrderDetailsDisplay}
+            />
+          ))}
         </tbody>
       </table>
     </div>

@@ -2,7 +2,7 @@ import Image from "next/image";
 
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
-const CartItem = ({ isLast, product }) => {
+const ProductItem = ({ isLast, product }) => {
   let imageSource = `${process.env.NEXT_PUBLIC_SERVER}products/${product.image.fileName}.jpg`;
 
   const dateOfNow = new Date();
@@ -14,14 +14,14 @@ const CartItem = ({ isLast, product }) => {
     <li
       className="w-full flex flex-row justify-between items-center gap-4 p-2"
       style={{
-        height: "160px",
+        height: "120px",
         borderBottom: isLast ? "" : "2px solid #dbdddc",
       }}
     >
       <div className="flex flex-row gap-3">
-        <div className="relative" style={{ width: "160px", height: "120px" }}>
+        <div className="relative" style={{ width: "140px", height: "100px" }}>
           <Image
-            fill
+            fill={true}
             src={imageSource}
             alt="product-image"
             style={{ border: "2px solid #c3c4c3" }}
@@ -30,12 +30,12 @@ const CartItem = ({ isLast, product }) => {
         </div>
         <div className="flex flex-col justify-between items-start">
           <div className="flex flex-row gap-2">
-          <h3 className="text-stone-900 font-bold text-xl">
-            {product.nameFa}
-          </h3>
-          <h3 className="text-stone-900 font-bold text-xl">
-            {product.number}x
-          </h3>
+            <h3 className="text-stone-900 font-bold text-lg">
+              {product.nameFa}
+            </h3>
+            <h3 className="text-stone-900 font-bold text-lg">
+              {product.number}x
+            </h3>
           </div>
           <div className="flex flex-row gap-2">
             <span>رنگ: {product.frameColor.nameFa}</span>
@@ -60,16 +60,8 @@ const CartItem = ({ isLast, product }) => {
           )}
         </div>
       </div>
-      <div className="h-full flex justify-center items-center ml-12">
-        <button
-          style={{ border: "2px solid #c3c4c3" }}
-          className="rounded-lg p-0.5"
-        >
-          <DeleteOutlineIcon className="w-7 h-7 text-slate-500" />
-        </button>
-      </div>
     </li>
   );
 };
 
-export default CartItem;
+export default ProductItem;

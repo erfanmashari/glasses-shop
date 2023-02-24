@@ -34,7 +34,7 @@ const Cart = () => {
       style={{ borderBottom: "2px dashed #202020" }}
     >
       <ul
-        className="w-9/12 flex flex-col justify-center items-center rounded-xl gap-2 px-4"
+        className="w-9/12 flex flex-col justify-center items-center rounded-xl px-4"
         style={{ border: "2px solid #dbdddc" }}
       >
         {cartList.map((product, index) => (
