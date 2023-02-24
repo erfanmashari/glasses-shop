@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const orderSchema = new Schema(
   {
-    userId: { type: Schema.Types.ObjectId, required: true },
+    user: { type: Schema.Types.ObjectId, required: true },
     address: { type: Schema.Types.ObjectId, required: true },
     totalPrice: { type: Number, required: true },
     trackingCode: { type: Number, required: true, unique: true },

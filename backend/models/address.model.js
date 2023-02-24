@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const addressSchema = new Schema(
   {
-    userId: { type: Schema.Types.ObjectId, required: true },
+    user: { type: Schema.Types.ObjectId, required: true },
     province: { type: String, maxLength: 30, required: true },
     city: { type: String, maxLength: 30, required: true },
     plaque: { type: String, maxLength: 10, required: true },

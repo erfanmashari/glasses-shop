@@ -3,8 +3,8 @@ const Schema = mongoose.Schema;
 
 const commentSchema = new Schema(
   {
-    userId: { type: Schema.Types.ObjectId, required: true },
-    productId: { type: Schema.Types.ObjectId, required: true },
+    user: { type: Schema.Types.ObjectId, required: true },
+    product: { type: Schema.Types.ObjectId, required: true },
     title: { type: String, maxLength: 80, required: true },
     description: { type: String, required: true },
     status: { type: String, required: true }, // در حال بررسی - تایید شده- رد شده

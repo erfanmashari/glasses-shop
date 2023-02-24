@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const notificationSchema = new Schema(
   {
-    userId: { type: Schema.Types.ObjectId, required: true },
+    user: { type: Schema.Types.ObjectId, required: true },
     title: { type: String, required: true },
     seen: { type: Boolean, default: false },
   },
