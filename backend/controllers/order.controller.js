@@ -4,6 +4,17 @@ const Address = require("../models/address.model");
 const Cart = require("../models/cart.model");
 const { jsonResponse, checkDataExist } = require("../functions");
 
+// get single order by id
+const order_single = async (req, res) => {
+  Order.findById(req.params.id)
+    .then((order) => {
+      res.json(jsonResponse(200, { order }));
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
 const add_order = async (req, res) => {
   const body = req.body;
 
@@ -198,7 +209,7 @@ const checkOrderStatus = async (status, res) => {
     status !== "بسته بندی" &&
     status !== "ارسال شده" &&
     status !== "مرجوع شده" &&
-    status !== "لغو شده" 
+    status !== "لغو شده"
   ) {
     isCorrect = false;
     res.json(jsonResponse(406, { message: "وضعیت سفارش معتبر نیست!" }));
@@ -234,4 +245,4 @@ const clearUserCart = async (id) => {
   await User.findOneAndUpdate({ _id: id }).exec();
 };
 
-module.exports = { add_order };
+module.exports = { order_single, add_order };
