@@ -1,24 +1,64 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
 
-import Countdown from "react-countdown";
+import { useSelector, useDispatch } from "react-redux";
+import { changeTransactionInfo } from "../../redux/actions/payment";
 
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import axiosApp from "../../utils/axiosApp";
+import { checkFetchResponse, toastAlert } from "../../functions";
+
+// import Countdown from "react-countdown";
 
 const PaymentForm = () => {
-  const date = new Date();
+  const router = useRouter();
+  const dispatch = useDispatch();
+
+  // get personal info from redux/reducer/profile/personalInfo.js
+  const personalInfo = useSelector((state) => state.personalInfo);
+
+  // get transaction info from redux/reducers/payment/transactionInfo.js
+  const transactionInfo = useSelector((state) => state.transactionInfo);
+
+  // get now date for counter
+  // const date = new Date();
+
+  // change input value in transaction info
+  const changeInputValue = (parameter, value) => {
+    dispatch(changeTransactionInfo(parameter, value));
+  };
+
+  // submit transaction and send info to backend
+  const submitTransaction = (e) => {
+    e.preventDefault();
+
+    const fetchBody = { ...transactionInfo };
+    fetchBody.user = personalInfo._id;
+    axiosApp.post("transactions", fetchBody).then((response) => {
+      const res = checkFetchResponse(response);
+      if (res.ok) {
+        toastAlert(res.data.message, "success");
+        router.push("/");
+      } else {
+        toastAlert(res.message, "error");
+      }
+    });
+  };
 
   return (
-    <form className="w-7/12 flex flex-col gap-4 p-10">
+    <form
+      onSubmit={submitTransaction}
+      className="w-7/12 flex flex-col gap-4 p-10"
+    >
       <div className="w-full flex flex-row justify-between items-center">
-        <h3 className="flex flex-row items-center text-lg font-semibold gap-2" style={{ color: "#464749" }}>
-          <Link href={"/"}>
-            <ArrowForwardIcon />
-          </Link>
+        <h3
+          className="flex flex-row items-center text-lg font-semibold gap-2"
+          style={{ color: "#464749" }}
+        >
           اطلاعات کارت شما
         </h3>
-        <span className="font-semibold" style={{ color: "rgb(175, 175, 177)" }}>
+        {/* <span className="font-semibold" style={{ color: "rgb(175, 175, 177)" }}>
           <Countdown date={date.getTime() + 15 * 60 * 1000} autoStart={true} />
-        </span>
+        </span> */}
       </div>
       {/* inputs */}
       <div className="w-full flex flex-row justify-center items-center">
@@ -27,6 +67,8 @@ const PaymentForm = () => {
           dir="ltr"
           type="text"
           required={true}
+          value={transactionInfo["card"] ? transactionInfo["card"] : ""}
+          onChange={(e) => changeInputValue("card", e.target.value)}
           className="w-8/12 text-center rounded-lg py-1.5 px-3"
         />
       </div>
@@ -36,6 +78,8 @@ const PaymentForm = () => {
           dir="ltr"
           type="text"
           required={true}
+          value={transactionInfo["cvv2"] ? transactionInfo["cvv2"] : ""}
+          onChange={(e) => changeInputValue("cvv2", e.target.value)}
           className="w-8/12 text-center rounded-lg py-1.5 px-3"
         />
       </div>
@@ -46,6 +90,10 @@ const PaymentForm = () => {
           type="text"
           placeholder="ماه"
           required={true}
+          value={
+            transactionInfo["expireMonth"] ? transactionInfo["expireMonth"] : ""
+          }
+          onChange={(e) => changeInputValue("expireMonth", e.target.value)}
           className="w-3/12 text-center rounded-lg py-1.5 px-3"
         />
         <input
@@ -53,6 +101,10 @@ const PaymentForm = () => {
           type="text"
           placeholder="سال"
           required={true}
+          value={
+            transactionInfo["expireYear"] ? transactionInfo["expireYear"] : ""
+          }
+          onChange={(e) => changeInputValue("expireYear", e.target.value)}
           className="w-3/12 text-center rounded-lg py-1.5 px-3 mr-3"
         />
       </div>
@@ -62,6 +114,12 @@ const PaymentForm = () => {
           dir="ltr"
           type="text"
           required={true}
+          value={
+            transactionInfo["secondPassword"]
+              ? transactionInfo["secondPassword"]
+              : ""
+          }
+          onChange={(e) => changeInputValue("secondPassword", e.target.value)}
           className="w-8/12 text-center rounded-lg py-1.5 px-3"
         />
       </div>
@@ -76,8 +134,8 @@ const PaymentForm = () => {
         >
           پرداخت
         </button>
-        <button
-          type="button"
+        <Link
+          href={"/"}
           className="w-6/12 h-fit flex flex-row justify-center items-center text-md font-bold rounded-lg gap-1 px-3 py-1.5"
           style={{
             background: "inherit",
@@ -86,7 +144,7 @@ const PaymentForm = () => {
           }}
         >
           انصراف
-        </button>
+        </Link>
       </div>
     </form>
   );

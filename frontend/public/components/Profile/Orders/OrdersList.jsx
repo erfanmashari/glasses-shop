@@ -3,7 +3,7 @@ import OrdersItem from "./OrdersItem";
 import { useSelector } from "react-redux";
 
 const OrdersList = ({ setOrderDetailsDisplay }) => {
-  // get personal info from reduc/reducer/profile/personalInfo.js
+  // get personal info from redux/reducer/profile/personalInfo.js
   const personalInfo = useSelector((state) => state.personalInfo);
   const orders = personalInfo.orders ? personalInfo.orders : [];
 

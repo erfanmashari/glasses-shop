@@ -1,6 +1,11 @@
 import Image from "next/image";
 
+import { useSelector } from "react-redux";
+
 const PaymentDetails = () => {
+  // get transaction info from redux/reducers/payment/transactionInfo.js
+  const transactionInfo = useSelector((state) => state.transactionInfo);
+  
   return (
     <div className="w-5/12 flex flex-col px-5 py-10">
       <div
@@ -20,8 +25,8 @@ const PaymentDetails = () => {
           />
         </div>
         <div className="w-full flex flex-row justify-between items-center">
-          <p className="w-5/12">مبلغ تراکنش(ریال)</p>
-          <span className="text-stone-900 font-bold">50,000,000</span>
+          <p className="w-6/12">مبلغ تراکنش(تومان)</p>
+          <span className="text-stone-900 font-bold">{transactionInfo.amount}</span>
         </div>
       </div>
     </div>

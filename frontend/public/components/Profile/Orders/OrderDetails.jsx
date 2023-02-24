@@ -22,7 +22,7 @@ const OrderDetails = ({ setOrderDetailsDisplay }) => {
     dispatch(changeTransactionInfo("amount", selectedOrder.totalPrice));
 
     // move user to payment page
-    router.push("/payment")
+    router.push("/payment");
   };
 
   return (
@@ -41,10 +41,6 @@ const OrderDetails = ({ setOrderDetailsDisplay }) => {
         </div>
         <div className="w-full flex flex-row justify-center items-center gap-4">
           <OrderDetailsItem
-            label={"روش پرداخت"}
-            value={selectedOrder.paymentMethod}
-          />
-          <OrderDetailsItem
             label={"شیوه ارسال"}
             value={selectedOrder.sendingMethod}
           />
@@ -52,8 +48,20 @@ const OrderDetails = ({ setOrderDetailsDisplay }) => {
             label={"وضعیت سفارش"}
             value={selectedOrder.status}
           />
+          <OrderDetailsItem
+            label={"کد رهگیری پستی"}
+            value={
+              selectedOrder.postalTrackingCode
+                ? selectedOrder.postalTrackingCode
+                : "بعد از پرداخت قرار می گیرد"
+            }
+          />
         </div>
         <div className="w-full flex flex-row justify-center items-center gap-4">
+          <OrderDetailsItem
+            label={"روش پرداخت"}
+            value={selectedOrder.paymentMethod}
+          />
           <OrderDetailsItem
             label={"قیمت کل"}
             value={selectedOrder.totalPrice}
@@ -67,7 +75,7 @@ const OrderDetails = ({ setOrderDetailsDisplay }) => {
             }
           />
           <OrderDetailsItem
-            label={"کد رهگیری"}
+            label={"کد رهگیری سفارش"}
             value={selectedOrder.trackingCode}
           />
         </div>
@@ -77,14 +85,6 @@ const OrderDetails = ({ setOrderDetailsDisplay }) => {
             selectedOrder.address ? selectedOrder.address.postalAddress : ""
           }
         />
-        {selectedOrder.transaction ? (
-          <OrderDetailsItem
-            label={"تراکنش"}
-            value={selectedOrder.transaction}
-          />
-        ) : (
-          ""
-        )}
         {/* products list */}
         <p className="w-full text-md font-bold text-stone-600">محصولات</p>
         <ul
