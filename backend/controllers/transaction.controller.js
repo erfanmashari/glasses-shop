@@ -32,15 +32,6 @@ const add_transaction = async (req, res) => {
   body.expireMonth = Number(body.expireMonth);
   body.expireYear = Number(body.expireYear);
 
-  // craete and check tracking codd
-  let trackingCode = createTrackingCode();
-  let checkTrackingCodeStatus = await checkTrackingCode(trackingCode);
-  while (checkTrackingCodeStatus) {
-    trackingCode = createTrackingCode();
-    checkTrackingCodeStatus = await checkTrackingCode(trackingCode);
-  }
-  body.trackingCode = trackingCode;
-
   const checkUserStatus = await checkUser(body.user, res);
   const checkOrderStatus = await checkOrder(body, res);
   if (
@@ -55,22 +46,47 @@ const add_transaction = async (req, res) => {
     return null;
   }
 
+  // create and check tracking code for transaction model
+  let trackingCode = createTrackingCode();
+  let checkTrackingCodeStatus = await checkTrackingCode(trackingCode);
+  while (checkTrackingCodeStatus) {
+    trackingCode = createTrackingCode();
+    checkTrackingCodeStatus = await checkTrackingCode(trackingCode);
+  }
+  body.trackingCode = trackingCode;
   body.expireDate = `14${body.expireYear}/${body.expireMonth}`;
+
+  // create and check postal tracking code for order model
+  let postalTrackingCode = createPostalTrackingCode();
+  let checkPostalTrackingCodeStatus = await checkPostalTrackingCode(
+    postalTrackingCode
+  );
+  while (checkPostalTrackingCodeStatus) {
+    postalTrackingCode = createPostalTrackingCode();
+    checkPostalTrackingCodeStatus = await checkPostalTrackingCode(
+      postalTrackingCode
+    );
+  }
 
   // create new transaction instance
   await Transaction.create(body)
     .then((result) => {
-      Order.findOneAndUpdate({ _id: body.order }, { status: "بسته بندی" }).then(
-        (order) => {
-          if (order) {
-            res.json(
-              jsonResponse(201, {
-                message: "پرداخت با موفقیت انجام شد!",
-              })
-            );
-          }
+      Order.findOneAndUpdate(
+        { _id: body.order },
+        {
+          status: "بسته بندی",
+          transaction: result._id,
+          postalTrackingCode,
         }
-      );
+      ).then((order) => {
+        if (order) {
+          res.json(
+            jsonResponse(201, {
+              message: "پرداخت با موفقیت انجام شد!",
+            })
+          );
+        }
+      });
     })
     .catch((error) => {
       res.status(500).json({ error });
@@ -90,6 +106,21 @@ const checkTrackingCode = async (trackingCode) => {
   const trackingCodeIndex = await Transaction.findOne({ trackingCode });
 
   return trackingCodeIndex ? true : false;
+};
+
+// create a 21 digits postal tracking code
+const createPostalTrackingCode = () => {
+  return Math.floor(
+    100 * 1000 * 1000 * 1000 * 1000 * 1000 * 1000 +
+      Math.random() * (900 * 1000 * 1000 * 1000 * 1000 * 1000 * 1000)
+  );
+};
+
+// check if tracking code exist in database or not
+const checkPostalTrackingCode = async (postalTrackingCode) => {
+  const postalTrackingCodeIndex = await Order.findOne({ postalTrackingCode });
+
+  return postalTrackingCodeIndex ? true : false;
 };
 
 // check if user is real or not
@@ -125,7 +156,7 @@ const checkOrder = async (body, res) => {
     );
     return false;
   } else {
-    return true;
+    return order;
   }
 };
 
