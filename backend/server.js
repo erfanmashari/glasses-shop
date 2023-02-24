@@ -19,6 +19,7 @@ const favoriteRoutes = require("./routes/favorite.routes");
 const commentRoutes = require("./routes/comment.routes");
 const notificationRoutes = require("./routes/notification.routes");
 const passwordRoutes = require("./routes/password.routes");
+const transactionRoutes = require("./routes/transaction.routes");
 
 // express app
 const app = express();
@@ -90,3 +91,4 @@ app.use("/favorites", favoriteRoutes);
 app.use("/comments", commentRoutes);
 app.use("/notifications", notificationRoutes);
 app.use("/password", passwordRoutes);
+app.use("/transactions", transactionRoutes);
