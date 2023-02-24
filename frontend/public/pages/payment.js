@@ -9,7 +9,8 @@ const Payment = () => {
   const isLoggedIn = useSelector((state) => state.isLoggedIn);
 
   return (
-    <>{isLoggedIn ? <PaymentComponent /> : <ErrorPage statusCode={404} />}</>
+    // <>{isLoggedIn ? <PaymentComponent /> : <ErrorPage statusCode={404} />}</>
+    <><PaymentComponent /></>
   );
 };
 
