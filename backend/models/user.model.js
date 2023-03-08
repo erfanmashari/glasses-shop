@@ -15,11 +15,11 @@ const userSchema = new Schema(
     password: { type: String },
     birthday: { type: Date },
     addresses: [{ type: Schema.Types.ObjectId, ref: 'Address' }],
-    cart: { type: [Object], default: [] },
-    orders: { type: [Object], default: [] },
-    favorites: { type: [Object], default: [] },
-    comments: { type: [Object], default: [] },
-    notifications: { type: [Object], default: [] },
+    cart: { type: [Schema.Types.ObjectId], default: [] },
+    orders: { type: [Schema.Types.ObjectId], default: [] },
+    favorites: { type: [Schema.Types.ObjectId], default: [] },
+    comments: { type: [Schema.Types.ObjectId], default: [] },
+    notifications: { type: [Schema.Types.ObjectId], default: [] },
   },
   { timestamps: true, collection: "users" }
 );
