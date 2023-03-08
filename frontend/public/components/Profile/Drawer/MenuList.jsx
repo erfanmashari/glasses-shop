@@ -41,6 +41,7 @@ const MenuList = () => {
       <MenuItem
         icon={<RiLockPasswordLine className="w-6 h-6 relative left-1.5" />}
         title={"تغییر رمزعبور"}
+        href={"password"}
       />
       <MenuItem
         icon={<BiLogOut className="w-6 h-6 relative left-1" />}
