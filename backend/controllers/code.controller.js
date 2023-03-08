@@ -57,7 +57,8 @@ const createVerficationCode = async (phoneNumber, type, res) => {
 };
 
 // check if code exist or not expired
-const checkConfirmCode = async (payload, res) => {
+const checkConfirmCode = async (phoneNumber, payloadCode, type, res) => {
+  const payload = { phoneNumber, code: payloadCode, type }
   const code = await Code.findOne(payload);
 
   const date = new Date();

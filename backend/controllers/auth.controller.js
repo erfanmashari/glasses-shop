@@ -35,7 +35,9 @@ const confirm_code = async (req, res) => {
     }
 
     const confirmCodeStatus = await checkConfirmCode(
-      { phoneNumber, code: body.code, type: "authentication" },
+      phoneNumber,
+      body.code,
+      "authentication",
       res
     );
 

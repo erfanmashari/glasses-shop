@@ -1,7 +1,12 @@
 const User = require("../models/user.model");
 const bcrypt = require("bcrypt");
 const { jsonResponse, checkDataExist } = require("../functions");
+const {
+  createVerficationCode,
+  checkConfirmCode,
+} = require("./code.controller");
 
+// set password for users that don't have any password
 const set_password = async (req, res) => {
   const body = req.body;
 
@@ -28,6 +33,67 @@ const set_password = async (req, res) => {
   //       // password is valid
   //     }
   //   });
+};
+
+// change user password
+const change_password = async (req, res) => {
+  const body = req.body;
+
+  if (!checkDataExist(body, ["userId", "phoneNumber"], res)) {
+    return null;
+  }
+
+  const user = await User.findOne({ _id: body.userId });
+
+  if (user) {
+    if (!checkPhoneNumber(body.phoneNumber, user.phoneNumber, res)) {
+      return null;
+    }
+
+    await createVerficationCode(body.phoneNumber, "changePassword", res);
+  } else {
+    res.json(jsonResponse(406, { message: "کاربر مورد نظر معتبر نمی باشد!" }));
+  }
+};
+
+const confirm_code = async (req, res) => {
+  const body = req.body;
+  const phoneNumber = body.phoneNumber;
+
+  if (phoneNumber) {
+    if (!checkDataExist(body, ["code", "phoneNumber", "password", "confirmPassword"], res)) {
+      return null;
+    }
+
+    const confirmCodeStatus = await checkConfirmCode(
+      phoneNumber,
+      body.code,
+      "changePassword",
+      res
+    );
+
+    if (!confirmCodeStatus) {
+      return null;
+    }
+
+    if (
+      !checkPassword(body.password, body.confirmPassword, res)
+    ) {
+      return null;
+    }
+
+    // update user password
+    bcrypt.hash(body.password, 10, async function (err, hash) {
+      await User.findOneAndUpdate({ phoneNumber: phoneNumber }, { password: hash });
+      res.json(jsonResponse(200, { message: "رمز عبور با تغییر کرد!" }));
+    });
+  } else {
+    res.json(
+      jsonResponse(406, {
+        message: "درخواست معتبر نمی باشد!",
+      })
+    );
+  }
 };
 
 // check if user is real or not or password has been set or not
@@ -72,4 +138,14 @@ const checkPassword = (password, confirmPassword, res) => {
   }
 };
 
-module.exports = { set_password };
+// check if given phone number is the same as user phone number
+const checkPhoneNumber = (phoneNumber, userPhoneNumber, res) => {
+  if (phoneNumber !== userPhoneNumber) {
+    res.json(jsonResponse(406, { message: "شماره همراه معتبر نمی باشد!" }));
+    return false;
+  } else {
+    return true;
+  }
+};
+
+module.exports = { set_password, change_password, confirm_code };
