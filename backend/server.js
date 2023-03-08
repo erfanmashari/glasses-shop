@@ -56,7 +56,7 @@ redisClient.connect().catch(console.error);
 const oneDay = 1000 * 60 * 60 * 24;
 app.use(
   session({
-    store: new RedisStore({ client: redisClient }),
+    // store: new RedisStore({ client: redisClient }),
     secret: process.env.SESSION_SECRET,
     saveUninitialized: true,
     resave: true,
