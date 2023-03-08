@@ -6,8 +6,8 @@ const {
   checkConfirmCode,
 } = require("./code.controller");
 
-// set password for users that don't have any password
-const set_password = async (req, res) => {
+// set or change password
+const set_or_change_password = async (req, res) => {
   const body = req.body;
 
   if (!checkDataExist(body, ["userId", "password", "confirmPassword"], res)) {
@@ -24,7 +24,7 @@ const set_password = async (req, res) => {
 
   bcrypt.hash(body.password, 10, async function (err, hash) {
     await User.findOneAndUpdate({ _id: body.userId }, { password: hash });
-    res.json(jsonResponse(200, { message: "رمز عبور با موفقیت تعیین شد!" }));
+    res.json(jsonResponse(200, { message: "رمز عبور جدید تایید شد!" }));
   });
   //   const user = await User.findOne({ _id: body.userId });
 
@@ -103,11 +103,6 @@ const checkUser = async (userId, res) => {
   if (!user) {
     res.json(jsonResponse(406, { message: "کاربر مورد نظر معتبر نمی باشد!" }));
     return false;
-  } else if (user.password) {
-    res.json(
-      jsonResponse(406, { message: "رمز عبوری برای این کاربر تعیین شده است!" })
-    );
-    return false;
   } else {
     return true;
   }
@@ -148,4 +143,4 @@ const checkPhoneNumber = (phoneNumber, userPhoneNumber, res) => {
   }
 };
 
-module.exports = { set_password, change_password, confirm_code };
+module.exports = { set_or_change_password, change_password, confirm_code };

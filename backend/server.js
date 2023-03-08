@@ -50,8 +50,8 @@ mongoose
   });
 
 // middleware & static files
-let redisClient = createClient({ legacyMode: true });
-redisClient.connect().catch(console.error);
+// let redisClient = createClient({ legacyMode: true });
+// redisClient.connect().catch(console.error);
 
 const oneDay = 1000 * 60 * 60 * 24;
 app.use(
