@@ -22,10 +22,11 @@ const user_index = async (req, res) => {
 
 // get one user by id
 const user_index_phone_number = async (req, res) => {
-  const user = await User.findOne({ phoneNumber: req.params.phoneNumber }).sort(
+  const userIndex = await User.findOne({ phoneNumber: req.params.phoneNumber }).sort(
     { createdAt: -1 }
   );
-  if (user) {
+  if (userIndex) {
+    const user = { ...userIndex }._doc;
     user.addresses = await getAddresses(user.addresses);
     user.cart = await getCart(user.cart);
     user.orders = await getOrders(user.orders);
