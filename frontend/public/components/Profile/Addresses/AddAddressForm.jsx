@@ -11,7 +11,7 @@ import {
 } from "../../../redux/actions/profile";
 
 import axios from "axios";
-import axiosApp from "../../../utils/axiosConfig";
+import axiosApp from "../../../utils/axiosApp";
 import { checkFetchResponse, toastAlert } from "../../../functions";
 
 const AddAddressForm = () => {
