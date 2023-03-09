@@ -103,6 +103,25 @@ const address_update = async (req, res) => {
   }
 };
 
+// delete address
+const address_delete = (req, res) => {
+  const body = req.body;
+
+  if (!checkDataExist(body, ["_id"], res)) {
+    return null;
+  }
+
+  Address.findByIdAndDelete(body._id)
+    .then((result) => {
+      res.json(
+        jsonResponse(200, { message: "آدرس موردنظر حذف شد!" })
+      );
+    })
+    .catch((error) => {
+      res.status(500).json({ error });
+    });
+};
+
 // check if the receiver is user himeself and he is exist or not
 const checkReceiver = async (receiverSpecifications, res) => {
   const receiverUser = await User.findOne(receiverSpecifications);
@@ -132,4 +151,4 @@ const checkPhoneNumber = (phoneNumber, res) => {
   }
 };
 
-module.exports = { add_address, address_update };
+module.exports = { add_address, address_update, address_delete };
