@@ -5,7 +5,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { changeTransactionInfo } from "../../redux/actions/payment";
 
 import axiosApp from "../../utils/axiosApp";
-import { checkFetchResponse, toastAlert } from "../../functions";
+import {
+  checkFetchResponse,
+  toastAlert,
+  getTokenFromCookie,
+} from "../../functions";
 
 // import Countdown from "react-countdown";
 
@@ -33,15 +37,19 @@ const PaymentForm = () => {
 
     const fetchBody = { ...transactionInfo };
     fetchBody.user = personalInfo._id;
-    axiosApp.post("transactions", fetchBody).then((response) => {
-      const res = checkFetchResponse(response);
-      if (res.ok) {
-        toastAlert(res.data.message, "success");
-        router.push("/");
-      } else {
-        toastAlert(res.message, "error");
-      }
-    });
+    axiosApp
+      .post("transactions", fetchBody, {
+        headers: { Authorization: getTokenFromCookie() },
+      })
+      .then((response) => {
+        const res = checkFetchResponse(response);
+        if (res.ok) {
+          toastAlert(res.data.message, "success");
+          router.push("/");
+        } else {
+          toastAlert(res.message, "error");
+        }
+      });
   };
 
   return (

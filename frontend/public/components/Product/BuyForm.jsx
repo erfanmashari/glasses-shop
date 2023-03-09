@@ -6,7 +6,12 @@ import { useSelector, useDispatch } from "react-redux";
 import { changeSelectedProductProperties } from "../../redux/actions/product";
 
 import axiosApp from "../../utils/axiosApp";
-import { checkFetchResponse, toastAlert, getUserInfo } from "../../functions";
+import {
+  checkFetchResponse,
+  toastAlert,
+  getUserInfo,
+  getTokenFromCookie,
+} from "../../functions";
 
 import { Tooltip } from "flowbite-react";
 
@@ -59,18 +64,26 @@ const BuyForm = () => {
 
   // send add faviorite product request to backend
   const addFavorite = () => {
-    axiosApp.post("favorites", {
-      userId: personalInfo._id,
-      productId: productInfo._id,
-    }).then((response) => {
-      const res = checkFetchResponse(response);
-      if (res.ok) {
-        getUserInfo(dispatch);
-        toastAlert(res.data.message, "success");
-      } else {
-        toastAlert(res.message, "error");
-      }
-    });
+    axiosApp
+      .post(
+        "favorites",
+        {
+          userId: personalInfo._id,
+          productId: productInfo._id,
+        },
+        {
+          headers: { Authorization: getTokenFromCookie() },
+        }
+      )
+      .then((response) => {
+        const res = checkFetchResponse(response);
+        if (res.ok) {
+          getUserInfo(dispatch);
+          toastAlert(res.data.message, "success");
+        } else {
+          toastAlert(res.message, "error");
+        }
+      });
   };
 
   return (

@@ -5,7 +5,11 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
 import axiosApp from "../../../utils/axiosApp";
-import { checkFetchResponse, toastAlert } from "../../../functions";
+import {
+  checkFetchResponse,
+  toastAlert,
+  getTokenFromCookie,
+} from "../../../functions";
 
 const SetPassword = () => {
   // get personal info from reduc/reducer/profile/personalInfo.js
@@ -28,19 +32,23 @@ const SetPassword = () => {
     e.preventDefault();
 
     const reqData = { ...formFields, userId: personalInfo._id };
-    axiosApp.post("password", reqData).then((response) => {
-      const res = checkFetchResponse(response);
+    axiosApp
+      .post("password", reqData, {
+        headers: { Authorization: getTokenFromCookie() },
+      })
+      .then((response) => {
+        const res = checkFetchResponse(response);
 
-      if (res.ok) {
-        toastAlert(res.data.message, "success");
-        setFormFields({
-          password: "",
-          confirmPassword: "",
-        });
-      } else {
-        toastAlert(res.message, "error");
-      }
-    });
+        if (res.ok) {
+          toastAlert(res.data.message, "success");
+          setFormFields({
+            password: "",
+            confirmPassword: "",
+          });
+        } else {
+          toastAlert(res.message, "error");
+        }
+      });
   };
 
   return (

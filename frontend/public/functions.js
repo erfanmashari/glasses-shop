@@ -55,7 +55,11 @@ export function toastAlert(text, type) {
 export function getUserInfo(dispatch, homePageLink) {
   const phoneNumber = getPhoneNumberFromCookie();
   if (phoneNumber) {
-    axiosApp.get(`users/${phoneNumber}`).then((response) => {
+    axiosApp({
+      method: "get",
+      url: `users/${phoneNumber}`,
+      headers: { Authorization: getTokenFromCookie() },
+    }).then((response) => {
       const res = checkFetchResponse(response);
 
       if (res.ok && res.data.user) {

@@ -1,7 +1,7 @@
 import { useDispatch } from "react-redux";
 
 import axiosApp from "../../../utils/axiosApp";
-import { checkFetchResponse } from "../../../functions";
+import { checkFetchResponse, getTokenFromCookie } from "../../../functions";
 import { setSelectedOrderInfo } from "../../../redux/actions/profile";
 
 import { BsInfoCircleFill } from "react-icons/bs";
@@ -11,13 +11,17 @@ const OrdersItem = ({ order, setOrderDetailsDisplay }) => {
 
   // get order details from backend
   const getOrderDetailsFromBackend = () => {
-    axiosApp.get(`orders/${order._id}`).then((response) => {
-      const res = checkFetchResponse(response);
-      if (res.ok) {
-        dispatch(setSelectedOrderInfo(res.data.order));
-        showOrderDetails();
-      }
-    });
+    axiosApp
+      .get(`orders/${order._id}`, {
+        headers: { Authorization: getTokenFromCookie() },
+      })
+      .then((response) => {
+        const res = checkFetchResponse(response);
+        if (res.ok) {
+          dispatch(setSelectedOrderInfo(res.data.order));
+          showOrderDetails();
+        }
+      });
   };
 
   // show order deatils popup

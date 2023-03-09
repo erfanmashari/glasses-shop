@@ -8,7 +8,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { changeTransactionInfo } from "../../redux/actions/payment";
 
 import axiosApp from "../../utils/axiosApp";
-import { checkFetchResponse } from "../../functions";
+import { checkFetchResponse, getTokenFromCookie } from "../../functions";
 
 import { toastAlert } from "../../functions";
 
@@ -56,16 +56,20 @@ const Checkout = () => {
       paymentMethod: orderInfo.paymentMethod,
       sendingMethod: "پست پیشتاز",
     };
-    axiosApp.post("orders", fecthBody).then((response) => {
-      const res = checkFetchResponse(response);
+    axiosApp
+      .post("orders", fecthBody, {
+        headers: { Authorization: getTokenFromCookie() },
+      })
+      .then((response) => {
+        const res = checkFetchResponse(response);
 
-      if (res.ok) {
-        toastAlert(res.data.message, "success");
-        setTransactionFields(res.data.order, res.data.amount);
-      } else {
-        toastAlert(res.message, "error");
-      }
-    });
+        if (res.ok) {
+          toastAlert(res.data.message, "success");
+          setTransactionFields(res.data.order, res.data.amount);
+        } else {
+          toastAlert(res.message, "error");
+        }
+      });
   };
 
   // set some of transaction fields in redux

@@ -10,6 +10,7 @@ import {
   checkFetchResponse,
   toastAlert,
   getUserInfo,
+  getTokenFromCookie,
 } from "../../../functions";
 
 const PersonalInfoForm = () => {
@@ -25,16 +26,20 @@ const PersonalInfoForm = () => {
   const changePersonalInfo = (e) => {
     e.preventDefault();
 
-    axiosApp.put(`users/edit`, personalInfo).then((response) => {
-      const res = checkFetchResponse(response);
+    axiosApp
+      .put(`users/edit`, personalInfo, {
+        headers: { Authorization: getTokenFromCookie() },
+      })
+      .then((response) => {
+        const res = checkFetchResponse(response);
 
-      if (res.ok) {
-        toastAlert(res.data.message, "success");
-        getUserInfo(dispatch);
-      } else {
-        toastAlert(res.message, "error");
-      }
-    });
+        if (res.ok) {
+          toastAlert(res.data.message, "success");
+          getUserInfo(dispatch);
+        } else {
+          toastAlert(res.message, "error");
+        }
+      });
   };
 
   return (

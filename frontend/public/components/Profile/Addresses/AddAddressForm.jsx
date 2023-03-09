@@ -12,7 +12,11 @@ import {
 
 import axios from "axios";
 import axiosApp from "../../../utils/axiosApp";
-import { checkFetchResponse, toastAlert } from "../../../functions";
+import {
+  checkFetchResponse,
+  toastAlert,
+  getTokenFromCookie,
+} from "../../../functions";
 
 const AddAddressForm = () => {
   const dispatch = useDispatch();
@@ -56,16 +60,20 @@ const AddAddressForm = () => {
     e.preventDefault();
 
     const reqData = { ...addressForm, userId: personalInfo._id };
-    axiosApp.post("addresses", reqData).then((response) => {
-      const res = checkFetchResponse(response);
+    axiosApp
+      .post("addresses", reqData, {
+        headers: { Authorization: getTokenFromCookie() },
+      })
+      .then((response) => {
+        const res = checkFetchResponse(response);
 
-      if (res.ok) {
-        toastAlert(res.data.message, "success");
-        dispatch(resetAddressesFormFields());
-      } else {
-        toastAlert(res.message, "error");
-      }
-    });
+        if (res.ok) {
+          toastAlert(res.data.message, "success");
+          dispatch(resetAddressesFormFields());
+        } else {
+          toastAlert(res.message, "error");
+        }
+      });
   };
 
   useEffect(() => {

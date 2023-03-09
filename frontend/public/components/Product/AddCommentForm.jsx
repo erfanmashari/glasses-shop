@@ -6,7 +6,11 @@ import { useSelector, useDispatch } from "react-redux";
 import { changeNewCommentInfo } from "../../redux/actions/product";
 
 import axiosApp from "../../utils/axiosApp";
-import { checkFetchResponse, getUserInfo } from "../../functions";
+import {
+  checkFetchResponse,
+  getUserInfo,
+  getTokenFromCookie,
+} from "../../functions";
 
 import { toastAlert } from "../../functions";
 
@@ -43,16 +47,20 @@ const AddCommentForm = ({ addCommentDisplay, setAddCommentDisplay }) => {
         status: "در حال بررسی",
         ...newCommentInfo,
       };
-      axiosApp.post("comments", fecthBody).then((response) => {
-        const res = checkFetchResponse(response);
+      axiosApp
+        .post("comments", fecthBody, {
+          headers: { Authorization: getTokenFromCookie() },
+        })
+        .then((response) => {
+          const res = checkFetchResponse(response);
 
-        if (res.ok) {
-          toastAlert(res.data.message, "success");
-          getUserInfo(dispatch);
-        } else {
-          toastAlert(res.message, "error");
-        }
-      });
+          if (res.ok) {
+            toastAlert(res.data.message, "success");
+            getUserInfo(dispatch);
+          } else {
+            toastAlert(res.message, "error");
+          }
+        });
     }
   };
 
