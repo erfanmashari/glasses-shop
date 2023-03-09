@@ -3,7 +3,7 @@ const addressController = require("../controllers/address.controller")
 
 const addressRoutes = express.Router();
 
-addressRoutes.get("/", addressController.address_index);
 addressRoutes.post("/", addressController.add_address);
+addressRoutes.put("/", addressController.address_update);
 
 module.exports = addressRoutes;

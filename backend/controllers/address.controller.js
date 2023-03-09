@@ -2,30 +2,18 @@ const User = require("../models/user.model");
 const Address = require("../models/address.model");
 const { jsonResponse, checkDataExist } = require("../functions");
 
-// get all addresses
-const address_index = async (req, res) => {
-  await Address.find()
-    .sort({ createdAt: -1 })
-    .then((addresses) => {
-      res.json(jsonResponse(200, { addresses }));
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-};
-
 // create new addrss for user
 const add_address = async (req, res) => {
   const body = req.body;
 
-  const checkReceiverStatus = body.isMeReceiver ? await checkReceiver(
-    body.receiverSpecifications,
-    res
-  ) : false;
+  const checkReceiverStatus = body.isMeReceiver
+    ? await checkReceiver(body.receiverSpecifications, res)
+    : false;
+
   if (
     !checkDataExist(
       body,
-      ["userId", "province", "city", "plaque", "postalAddress", "postalCode"],
+      ["user", "province", "city", "plaque", "postalAddress", "postalCode"],
       res
     ) ||
     !checkDataExist(
@@ -41,7 +29,7 @@ const add_address = async (req, res) => {
 
   const previousAddress = await Address.findOne(body);
 
-  if (previousAddress) {
+  if (!previousAddress) {
     Address.create(body)
       .then((result) => {
         User.findOne({ _id: body.userId }, (err, user) => {
@@ -60,9 +48,58 @@ const add_address = async (req, res) => {
         res.status(500).json({ error });
       });
   } else {
-    res.json(
-      jsonResponse(406, { message: "این آدرس وجود دارد!" })
-    );
+    res.json(jsonResponse(406, { message: "این آدرس وجود دارد!" }));
+  }
+};
+
+// update address informations
+const address_update = async (req, res) => {
+  const body = req.body;
+
+  const checkReceiverStatus = body.isMeReceiver
+    ? await checkReceiver(body.receiverSpecifications, res)
+    : false;
+
+  if (
+    !checkDataExist(
+      body,
+      [
+        "_id",
+        "user",
+        "province",
+        "city",
+        "plaque",
+        "postalAddress",
+        "postalCode",
+      ],
+      res
+    ) ||
+    !checkDataExist(
+      body.receiverSpecifications,
+      ["firstName", "phoneNumber", "lastName"],
+      res
+    ) ||
+    !checkPhoneNumber(body.receiverSpecifications.phoneNumber, res) ||
+    checkReceiverStatus
+  ) {
+    return null;
+  }
+
+  const previousAddress = await Address.findById(body._id);
+
+  if (previousAddress) {
+    // console.log("first")
+    Address.findByIdAndUpdate(body._id, body)
+      .then((result) => {
+        res.json(
+          jsonResponse(200, { message: "اطلاعات آدرس با موفقیت ویرایش شد!" })
+        );
+      })
+      .catch((error) => {
+        res.status(500).json({ error });
+      });
+  } else {
+    res.json(jsonResponse(406, { message: "این آدرس وجود ندارد!" }));
   }
 };
 
@@ -95,4 +132,4 @@ const checkPhoneNumber = (phoneNumber, res) => {
   }
 };
 
-module.exports = { address_index, add_address };
+module.exports = { add_address, address_update };
