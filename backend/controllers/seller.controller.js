@@ -1,7 +1,9 @@
 const Seller = require("../models/seller.model");
-const { jsonResponse, checkDataExist } = require("../functions");
+const { jsonResponse, checkDataExist, checkAuthorization } = require("../functions");
 
 const seller_index = async (req, res) => {
+  checkAuthorization(req.headers.authorization);
+
   await Seller.find()
     .sort({ createdAt: -1 })
     .then((sellers) => {
@@ -13,6 +15,8 @@ const seller_index = async (req, res) => {
 };
 
 const add_seller = async (req, res) => {
+  checkAuthorization(req.headers.authorization);
+
   const body = req.body;
 
   // make english text lower case

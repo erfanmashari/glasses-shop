@@ -52,7 +52,6 @@ const confirm_code = async (req, res) => {
         message: "کد معتبر است!",
         token: user
           ? generateJWTToken({
-              sub: user._id,
               phoneNumber: phoneNumber,
             })
           : undefined,

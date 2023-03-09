@@ -1,8 +1,14 @@
 const User = require("../models/user.model");
 const Product = require("../models/product.model");
-const { jsonResponse, checkDataExist } = require("../functions");
+const {
+  jsonResponse,
+  checkDataExist,
+  checkAuthorization,
+} = require("../functions");
 
 const add_favorite_product = async (req, res) => {
+  checkAuthorization(req.headers.authorization);
+  
   const body = req.body;
 
   if (!checkDataExist(body, ["userId", "productId"], res)) {

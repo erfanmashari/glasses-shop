@@ -1,9 +1,15 @@
 const Transaction = require("../models/transaction.model");
 const Order = require("../models/order.model");
 const User = require("../models/user.model");
-const { checkDataExist, jsonResponse } = require("../functions");
+const {
+  checkDataExist,
+  jsonResponse,
+  checkAuthorization,
+} = require("../functions");
 
 const add_transaction = async (req, res) => {
+  checkAuthorization(req.headers.authorization);
+
   const body = req.body;
 
   if (

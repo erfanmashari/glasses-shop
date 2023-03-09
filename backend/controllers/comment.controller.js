@@ -1,9 +1,15 @@
 const Comment = require("../models/comment.model");
 const User = require("../models/user.model");
 const Product = require("../models/product.model");
-const { jsonResponse, checkDataExist } = require("../functions");
+const {
+  jsonResponse,
+  checkDataExist,
+  checkAuthorization,
+} = require("../functions");
 
 const add_comment = async (req, res) => {
+  checkAuthorization(req.headers.authorization);
+
   const body = req.body;
 
   if (

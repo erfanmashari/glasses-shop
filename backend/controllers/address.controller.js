@@ -1,9 +1,15 @@
 const User = require("../models/user.model");
 const Address = require("../models/address.model");
-const { jsonResponse, checkDataExist } = require("../functions");
+const {
+  jsonResponse,
+  checkDataExist,
+  checkAuthorization,
+} = require("../functions");
 
 // create new addrss for user
 const add_address = async (req, res) => {
+  checkAuthorization(req.headers.authorization);
+
   const body = req.body;
 
   const checkReceiverStatus = body.isMeReceiver
@@ -54,6 +60,8 @@ const add_address = async (req, res) => {
 
 // update address informations
 const address_update = async (req, res) => {
+  checkAuthorization(req.headers.authorization);
+
   const body = req.body;
 
   const checkReceiverStatus = body.isMeReceiver
@@ -105,6 +113,8 @@ const address_update = async (req, res) => {
 
 // delete address
 const address_delete = (req, res) => {
+  checkAuthorization(req.headers.authorization);
+  
   const body = req.body;
 
   if (!checkDataExist(body, ["_id"], res)) {
@@ -113,9 +123,7 @@ const address_delete = (req, res) => {
 
   Address.findByIdAndDelete(body._id)
     .then((result) => {
-      res.json(
-        jsonResponse(200, { message: "آدرس موردنظر حذف شد!" })
-      );
+      res.json(jsonResponse(200, { message: "آدرس موردنظر حذف شد!" }));
     })
     .catch((error) => {
       res.status(500).json({ error });

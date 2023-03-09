@@ -2,10 +2,12 @@ const Order = require("../models/order.model");
 const User = require("../models/user.model");
 const Address = require("../models/address.model");
 const Cart = require("../models/cart.model");
-const { jsonResponse, checkDataExist } = require("../functions");
+const { jsonResponse, checkDataExist, checkAuthorization } = require("../functions");
 
 // get single order by id
 const order_single = async (req, res) => {
+  checkAuthorization(req.headers.authorization);
+
   const orderIndex = await Order.findById(req.params.id);
   const order = { ...orderIndex }._doc;
   order.address = await getAddress(order.address);
@@ -13,6 +15,8 @@ const order_single = async (req, res) => {
 };
 
 const add_order = async (req, res) => {
+  checkAuthorization(req.headers.authorization);
+  
   const body = req.body;
 
   if (

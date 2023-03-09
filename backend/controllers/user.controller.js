@@ -6,25 +6,19 @@ const Product = require("../models/product.model");
 const Comment = require("../models/comment.model");
 const Notification = require("../models/notification.model");
 const jwt = require("jsonwebtoken");
-const { jsonResponse, checkDataExist } = require("../functions");
-
-// get all users
-const user_index = async (req, res) => {
-  await User.find()
-    .sort({ createdAt: -1 })
-    .then((users) => {
-      res.json(jsonResponse(200, { users }));
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-};
+const {
+  jsonResponse,
+  checkDataExist,
+  checkAuthorization,
+} = require("../functions");
 
 // get one user by id
 const user_index_phone_number = async (req, res) => {
-  const userIndex = await User.findOne({ phoneNumber: req.params.phoneNumber }).sort(
-    { createdAt: -1 }
-  );
+  checkAuthorization(req.headers.authorization);
+
+  const userIndex = await User.findOne({
+    phoneNumber: req.params.phoneNumber,
+  }).sort({ createdAt: -1 });
   if (userIndex) {
     const user = { ...userIndex }._doc;
     user.addresses = await getAddresses(user.addresses);
@@ -35,12 +29,16 @@ const user_index_phone_number = async (req, res) => {
     user.notifications = await getNotifications(user.notifications);
     res.json(jsonResponse(200, { user }));
   } else {
-    res.json(jsonResponse(404, { message: "کاربری با این شماره همراه وجود ندارد!" }));
+    res.json(
+      jsonResponse(404, { message: "کاربری با این شماره همراه وجود ندارد!" })
+    );
   }
 };
 
 // edit only personal informations of user
 const edit_personal_info = (req, res) => {
+  checkAuthorization(req.headers.authorization);
+
   const body = req.body;
   body.email = body.email ? body.email.toLowerCase() : null;
 
@@ -269,7 +267,6 @@ const userSinglePhoneNumber = async (phoneNumber) => {
 };
 
 module.exports = {
-  user_index,
   user_index_phone_number,
   edit_personal_info,
   registerUser,

@@ -1,8 +1,14 @@
 const Notification = require("../models/notification.model");
 const User = require("../models/user.model");
-const { jsonResponse, checkDataExist } = require("../functions");
+const {
+  jsonResponse,
+  checkDataExist,
+  checkAuthorization,
+} = require("../functions");
 
 const add_notification = async (req, res) => {
+  checkAuthorization(req.headers.authorization);
+
   const body = req.body;
 
   if (!checkDataExist(body, ["userId", "title"], res)) {

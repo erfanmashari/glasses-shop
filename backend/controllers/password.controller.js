@@ -1,6 +1,10 @@
 const User = require("../models/user.model");
 const bcrypt = require("bcrypt");
-const { jsonResponse, checkDataExist } = require("../functions");
+const {
+  jsonResponse,
+  checkDataExist,
+  checkAuthorization,
+} = require("../functions");
 const {
   createVerficationCode,
   checkConfirmCode,
@@ -8,6 +12,8 @@ const {
 
 // set or change password
 const set_or_change_password = async (req, res) => {
+  checkAuthorization(req.headers.authorization);
+
   const body = req.body;
 
   if (!checkDataExist(body, ["userId", "password", "confirmPassword"], res)) {
@@ -61,7 +67,13 @@ const confirm_code = async (req, res) => {
   const phoneNumber = body.phoneNumber;
 
   if (phoneNumber) {
-    if (!checkDataExist(body, ["code", "phoneNumber", "password", "confirmPassword"], res)) {
+    if (
+      !checkDataExist(
+        body,
+        ["code", "phoneNumber", "password", "confirmPassword"],
+        res
+      )
+    ) {
       return null;
     }
 
@@ -76,15 +88,16 @@ const confirm_code = async (req, res) => {
       return null;
     }
 
-    if (
-      !checkPassword(body.password, body.confirmPassword, res)
-    ) {
+    if (!checkPassword(body.password, body.confirmPassword, res)) {
       return null;
     }
 
     // update user password
     bcrypt.hash(body.password, 10, async function (err, hash) {
-      await User.findOneAndUpdate({ phoneNumber: phoneNumber }, { password: hash });
+      await User.findOneAndUpdate(
+        { phoneNumber: phoneNumber },
+        { password: hash }
+      );
       res.json(jsonResponse(200, { message: "رمز عبور با تغییر کرد!" }));
     });
   } else {

@@ -1,8 +1,14 @@
 const Brand = require("../models/brand.model");
 const fs = require("fs");
-const { jsonResponse, checkDataExist } = require("../functions");
+const {
+  jsonResponse,
+  checkDataExist,
+  checkAuthorization,
+} = require("../functions");
 
 const brand_index = (req, res) => {
+  checkAuthorization(req.headers.authorization);
+
   Brand.find()
     .sort({ createdAt: -1 })
     .then((brands) => {
@@ -44,6 +50,8 @@ const checkImages = (image, imageFile, res) => {
 };
 
 const add_brand = async (req, res) => {
+  checkAuthorization(req.headers.authorization);
+  
   const body = req.body;
   const file = req.file;
 

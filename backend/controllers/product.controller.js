@@ -8,6 +8,7 @@ const {
   jsonResponse,
   checkDataExist,
   checkArrayStringIndexes,
+  checkAuthorization
 } = require("../functions");
 
 // get all products
@@ -394,6 +395,8 @@ const checkStrArrays = (body, listOfArrays, res) => {
 };
 
 const add_product = async (req, res) => {
+  checkAuthorization(req.headers.authorization);
+
   const body = req.body;
   const files = req.files;
 
