@@ -1,3 +1,5 @@
+const jwt = require("jsonwebtoken");
+
 // json response function with tatus code and data parameters
 // data should be an object which can contain error message or required data
 const jsonResponse = (status, data) => ({
@@ -38,4 +40,14 @@ const checkArrayStringIndexes = (array) => {
   }
 };
 
-module.exports = { jsonResponse, checkDataExist, checkArrayStringIndexes };
+// check authorization token in header of requests
+const checkAuthorization = (token, res) => {
+  jwt.verify(token, process.env.JWT_SECRET)
+};
+
+module.exports = {
+  jsonResponse,
+  checkDataExist,
+  checkArrayStringIndexes,
+  checkAuthorization,
+};
