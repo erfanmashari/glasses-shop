@@ -84,6 +84,24 @@ const add_product_to_cart = async (req, res) => {
   }
 };
 
+const delete_product_from_cart = (req, res) => {
+  const body = req.body;
+
+  if (
+    !checkDataExist(body, ["_id"], res)
+  ) {
+    return null;
+  }
+
+  Cart.findByIdAndDelete(body._id)
+    .then((result) => {
+      res.json(jsonResponse(200, { message: "محصول از سبر خرید حذف شد!" }));
+    })
+    .catch((error) => {
+      res.status(500).json({ error });
+    });
+}
+
 // check color
 const checkColor = (color, product, res) => {
   let isCorrect = false;
@@ -124,4 +142,4 @@ const checkSize = async (size, product, res) => {
   return isCorrect;
 };
 
-module.exports = { add_product_to_cart };
+module.exports = { add_product_to_cart, delete_product_from_cart };
