@@ -53,7 +53,7 @@ const confirm_code = async (req, res) => {
         token: user
           ? generateJWTToken({
               sub: user._id,
-              phoneNumber: payload.phoneNumber,
+              phoneNumber: phoneNumber,
             })
           : undefined,
       })

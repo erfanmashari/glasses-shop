@@ -1,4 +1,5 @@
 const Code = require("../models/code.model");
+const { jsonResponse } = require("../functions");
 
 const getVerifiedCode = async (code, type) => {
   return await Code.findOne({
