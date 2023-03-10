@@ -88,7 +88,7 @@ const address_update = async (req, res) => {
       res
     ) ||
     !checkPhoneNumber(body.receiverSpecifications.phoneNumber, res) ||
-    checkReceiverStatus
+    !checkReceiverStatus
   ) {
     return null;
   }
@@ -96,7 +96,6 @@ const address_update = async (req, res) => {
   const previousAddress = await Address.findById(body.id);
 
   if (previousAddress) {
-    // console.log("first")
     Address.findByIdAndUpdate(body.id, body)
       .then((result) => {
         res.json(
@@ -114,7 +113,7 @@ const address_update = async (req, res) => {
 // delete address
 const address_delete = (req, res) => {
   checkAuthorization(req.headers.authorization);
-  
+
   const body = req.body;
 
   if (!checkDataExist(body, ["id", "user"], res)) {
@@ -125,7 +124,9 @@ const address_delete = (req, res) => {
     if (user) {
       // The below two lines will set the newly addresses
       // to the the User's addresses array field
-      user.addresses = user.addresses.filter(item => item.valueOf() !== body.id);
+      user.addresses = user.addresses.filter(
+        (item) => item.valueOf() !== body.id
+      );
       user.save();
 
       Address.findByIdAndDelete(body.id)
