@@ -20,7 +20,8 @@ function MyApp({ Component, pageProps }) {
     <Provider store={store}>
       {router.pathname === "/login" ||
       router.pathname === "/register" ||
-      router.pathname === "/payment" ? (
+      router.pathname === "/payment" ||
+      router.pathname.includes("/verified/") ? (
         <>
           <Component {...pageProps} />
           <ToastContainer rtl={true} />
