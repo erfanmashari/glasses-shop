@@ -61,3 +61,11 @@ export const setSelectedCommentInfo = (comment) => {
         type: "SET_SELECTED_COMMENT_INFO"
     }
 }
+
+// action for setting selected address info
+export const setSelectedAddressInfo = (address) => {
+    return {
+        address,
+        type: "SET_SELECTED_ADDRESS_INFO"
+    }
+}
