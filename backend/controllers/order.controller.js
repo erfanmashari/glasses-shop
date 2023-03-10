@@ -2,7 +2,11 @@ const Order = require("../models/order.model");
 const User = require("../models/user.model");
 const Address = require("../models/address.model");
 const Cart = require("../models/cart.model");
-const { jsonResponse, checkDataExist, checkAuthorization } = require("../functions");
+const {
+  jsonResponse,
+  checkDataExist,
+  checkAuthorization,
+} = require("../functions");
 
 // get single order by id
 const order_single = async (req, res) => {
@@ -16,7 +20,7 @@ const order_single = async (req, res) => {
 
 const add_order = async (req, res) => {
   checkAuthorization(req.headers.authorization);
-  
+
   const body = req.body;
 
   if (
@@ -58,8 +62,6 @@ const add_order = async (req, res) => {
     return null;
   }
 
-  await clearUserCart();
-
   // create new order
   await Order.create(body)
     .then((result) => {
@@ -68,6 +70,7 @@ const add_order = async (req, res) => {
           // The below two lines will add the newly saved order's
           // ObjectID to the the User's orders array field
           user.orders.push(result._id);
+          user.cart = [];
           user.save();
           res.json(
             jsonResponse(201, {
@@ -246,11 +249,6 @@ const checkSendingMethod = async (sendingMethod, res) => {
   }
 
   return isCorrect;
-};
-
-// clear cart property of user
-const clearUserCart = async (id) => {
-  await User.findOneAndUpdate({ _id: id }).exec();
 };
 
 module.exports = { order_single, add_order };
