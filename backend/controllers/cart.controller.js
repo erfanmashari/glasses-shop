@@ -9,13 +9,13 @@ const add_product_to_cart = async (req, res) => {
   const body = req.body;
 
   if (
-    !checkDataExist(body, ["userId", "_id", "size", "frameColor"], res) ||
+    !checkDataExist(body, ["user", "id", "size", "frameColor"], res) ||
     !checkDataExist(body.frameColor, ["seller"], res)
   ) {
     return null;
   }
 
-  const product = await Product.findOne({ _id: body._id });
+  const product = await Product.findOne({ _id: body.id });
   if (product) {
     const checkSizeStatus = checkSize(body.size, product, res);
     const checkColorStatus = checkColor(body.frameColor, product, res);
@@ -26,7 +26,7 @@ const add_product_to_cart = async (req, res) => {
     const seller = await Seller.findOne({ _id: body.frameColor.seller._id });
     if (seller) {
       const cartProduct = {
-        userId: body.userId,
+        user: body.user,
         isAvailable: product.isAvailable,
         nameFa: product.nameFa,
         nameEn: product.nameEn,
@@ -54,7 +54,7 @@ const add_product_to_cart = async (req, res) => {
       if (!savedCart) {
         Cart.create(cartProduct)
           .then((result) => {
-            User.findOne({ _id: body.userId }, (err, user) => {
+            User.findOne({ _id: body.user }, (err, user) => {
               if (user) {
                 // The below two lines will add the newly saved cart's
                 // ObjectID to the the User's cart array field
@@ -87,20 +87,29 @@ const add_product_to_cart = async (req, res) => {
 const delete_product_from_cart = (req, res) => {
   const body = req.body;
 
-  if (
-    !checkDataExist(body, ["_id"], res)
-  ) {
+  if (!checkDataExist(body, ["user", "id"], res)) {
     return null;
   }
 
-  Cart.findByIdAndDelete(body._id)
-    .then((result) => {
-      res.json(jsonResponse(200, { message: "محصول از سبر خرید حذف شد!" }));
-    })
-    .catch((error) => {
-      res.status(500).json({ error });
-    });
-}
+  User.findOne({ _id: body.user }, (err, user) => {
+    if (user) {
+      // The below two lines will set the newly cart
+      // to the the User's cart array field
+      user.cart = user.cart.filter(
+        (item) => item.valueOf() !== body.id
+      );
+      user.save();
+
+      Cart.findByIdAndDelete(body.id)
+        .then((result) => {
+          res.json(jsonResponse(200, { message: "محصول از سبد خرید حذف شد!" }));
+        })
+        .catch((error) => {
+          res.status(500).json({ error });
+        });
+    }
+  });
+};
 
 // check color
 const checkColor = (color, product, res) => {

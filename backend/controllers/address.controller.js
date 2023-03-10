@@ -38,7 +38,7 @@ const add_address = async (req, res) => {
   if (!previousAddress) {
     Address.create(body)
       .then((result) => {
-        User.findOne({ _id: body.userId }, (err, user) => {
+        User.findOne({ _id: body.user }, (err, user) => {
           if (user) {
             // The below two lines will add the newly saved address's
             // ObjectID to the the User's addresses array field
@@ -72,7 +72,7 @@ const address_update = async (req, res) => {
     !checkDataExist(
       body,
       [
-        "_id",
+        "id",
         "user",
         "province",
         "city",
@@ -93,11 +93,11 @@ const address_update = async (req, res) => {
     return null;
   }
 
-  const previousAddress = await Address.findById(body._id);
+  const previousAddress = await Address.findById(body.id);
 
   if (previousAddress) {
     // console.log("first")
-    Address.findByIdAndUpdate(body._id, body)
+    Address.findByIdAndUpdate(body.id, body)
       .then((result) => {
         res.json(
           jsonResponse(200, { message: "اطلاعات آدرس با موفقیت ویرایش شد!" })
@@ -117,17 +117,26 @@ const address_delete = (req, res) => {
   
   const body = req.body;
 
-  if (!checkDataExist(body, ["_id"], res)) {
+  if (!checkDataExist(body, ["id", "user"], res)) {
     return null;
   }
 
-  Address.findByIdAndDelete(body._id)
-    .then((result) => {
-      res.json(jsonResponse(200, { message: "آدرس موردنظر حذف شد!" }));
-    })
-    .catch((error) => {
-      res.status(500).json({ error });
-    });
+  User.findOne({ _id: body.user }, (err, user) => {
+    if (user) {
+      // The below two lines will set the newly addresses
+      // to the the User's addresses array field
+      user.addresses = user.addresses.filter(item => item.valueOf() !== body.id);
+      user.save();
+
+      Address.findByIdAndDelete(body.id)
+        .then((result) => {
+          res.json(jsonResponse(200, { message: "آدرس موردنظر حذف شد!" }));
+        })
+        .catch((error) => {
+          res.status(500).json({ error });
+        });
+    }
+  });
 };
 
 // check if the receiver is user himeself and he is exist or not
