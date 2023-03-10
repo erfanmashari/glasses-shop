@@ -24,9 +24,9 @@ const NewestProductsItem = ({ product }) => {
         </div>
         <p className="font-bold">{product.price} تومان</p>
       </Link>
-      <button className="border-b-2 py-1.5 px-3 mt-2 hover:border-blue-600">
+      {/* <button className="border-b-2 py-1.5 px-3 mt-2 hover:border-blue-600">
         افزودن به سبد خرید
-      </button>
+      </button> */}
     </li>
   );
 };

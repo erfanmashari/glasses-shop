@@ -35,7 +35,7 @@ const NewestProductsList = ({ categoryFa, categoryEn }) => {
       className="w-full flex flex-col justify-center items-center gap-3 p-8"
       style={{ background: "#EBEBEB" }}
     >
-      <div className="w-full flex flex-col justify-center items-center bg-white shadow-lg rounded-lg gap-3">
+      <div className="w-full flex flex-col justify-center items-center bg-white shadow-lg rounded-lg">
         <header className="w-full flex flex-row justify-between items-center border-b-2 border-gray-300 py-2 px-4">
           <h4 className="text-2xl font-bold text-stone-700 border-r-4 border-stone-700 pr-2">
             {categoryFa}
@@ -45,7 +45,7 @@ const NewestProductsList = ({ categoryFa, categoryEn }) => {
             <KeyboardArrowLeftOutlinedIcon />
           </button>
         </header>
-        <ul className="w-full flex flex-row gap-8" style={{ height: "400px" }}>
+        <ul className="w-full flex flex-row gap-8" style={{ height: "360px" }}>
         {productsList[categoryEn].map((product, index) => (
           <NewestProductsItem
             key={index}
