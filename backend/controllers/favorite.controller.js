@@ -42,7 +42,7 @@ const delete_favorite_product = (req, res) => {
 
   const body = req.body;
 
-  if (!checkDataExist(body, ["id", "user"], res)) {
+  if (!checkDataExist(body, ["user", "product"], res)) {
     return null;
   }
 
