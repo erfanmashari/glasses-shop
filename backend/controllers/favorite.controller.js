@@ -8,7 +8,7 @@ const {
 
 const add_favorite_product = async (req, res) => {
   checkAuthorization(req.headers.authorization);
-  
+
   const body = req.body;
 
   if (!checkDataExist(body, ["userId", "productId"], res)) {
@@ -30,6 +30,34 @@ const add_favorite_product = async (req, res) => {
       res.json(
         jsonResponse(200, {
           message: "محصول مورد علاقه جدید با موفقیت افزوده شد!",
+        })
+      );
+    }
+  });
+};
+
+// delete favorite product
+const delete_favorite_product = (req, res) => {
+  checkAuthorization(req.headers.authorization);
+
+  const body = req.body;
+
+  if (!checkDataExist(body, ["id", "user"], res)) {
+    return null;
+  }
+
+  User.findOne({ _id: body.user }, (err, user) => {
+    if (user) {
+      // The below two lines will set the newly favorites
+      // to the the User's favorites array field
+      user.favorites = user.favorites.filter(
+        (item) => item.valueOf() !== body.id
+      );
+      user.save();
+
+      res.json(
+        jsonResponse(200, {
+          message: "محصول موردنظر از لیست محصولات موردعلاقه حذف شد!",
         })
       );
     }
@@ -58,4 +86,4 @@ const checkProduct = async (productId, res) => {
   return product ? true : false;
 };
 
-module.exports = { add_favorite_product };
+module.exports = { add_favorite_product, delete_favorite_product };
