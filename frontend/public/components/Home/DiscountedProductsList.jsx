@@ -33,6 +33,7 @@ const DiscountedProductsList = () => {
 
   return (
     <div
+      id="discounted-products-container"
       className="w-full flex flex-row justify-evenly items-center text-white gap-4 p-8"
       style={{ backgroundImage: "linear-gradient(to left, #0039d4, #4e0081)" }}
     >
