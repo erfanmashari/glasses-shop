@@ -99,8 +99,8 @@ const OrderDetails = ({ setOrderDetailsDisplay }) => {
             />
           ))}
         </ul>
-        <div className="w-full flex flex-row justify-center items-center gap-4">
-          {selectedOrder.status === "جاری" ? (
+        {selectedOrder.status === "جاری" ? (
+          <div className="w-full flex flex-row justify-center items-center gap-4">
             <button
               onClick={setTransactionFields}
               className="w-max h-fit flex flex-row justify-center items-center text-md font-bold rounded-lg gap-1 px-3 py-1.5"
@@ -112,20 +112,10 @@ const OrderDetails = ({ setOrderDetailsDisplay }) => {
             >
               پرداخت سفارش
             </button>
-          ) : (
-            ""
-          )}
-          <button
-            className="w-max h-fit flex flex-row justify-center items-center text-md font-bold rounded-lg gap-1 px-3 py-1.5"
-            style={{
-              background: "inherit",
-              color: "#06291D",
-              border: "2px solid #06291D",
-            }}
-          >
-            حذف سفارش
-          </button>
-        </div>
+          </div>
+        ) : (
+          ""
+        )}
       </div>
     </div>
   );
