@@ -45,7 +45,7 @@ const PaymentForm = () => {
         const res = checkFetchResponse(response);
         if (res.ok) {
           toastAlert(res.data.message, "success");
-          router.push("/");
+          router.push(`/verified/${res.data.trackingCode}`);
         } else {
           toastAlert(res.message, "error");
         }
