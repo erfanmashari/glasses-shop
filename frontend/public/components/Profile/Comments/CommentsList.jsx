@@ -2,7 +2,7 @@ import CommentsItem from "./CommentsItem";
 
 import { useSelector } from "react-redux";
 
-const CommentsList = () => {
+const CommentsList = ({ setCommentDetailsDisplay }) => {
   // get personal info from reduc/reducer/profile/personalInfo.js
   const personalInfo = useSelector((state) => state.personalInfo);
   const comments = personalInfo.comments ? personalInfo.comments : [];
@@ -22,7 +22,12 @@ const CommentsList = () => {
         </thead>
         <tbody>
           {comments.map((comment, index) => (
-            <CommentsItem key={index} comment={comment} index={index} />
+            <CommentsItem
+              key={index}
+              comment={comment}
+              index={index}
+              setCommentDetailsDisplay={setCommentDetailsDisplay}
+            />
           ))}
         </tbody>
       </table>
