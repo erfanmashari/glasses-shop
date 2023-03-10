@@ -49,10 +49,10 @@ const Checkout = () => {
       productsIds.push(product._id);
     });
     const fecthBody = {
-      userId: personalInfo._id,
+      user: personalInfo._id,
       address: orderInfo.address,
       products: productsIds,
-      status: "پرداخت نشده",
+      status: "جاری",
       paymentMethod: orderInfo.paymentMethod,
       sendingMethod: "پست پیشتاز",
     };

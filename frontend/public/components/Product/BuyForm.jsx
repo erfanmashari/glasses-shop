@@ -68,7 +68,9 @@ const BuyForm = () => {
     e.preventDefault();
 
     const selectedProductInfo = { ...selectedProduct };
-    selectedProductInfo.userId = personalInfo._id;
+    selectedProductInfo.user = personalInfo._id;
+    selectedProductInfo.id = selectedProductInfo._id;
+    selectedProductInfo._id = undefined;
     if (!selectedProductInfo.frameColor) {
       toastAlert("رنگ محصول را انتخاب کنید!", "error");
     } else if (!selectedProductInfo.size) {
@@ -300,7 +302,7 @@ const BuyForm = () => {
       >
         افزودن به سبد خرید
       </button>
-      {productInfo.testAtHome && (
+      {/* {productInfo.testAtHome && (
         <>
           <p className="w-full text-center text-sm">یا</p>
           <p className="w-full text-center text-sm">تست رایگان در منزل</p>
@@ -312,7 +314,7 @@ const BuyForm = () => {
             افزودن به سبد تست
           </button>
         </>
-      )}
+      )} */}
     </form>
   );
 };
