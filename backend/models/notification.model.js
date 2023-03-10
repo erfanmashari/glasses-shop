@@ -5,7 +5,7 @@ const notificationSchema = new Schema(
   {
     user: { type: Schema.Types.ObjectId, required: true },
     title: { type: String, required: true },
-    seen: { type: Boolean, default: false },
+    isSeen: { type: Boolean, default: false },
   },
   { timestamps: true, collection: "notifications" }
 );

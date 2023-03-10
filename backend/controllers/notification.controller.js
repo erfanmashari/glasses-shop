@@ -52,7 +52,7 @@ const seen_notification = async (req, res) => {
   Notification.findOne({ _id: body.id }, (err, notification) => {
     if (notification) {
       // The below two lines will set seen field to true
-      notification.seen = true;
+      notification.isSeen = true;
       notification.save();
       res.json(
         jsonResponse(200, { message: "پیغام موردنظر به عنوان دیده شده ست شد!" })

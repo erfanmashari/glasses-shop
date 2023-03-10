@@ -9,7 +9,7 @@ const userSchema = new Schema(
     gender: { type: String, maxLength: 10, required: true },
     phoneNumber: { type: String, unique: true, maxLength: 15, required: true },
     rules: { type: Boolean },
-    active: { type: Boolean, default: true },
+    isActive: { type: Boolean, default: true },
     job: { type: String, maxLength: 60 },
     email: { type: String, default: null, index: { unique: true, sparse: true } },
     password: { type: String },
