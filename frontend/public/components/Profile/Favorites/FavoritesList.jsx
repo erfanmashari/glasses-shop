@@ -15,9 +15,10 @@ const FavoritesList = () => {
           <tr className="w-full text-stone-800 border-b-2 border-gray-200">
             <th className="w-1/12 py-4">ردیف</th>
             <th className="w-5/12 py-4">نام محصول</th>
-            <th className="w-3/12 py-4">گروه محصول</th>
+            <th className="w-2/12 py-4">گروه محصول</th>
             <th className="w-2/12 py-4">قیمت</th>
             <th className="w-1/12 py-4">اطلاعات</th>
+            <th className="w-1/12 py-4">حذف</th>
           </tr>
         </thead>
         <tbody>
