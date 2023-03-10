@@ -2,17 +2,54 @@ import CommentDetailsItem from "./CommentDetailsItem";
 import ProductItem from "./ProductItem";
 import PointsItem from "./PointsItem";
 
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+
+import axiosApp from "../../../utils/axiosApp";
+import {
+  checkFetchResponse,
+  toastAlert,
+  getUserInfo,
+  getTokenFromCookie,
+} from "../../../functions";
 
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import StarOutlineOutlinedIcon from "@mui/icons-material/StarOutlineOutlined";
 import StarOutlinedIcon from "@mui/icons-material/StarOutlined";
 
 const CommentDetails = ({ setCommentDetailsDisplay }) => {
+  const dispatch = useDispatch();
+
+  // get personal info from redux/reducer/profile/personalInfo.js
+  const personalInfo = useSelector((state) => state.personalInfo);
+
   // get selected comment info from redux/reducers/profile/selectedComment.js
   const selectedComment = useSelector((state) => state.selectedComment);
 
   const starsArray = [1, 2, 3, 4, 5];
+
+  // send delete comment request to backend
+  const deleteComment = () => {
+    axiosApp
+      .delete("comments", {
+        headers: {
+          Authorization: getTokenFromCookie(),
+        },
+        data: {
+          id: selectedComment._id,
+          user: personalInfo._id,
+        },
+      })
+      .then((response) => {
+        const res = checkFetchResponse(response);
+        if (res.ok) {
+          setCommentDetailsDisplay(false);
+          getUserInfo(dispatch);
+          toastAlert(res.data.message, "success");
+        } else {
+          toastAlert(res.message, "error");
+        }
+      });
+  };
 
   return (
     <div className="w-full h-screen fixed top-0 right-0 flex justify-center items-center bg-black/10 z-30">
@@ -90,23 +127,19 @@ const CommentDetails = ({ setCommentDetailsDisplay }) => {
         >
           <ProductItem product={selectedComment.product} />
         </ul>
-        {selectedComment.status === "جاری" ? (
-          <div className="w-full flex flex-row justify-center items-center gap-4">
-            <button
-              onClick={setTransactionFields}
-              className="w-max h-fit flex flex-row justify-center items-center text-md font-bold rounded-lg gap-1 px-3 py-1.5"
-              style={{
-                background: "inherit",
-                color: "#06291D",
-                border: "2px solid #06291D",
-              }}
-            >
-              پرداخت سفارش
-            </button>
-          </div>
-        ) : (
-          ""
-        )}
+        <div className="w-full flex flex-row justify-center items-center gap-4">
+          <button
+            onClick={deleteComment}
+            className="w-max h-fit flex flex-row justify-center items-center text-md font-bold rounded-lg gap-1 px-3 py-1.5"
+            style={{
+              background: "inherit",
+              color: "#06291D",
+              border: "2px solid #06291D",
+            }}
+          >
+            حذف دیدگاه
+          </button>
+        </div>
       </div>
     </div>
   );
