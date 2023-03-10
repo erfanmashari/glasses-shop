@@ -3,11 +3,25 @@ import AddressesList from "./AddressesList";
 import AddAddressForm from "./AddAddressForm";
 import AddressDetails from "./AddressDetails";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+import { useDispatch } from "react-redux";
+import {
+  resetAddressesFormFields,
+  resetSelectedAddressInfo,
+} from "../../../redux/actions/profile";
 
 const Addresses = () => {
+  const dispatch = useDispatch();
+
   // display address details status
   const [addressDetailsDisplay, setAddressDetailsDisplay] = useState(false);
+
+  useEffect(() => {
+    dispatch(resetAddressesFormFields());
+    dispatch(resetSelectedAddressInfo());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <main className="w-full flex flex-row justify-center items-start gap-6 p-8">

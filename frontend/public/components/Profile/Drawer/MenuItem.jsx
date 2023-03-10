@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useDispatch } from "react-redux";
 
 import { changeLoginStatus } from "../../../redux/actions/login";
+import { resetProfilePersonalInfo } from "../../../redux/actions/profile";
 
 const MenuItem = ({ icon, title, href }) => {
   const dispatch = useDispatch();
@@ -14,6 +15,7 @@ const MenuItem = ({ icon, title, href }) => {
         document.cookie = `email=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${process.env.COOKIE_PATH}`;
 
         dispatch(changeLoginStatus(false));
+        dispatch(resetProfilePersonalInfo());
       }, 1000);
     }
   };

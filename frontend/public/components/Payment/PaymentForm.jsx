@@ -2,7 +2,10 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { useSelector, useDispatch } from "react-redux";
-import { changeTransactionInfo } from "../../redux/actions/payment";
+import {
+  changeTransactionInfo,
+  resetTransactionInfo,
+} from "../../redux/actions/payment";
 
 import axiosApp from "../../utils/axiosApp";
 import {
@@ -44,6 +47,7 @@ const PaymentForm = () => {
       .then((response) => {
         const res = checkFetchResponse(response);
         if (res.ok) {
+          dispatch(resetTransactionInfo());
           toastAlert(res.data.message, "success");
           router.push(`/verified/${res.data.trackingCode}`);
         } else {

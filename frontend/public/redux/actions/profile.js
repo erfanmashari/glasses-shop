@@ -22,6 +22,27 @@ export const resetProfilePersonalInfo = () => {
   };
 };
 
+// action for resetting selected address info
+export const resetSelectedAddressInfo = () => {
+  return {
+    type: "RESET_SELECTED_ADDRESS_INFO",
+  };
+};
+
+// action for resetting selected comment info
+export const resetSelectedCommentInfo = () => {
+  return {
+    type: "RESET_SELECTED_COMMENT_INFO",
+  };
+};
+
+// action for resetting selected order info
+export const resetSelectedOrderInfo = () => {
+  return {
+    type: "RESET_SELECTED_ORDER_INFO",
+  };
+};
+
 // action for setting addresses list from backend
 export const setAddressesListFromBackend = (addresses) => {
   return {

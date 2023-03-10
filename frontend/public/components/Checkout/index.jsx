@@ -2,10 +2,16 @@ import DeliveryAddressList from "./DeliveryAddressList";
 import PaymentMethod from "./PaymentMethod";
 import SendingMethod from "./SendingMethod";
 
+import { useEffect } from "react";
+
 import { useRouter } from "next/router";
 
 import { useSelector, useDispatch } from "react-redux";
-import { changeTransactionInfo } from "../../redux/actions/payment";
+import { resetOrderInfo } from "../../redux/actions/checkout";
+import {
+  changeTransactionInfo,
+  resetTransactionInfo,
+} from "../../redux/actions/payment";
 
 import axiosApp from "../../utils/axiosApp";
 import { checkFetchResponse, getTokenFromCookie } from "../../functions";
@@ -22,6 +28,12 @@ const Checkout = () => {
   // get personal info from redux/reducer/profile/personalInfo.js
   const personalInfo = useSelector((state) => state.personalInfo);
   const cartList = personalInfo.cart ? personalInfo.cart : [];
+
+  // reset order info
+  useEffect(() => {
+    dispatch(resetOrderInfo());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   let totalPrice = 0;
   const dateOfNow = new Date();
@@ -74,6 +86,8 @@ const Checkout = () => {
 
   // set some of transaction fields in redux
   const setTransactionFields = (order, amount) => {
+    dispatch(resetTransactionInfo());
+
     dispatch(changeTransactionInfo("order", order));
     dispatch(changeTransactionInfo("amount", amount));
 

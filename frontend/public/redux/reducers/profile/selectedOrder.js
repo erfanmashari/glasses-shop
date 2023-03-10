@@ -3,6 +3,9 @@ const selectedOrder = (state = {}, action) => {
     case "SET_SELECTED_ORDER_INFO":
       state = action.order;
       return state;
+    case "RESET_SELECTED_ORDER_INFO":
+      state = {};
+      return state;
     default:
       return state;
   }

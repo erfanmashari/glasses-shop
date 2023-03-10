@@ -7,7 +7,7 @@ const personalInfo = (state = {}, action) => {
       const items = { ...state };
       items[action.parameter] = action.value;
       state = items;
-      return state;
+      return state; 
     case "RESET_PROFILE_PERSONAL_INFO":
       state = {};
       return state;
