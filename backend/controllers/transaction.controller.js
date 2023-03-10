@@ -89,6 +89,7 @@ const add_transaction = async (req, res) => {
           res.json(
             jsonResponse(201, {
               message: "پرداخت با موفقیت انجام شد!",
+              trackingCode,
             })
           );
         }
