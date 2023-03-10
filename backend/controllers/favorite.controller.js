@@ -51,7 +51,7 @@ const delete_favorite_product = (req, res) => {
       // The below two lines will set the newly favorites
       // to the the User's favorites array field
       user.favorites = user.favorites.filter(
-        (item) => item.valueOf() !== body.id
+        (item) => item.valueOf() !== body.product
       );
       user.save();
 
