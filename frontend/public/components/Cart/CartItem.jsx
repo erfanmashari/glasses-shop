@@ -1,5 +1,15 @@
 import Image from "next/image";
 
+import { useSelector, useDispatch } from "react-redux";
+
+import axiosApp from "../../utils/axiosApp";
+import {
+  checkFetchResponse,
+  toastAlert,
+  getUserInfo,
+  getTokenFromCookie,
+} from "../../functions";
+
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
 const CartItem = ({ isLast, product }) => {
@@ -9,6 +19,37 @@ const CartItem = ({ isLast, product }) => {
   const dateOfDiscountTime = product.discountTime
     ? new Date(product.discountTime)
     : dateOfNow;
+
+    const dispatch = useDispatch();
+
+  // get personal info from redux/reducer/profile/personalInfo.js
+  const personalInfo = useSelector((state) => state.personalInfo);
+
+  // send delete product from cart request to backend
+  const deleteProduct = () => {
+    axiosApp
+      .delete(
+        "cart",
+        {
+          headers: {
+            Authorization: getTokenFromCookie()
+          },
+          data: {
+            user: personalInfo._id,
+            id: product._id,
+          }
+        }
+      )
+      .then((response) => {
+        const res = checkFetchResponse(response);
+        if (res.ok) {
+          getUserInfo(dispatch);
+          toastAlert(res.data.message, "success");
+        } else {
+          toastAlert(res.message, "error");
+        }
+      });
+  };
 
   return (
     <li
@@ -64,6 +105,7 @@ const CartItem = ({ isLast, product }) => {
         <button
           style={{ border: "2px solid #c3c4c3" }}
           className="rounded-lg p-0.5"
+          onClick={deleteProduct}
         >
           <DeleteOutlineIcon className="w-7 h-7 text-slate-500" />
         </button>
