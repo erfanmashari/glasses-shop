@@ -15,6 +15,7 @@ import {
 
 import { Tooltip } from "flowbite-react";
 
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 
 const BuyForm = () => {
@@ -28,6 +29,29 @@ const BuyForm = () => {
 
   // get selected product info from redux/reducers/product/selectedProduct.js
   const selectedProduct = useSelector((state) => state.selectedProduct);
+
+  const dateOfNow = new Date();
+  const dateOfDiscountTime = productInfo.discountTime
+    ? new Date(productInfo.discountTime)
+    : dateOfNow;
+
+  // true if product have have discount price
+  const isDiscounted =
+    productInfo.discountPercent &&
+    productInfo.discountedPrice &&
+    productInfo.discountTime &&
+    dateOfNow <= dateOfDiscountTime;
+
+  // check if product is in user favorites
+  let isFavorite = false;
+  if (personalInfo.favorites) {
+    for (const favorite of personalInfo.favorites) {
+      if (favorite._id === productInfo._id) {
+        isFavorite = true;
+        break;
+      }
+    }
+  }
 
   const chooseProductColor = (color) => {
     if (color.isAvailable === "true" || color.isAvailable === true) {
@@ -62,19 +86,51 @@ const BuyForm = () => {
     }
   };
 
+  // run addFavorite or deleteFavorite based of if product is in favorites list
+  const handleFavorite = () => {
+    if (isFavorite) {
+      deleteFavorite();
+    } else {
+      addFavorite();
+    }
+  };
+
   // send add faviorite product request to backend
   const addFavorite = () => {
     axiosApp
       .post(
         "favorites",
         {
-          userId: personalInfo._id,
-          productId: productInfo._id,
+          user: personalInfo._id,
+          product: productInfo._id,
         },
         {
           headers: { Authorization: getTokenFromCookie() },
         }
       )
+      .then((response) => {
+        const res = checkFetchResponse(response);
+        if (res.ok) {
+          getUserInfo(dispatch);
+          toastAlert(res.data.message, "success");
+        } else {
+          toastAlert(res.message, "error");
+        }
+      });
+  };
+
+  // send delete favorite product request to backend
+  const deleteFavorite = () => {
+    axiosApp
+      .delete("favorites", {
+        headers: {
+          Authorization: getTokenFromCookie(),
+        },
+        data: {
+          user: personalInfo._id,
+          product: productInfo._id,
+        },
+      })
       .then((response) => {
         const res = checkFetchResponse(response);
         if (res.ok) {
@@ -96,8 +152,8 @@ const BuyForm = () => {
         <span className="text-sm" style={{ color: "#6e6e6e" }}>
           خانه / {productInfo.category}
         </span>
-        <button type="button" onClick={addFavorite}>
-          <FavoriteBorderOutlinedIcon />
+        <button type="button" onClick={handleFavorite} className="text-red-600">
+          {isFavorite ? <FavoriteIcon /> : <FavoriteBorderOutlinedIcon />}
         </button>
       </div>
       <h2 className="w-full text-lg font-bold">{productInfo.nameFa}</h2>
@@ -144,18 +200,13 @@ const BuyForm = () => {
         </h4>
         <span
           className={`font-bold ${
-            productInfo.discountPercent &&
-            productInfo.discountedPrice &&
-            productInfo.discountTime &&
-            "line-through text-stone-500"
+            isDiscounted && "line-through text-stone-500"
           }`}
         >
           {productInfo.price} تومان
         </span>
       </div>
-      {productInfo.discountPercent &&
-      productInfo.discountedPrice &&
-      productInfo.discountTime ? (
+      {isDiscounted ? (
         <>
           <div className="w-full flex flex-row justify-between items-center border-b-2 border-stone-200 pb-2">
             <h4>قیمت با تخفیف {productInfo.discountPercent}%</h4>
