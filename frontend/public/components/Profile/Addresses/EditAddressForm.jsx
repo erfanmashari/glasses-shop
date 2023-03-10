@@ -1,14 +1,11 @@
 import FormFieldsContainer from "./FormFieldsContainer";
-import FormInput from "./FormInput";
-import FormSelector from "./FormSelector";
+import EditFormInput from "./EditFormInput";
+import EditFormSelector from "./EditFormSelector";
 
 import { useState, useEffect } from "react";
 
 import { useSelector, useDispatch } from "react-redux";
-import {
-  resetAddressesFormFields,
-  changeAddressesFormFields,
-} from "../../../redux/actions/profile";
+import { changeSelectedAddressesInfo } from "../../../redux/actions/profile";
 
 import axios from "axios";
 import axiosApp from "../../../utils/axiosApp";
@@ -16,52 +13,48 @@ import {
   checkFetchResponse,
   toastAlert,
   getTokenFromCookie,
+  getUserInfo,
 } from "../../../functions";
 
-const AddAddressForm = () => {
+const EditselectedAddress = ({ setAddressDetailsDisplay }) => {
   const dispatch = useDispatch();
 
   // get personal info from reduc/reducer/profile/personalInfo.js
   const personalInfo = useSelector((state) => state.personalInfo);
 
-  // get add new address form fields from reduc/reducer/profile/addressForm.js
-  const addressForm = useSelector((state) => state.addressForm);
+  // get selected address info from redux/reducers/profile/selectedAddress.js
+  const selectedAddress = useSelector((state) => state.selectedAddress);
 
   // province and city selector values
-  const [selectorsValues, setSelectorsValues] = useState({
-    province: [],
-    city: [],
-  });
+  const [provincesList, setProvincesList] = useState([]);
+  const [citiesList, setCitiesList] = useState([]);
 
   const changeReceiverValue = (checked) => {
     if (checked) {
       dispatch(
-        changeAddressesFormFields("receiverSpecifications", {
+        changeSelectedAddressesInfo("receiverSpecifications", {
           firstName: personalInfo.firstName,
           lastName: personalInfo.lastName,
           phoneNumber: personalInfo.phoneNumber,
         })
       );
     } else {
-      dispatch(changeAddressesFormFields("receiverSpecifications", {}));
+      dispatch(changeSelectedAddressesInfo("receiverSpecifications", {}));
     }
-    dispatch(changeAddressesFormFields("isMeReceiver", checked));
+    dispatch(changeSelectedAddressesInfo("isMeReceiver", checked));
   };
 
-  // change selector values options
-  const changeSelectorsValues = (parameter, value) => {
-    const items = { ...selectorsValues };
-    items[parameter] = value;
-    setSelectorsValues(items);
-  };
-
-  // send add new address request to backend
-  const addNewAddress = (e) => {
+  // send edit address info request to backend
+  const editAddress = (e) => {
     e.preventDefault();
 
-    const reqData = { ...addressForm, user: personalInfo._id };
+    const reqData = {
+      ...selectedAddress,
+      id: selectedAddress._id,
+      _id: undefined,
+    };
     axiosApp
-      .post("addresses", reqData, {
+      .put("addresses", reqData, {
         headers: { Authorization: getTokenFromCookie() },
       })
       .then((response) => {
@@ -69,7 +62,30 @@ const AddAddressForm = () => {
 
         if (res.ok) {
           toastAlert(res.data.message, "success");
-          dispatch(resetAddressesFormFields());
+        } else {
+          toastAlert(res.message, "error");
+        }
+      });
+  };
+
+  // send delete address request to backend
+  const deleteAddress = () => {
+    axiosApp
+      .delete("addresses", {
+        headers: {
+          Authorization: getTokenFromCookie(),
+        },
+        data: {
+          id: selectedAddress._id,
+          user: personalInfo._id,
+        },
+      })
+      .then((response) => {
+        const res = checkFetchResponse(response);
+        if (res.ok) {
+          setAddressDetailsDisplay(false);
+          getUserInfo(dispatch);
+          toastAlert(res.data.message, "success");
         } else {
           toastAlert(res.message, "error");
         }
@@ -84,62 +100,62 @@ const AddAddressForm = () => {
         res.data.forEach((province) => {
           provinceArray.push({ text: province.name, value: province.name });
         });
-        changeSelectorsValues("province", provinceArray);
+        setProvincesList(provinceArray);
       }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    if (addressForm.province) {
+    if (selectedAddress.province) {
       // get cities of iran from an api
       axios.get(`http://localhost:3000/cities.json`).then((res) => {
         if (res.status === 200 && res.data && res.data.length) {
           const cityArray = [{ text: "انتخاب شهرستان", value: "" }];
           res.data.forEach((city) => {
-            if (addressForm.province === city.province) {
+            if (selectedAddress.province === city.province) {
               cityArray.push({ text: city.name, value: city.name });
             }
           });
-          changeSelectorsValues("city", cityArray);
+          setCitiesList(cityArray);
         }
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [addressForm.province]);
+  }, [selectedAddress.province]);
 
   return (
     <form
-      onSubmit={addNewAddress}
+      onSubmit={editAddress}
       className="w-full flex flex-col justify-center items-center gap-4"
     >
       <h3 className="w-full text-xl font-bold text-stone-800">
         افزودن آدرس جدید
       </h3>
       <FormFieldsContainer>
-        <FormSelector
+        <EditFormSelector
           label={"استان *"}
           type={"text"}
           parameter={"province"}
           required={true}
-          options={selectorsValues.province}
+          options={provincesList}
         />
-        <FormSelector
+        <EditFormSelector
           label={"شهر *"}
           type={"text"}
           parameter={"city"}
           required={true}
-          options={selectorsValues.city}
+          options={citiesList}
         />
         <FormFieldsContainer>
-          <FormInput
+          <EditFormInput
             label={"پلاک *"}
             placeholder={"پلاک"}
             type={"text"}
             parameter={"plaque"}
             required={true}
           />
-          <FormInput
+          <EditFormInput
             label={"واحد"}
             placeholder={"واحد"}
             type={"text"}
@@ -147,7 +163,7 @@ const AddAddressForm = () => {
           />
         </FormFieldsContainer>
       </FormFieldsContainer>
-      <FormInput
+      <EditFormInput
         label={"نشانی پستی *"}
         placeholder={"نشانی پستی را وارد کنید..."}
         type={"text"}
@@ -155,7 +171,7 @@ const AddAddressForm = () => {
         required={true}
       />
       <div className="w-full flex flex-row justify-center items-end gap-4">
-        <FormInput
+        <EditFormInput
           label={"کد پستی *"}
           placeholder={"کد پستی"}
           type={"text"}
@@ -166,8 +182,9 @@ const AddAddressForm = () => {
           <input
             type="checkbox"
             checked={
-              addressForm["isMeReceiver"] === true
-                ? addressForm["isMeReceiver"]
+              selectedAddress["isMeReceiver"] === true ||
+              selectedAddress["isMeReceiver"] === "true"
+                ? true
                 : false
             }
             onChange={(e) => changeReceiverValue(e.target.checked)}
@@ -178,47 +195,61 @@ const AddAddressForm = () => {
         </div>
       </div>
       <FormFieldsContainer>
-        <FormInput
+        <EditFormInput
           label={"نام *"}
           placeholder={"نام"}
           type={"text"}
           parameter={"firstName"}
           required={true}
-          disabled={addressForm.isMeReceiver}
+          disabled={selectedAddress.isMeReceiver}
           isReceiverSpecifications={true}
         />
-        <FormInput
+        <EditFormInput
           label={"نام خانوادگی *"}
           placeholder={"نام خانوادگی"}
           type={"text"}
           parameter={"lastName"}
           required={true}
-          disabled={addressForm.isMeReceiver}
+          disabled={selectedAddress.isMeReceiver}
           isReceiverSpecifications={true}
         />
-        <FormInput
+        <EditFormInput
           label={"شماره همراه *"}
           placeholder={"شماره همراه"}
           type={"text"}
           parameter={"phoneNumber"}
           required={true}
-          disabled={addressForm.isMeReceiver}
+          disabled={selectedAddress.isMeReceiver}
           isReceiverSpecifications={true}
         />
       </FormFieldsContainer>
-      <button
-        type="submit"
-        className="w-max h-fit flex flex-row justify-center items-center text-md font-bold rounded-lg gap-1 px-3 py-1.5 mt-4"
-        style={{
-          background: "inherit",
-          color: "#06291D",
-          border: "2px solid #06291D",
-        }}
-      >
-        افزودن آدرس جدید
-      </button>
+      <div className="w-full flex flex-row justify-center items-center gap-4">
+        <button
+          type="submit"
+          className="w-max h-fit flex flex-row justify-center items-center text-md font-bold rounded-lg gap-1 px-3 py-1.5"
+          style={{
+            background: "inherit",
+            color: "#06291D",
+            border: "2px solid #06291D",
+          }}
+        >
+          ویرایش آدرس
+        </button>
+        <button
+          type="button"
+          onClick={deleteAddress}
+          className="w-max h-fit flex flex-row justify-center items-center text-md font-bold rounded-lg gap-1 px-3 py-1.5"
+          style={{
+            background: "inherit",
+            color: "#06291D",
+            border: "2px solid #06291D",
+          }}
+        >
+          حذف آدرس
+        </button>
+      </div>
     </form>
   );
 };
 
-export default AddAddressForm;
+export default EditselectedAddress;
