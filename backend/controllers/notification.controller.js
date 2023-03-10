@@ -61,6 +61,34 @@ const seen_notification = async (req, res) => {
   });
 };
 
+// delete notification
+const delete_notification = (req, res) => {
+  checkAuthorization(req.headers.authorization);
+  
+  const body = req.body;
+
+  if (!checkDataExist(body, ["id", "user"], res)) {
+    return null;
+  }
+
+  User.findOne({ _id: body.user }, (err, user) => {
+    if (user) {
+      // The below two lines will set the newly notifications
+      // to the the User's notifications array field
+      user.notifications = user.notifications.filter(item => item.valueOf() !== body.id);
+      user.save();
+
+      Notification.findByIdAndDelete(body.id)
+        .then((result) => {
+          res.json(jsonResponse(200, { message: "پیغام موردنظر حذف شد!" }));
+        })
+        .catch((error) => {
+          res.status(500).json({ error });
+        });
+    }
+  });
+};
+
 // check if user is real or not
 const checkUser = async (userId, res) => {
   const user = await User.findOne({ _id: userId });
@@ -72,4 +100,4 @@ const checkUser = async (userId, res) => {
   return user ? true : false;
 };
 
-module.exports = { add_notification, seen_notification };
+module.exports = { add_notification, seen_notification, delete_notification };
