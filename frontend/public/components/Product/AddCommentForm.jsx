@@ -42,8 +42,8 @@ const AddCommentForm = ({ addCommentDisplay, setAddCommentDisplay }) => {
       toastAlert("تعداد ستاره ها را مشخص کنید!", "error");
     } else {
       const fecthBody = {
-        userId: personalInfo._id,
-        productId: productInfo._id,
+        user: personalInfo._id,
+        product: productInfo._id,
         status: "در حال بررسی",
         ...newCommentInfo,
       };
