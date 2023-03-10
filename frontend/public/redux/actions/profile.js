@@ -53,3 +53,11 @@ export const setSelectedOrderInfo = (order) => {
         type: "SET_SELECTED_ORDER_INFO"
     }
 }
+
+// action for setting selected comment info
+export const setSelectedCommentInfo = (comment) => {
+    return {
+        comment,
+        type: "SET_SELECTED_COMMENT_INFO"
+    }
+}
