@@ -7,6 +7,16 @@ const {
   checkAuthorization,
 } = require("../functions");
 
+// get single comment by id
+const comment_single = async (req, res) => {
+  checkAuthorization(req.headers.authorization);
+
+  const commentIndex = await Comment.findById(req.params.id);
+  const comment = { ...commentIndex }._doc;
+  comment.product = await getProduct(comment.product);
+  res.json(jsonResponse(200, { comment }));
+};
+
 const add_comment = async (req, res) => {
   checkAuthorization(req.headers.authorization);
 
@@ -90,6 +100,13 @@ const delete_comment = async (req, res) => {
   });
 }
 
+// get product of comment
+const getProduct = async (productId, res) => {
+  const product = await Product.findOne({ _id: productId });
+
+  return product;
+};
+
 // check if user is real or not
 const checkUser = async (userId, res) => {
   const user = await User.findOne({ _id: userId });
@@ -150,4 +167,4 @@ const checkStars = (stars, res) => {
   }
 };
 
-module.exports = { add_comment, delete_comment };
+module.exports = { comment_single, add_comment, delete_comment };
