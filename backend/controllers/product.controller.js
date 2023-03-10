@@ -93,6 +93,173 @@ const product_discount = (req, res) => {
     });
 };
 
+const add_product = async (req, res) => {
+  checkAuthorization(req.headers.authorization);
+
+  const body = req.body;
+  const files = req.files;
+
+  // make number, boolean and object fields from string
+  const numberFields = [
+    "price",
+    "stars",
+    "discountPercent",
+    "discountedPrice",
+    "numberOfProducts",
+  ];
+  const booleanFields = [
+    "isAvailable",
+    "isOriginal",
+    "isSpecialSale",
+    "isFreeDelivery",
+    "testAtHome",
+  ];
+  const objectFields = [
+    "brand",
+    "genders",
+    "sizes",
+    "frameColors",
+    "frameShapes",
+    "faceShapes",
+    "features",
+    "images",
+    "sellers",
+    "lensFeatures",
+    "comments",
+  ];
+
+  for (const field in body) {
+    if (numberFields.includes(field)) {
+      body[field] = body[field] ? Number(body[field]) : 0;
+      // second one is for that to make NaN to 0
+      body[field] = isNaN(body[field]) ? 0 : body[field];
+    } else if (booleanFields.includes(field)) {
+      body[field] = body[field] === true || body[field] === "true";
+    } else if (objectFields.includes(field)) {
+      body[field] = JSON.parse(body[field]);
+    }
+  }
+
+  if (
+    !checkDataExist(
+      body,
+      [
+        "nameFa",
+        "nameEn",
+        "brand",
+        "price",
+        "isAvailable",
+        "numberOfProducts",
+        "category",
+        "genders",
+        "images",
+        "sizes",
+        "sellers",
+        "frameColors",
+      ],
+      res
+    )
+  ) {
+    return null;
+  }
+
+  const checkBrandStatus = await checkBrand(body.brand, res);
+  const checkSellersStatus = await checkSellers(body.sellers, res);
+  const checkFrameColorsStatus = await checkFrameColors(
+    body.frameColors,
+    body.numberOfProducts,
+    body.sellers,
+    res
+  );
+  if (
+    !checkAvailabality(body.frameColors, body.isAvailable, res) ||
+    !checkDiscount(
+      body.discountPercent,
+      body.discountedPrice,
+      body.discountTime,
+      res
+    ) ||
+    !checkStrArrays(
+      body,
+      [
+        "genders",
+        "sizes",
+        "features",
+        "frameShapes",
+        "faceShapes",
+        "lensFeatures",
+      ],
+      res
+    ) ||
+    !checkBrandStatus ||
+    !checkSellersStatus ||
+    !checkFrameColorsStatus ||
+    !checkImages(body.images, files, res)
+  ) {
+    return null;
+  }
+
+  // check if product already exist or not
+  const productNameFa = await Product.findOne({ nameFa: body.nameFa });
+  const productNameEn = await Product.findOne({ nameEn: body.nameEn });
+  if (productNameFa) {
+    res.json(
+      jsonResponse(406, {
+        message: "محصولی با این نام فارسی وجود دارد!",
+      })
+    );
+  } else if (productNameEn) {
+    res.json(
+      jsonResponse(406, {
+        message: "محصولی با این نام انگلیسی وجود دارد!",
+      })
+    );
+  } else {
+    // create new product
+    const productsIndex = await Product.create(body);
+
+    // save images with unique name
+    const savedFilesStatus = [];
+    await files.forEach((file, index) => {
+      const imageName = `${productsIndex.nameEn}_${createRandomImageName(10)}`;
+
+      // add image file name to image object saved in database
+      const newImages = [...productsIndex.images];
+      for (const img of newImages) {
+        if (file.originalname === img.name) {
+          img.fileName = imageName;
+        }
+      }
+
+      fs.writeFile(
+        `public/products/${imageName}.jpg`,
+        file.buffer,
+        "binary",
+        function (err) {
+          if (err) throw err;
+          Product.findByIdAndUpdate(
+            productsIndex._id,
+            { images: newImages },
+            { new: true }
+          )
+            .then((res) => {
+              savedFilesStatus.push(true);
+            })
+            .catch((err) => {
+              console.log("err-mongo-files: ", err);
+            });
+        }
+      );
+    });
+
+    res.status(201).json(
+      jsonResponse(201, {
+        message: "محصول جدید با موفقیت افزوده شد!",
+      })
+    );
+  }
+};
+
 // get comments of a product
 const getComments = async (comments) => {
   const commentsList = [];
@@ -100,10 +267,10 @@ const getComments = async (comments) => {
     const commentIndex = await Comment.findOne({ _id: comment });
     if (commentIndex) {
       // get user that created the comment
-      const userIndex = await User.findOne({ _id: commentIndex.userId });
-      commentIndex.userId = userIndex;
+      const userIndex = await User.findOne({ _id: commentIndex.user });
+      commentIndex.user = userIndex;
       const newComment = { ...commentIndex }._doc;
-      newComment.userId = undefined;
+      newComment.user = undefined;
       newComment.user = { ...userIndex }._doc;
 
       commentsList.push(newComment);
@@ -392,173 +559,6 @@ const checkStrArrays = (body, listOfArrays, res) => {
   }
 
   return !isHaveDuplicate;
-};
-
-const add_product = async (req, res) => {
-  checkAuthorization(req.headers.authorization);
-
-  const body = req.body;
-  const files = req.files;
-
-  // make number, boolean and object fields from string
-  const numberFields = [
-    "price",
-    "stars",
-    "discountPercent",
-    "discountedPrice",
-    "numberOfProducts",
-  ];
-  const booleanFields = [
-    "isAvailable",
-    "isOriginal",
-    "isSpecialSale",
-    "isFreeDelivery",
-    "testAtHome",
-  ];
-  const objectFields = [
-    "brand",
-    "genders",
-    "sizes",
-    "frameColors",
-    "frameShapes",
-    "faceShapes",
-    "features",
-    "images",
-    "sellers",
-    "lensFeatures",
-    "comments",
-  ];
-
-  for (const field in body) {
-    if (numberFields.includes(field)) {
-      body[field] = body[field] ? Number(body[field]) : 0;
-      // second one is for that to make NaN to 0
-      body[field] = isNaN(body[field]) ? 0 : body[field];
-    } else if (booleanFields.includes(field)) {
-      body[field] = body[field] === true || body[field] === "true";
-    } else if (objectFields.includes(field)) {
-      body[field] = JSON.parse(body[field]);
-    }
-  }
-
-  if (
-    !checkDataExist(
-      body,
-      [
-        "nameFa",
-        "nameEn",
-        "brand",
-        "price",
-        "isAvailable",
-        "numberOfProducts",
-        "category",
-        "genders",
-        "images",
-        "sizes",
-        "sellers",
-        "frameColors",
-      ],
-      res
-    )
-  ) {
-    return null;
-  }
-
-  const checkBrandStatus = await checkBrand(body.brand, res);
-  const checkSellersStatus = await checkSellers(body.sellers, res);
-  const checkFrameColorsStatus = await checkFrameColors(
-    body.frameColors,
-    body.numberOfProducts,
-    body.sellers,
-    res
-  );
-  if (
-    !checkAvailabality(body.frameColors, body.isAvailable, res) ||
-    !checkDiscount(
-      body.discountPercent,
-      body.discountedPrice,
-      body.discountTime,
-      res
-    ) ||
-    !checkStrArrays(
-      body,
-      [
-        "genders",
-        "sizes",
-        "features",
-        "frameShapes",
-        "faceShapes",
-        "lensFeatures",
-      ],
-      res
-    ) ||
-    !checkBrandStatus ||
-    !checkSellersStatus ||
-    !checkFrameColorsStatus ||
-    !checkImages(body.images, files, res)
-  ) {
-    return null;
-  }
-
-  // check if product already exist or not
-  const productNameFa = await Product.findOne({ nameFa: body.nameFa });
-  const productNameEn = await Product.findOne({ nameEn: body.nameEn });
-  if (productNameFa) {
-    res.json(
-      jsonResponse(406, {
-        message: "محصولی با این نام فارسی وجود دارد!",
-      })
-    );
-  } else if (productNameEn) {
-    res.json(
-      jsonResponse(406, {
-        message: "محصولی با این نام انگلیسی وجود دارد!",
-      })
-    );
-  } else {
-    // create new product
-    const productsIndex = await Product.create(body);
-
-    // save images with unique name
-    const savedFilesStatus = [];
-    await files.forEach((file, index) => {
-      const imageName = `${productsIndex.nameEn}_${createRandomImageName(10)}`;
-
-      // add image file name to image object saved in database
-      const newImages = [...productsIndex.images];
-      for (const img of newImages) {
-        if (file.originalname === img.name) {
-          img.fileName = imageName;
-        }
-      }
-
-      fs.writeFile(
-        `public/products/${imageName}.jpg`,
-        file.buffer,
-        "binary",
-        function (err) {
-          if (err) throw err;
-          Product.findByIdAndUpdate(
-            productsIndex._id,
-            { images: newImages },
-            { new: true }
-          )
-            .then((res) => {
-              savedFilesStatus.push(true);
-            })
-            .catch((err) => {
-              console.log("err-mongo-files: ", err);
-            });
-        }
-      );
-    });
-
-    res.status(201).json(
-      jsonResponse(201, {
-        message: "محصول جدید با موفقیت افزوده شد!",
-      })
-    );
-  }
 };
 
 module.exports = {

@@ -23,7 +23,7 @@ const add_order = async (req, res) => {
     !checkDataExist(
       body,
       [
-        "userId",
+        "user",
         "address",
         "products",
         "status",
@@ -43,7 +43,7 @@ const add_order = async (req, res) => {
     checkTrackingCodeStatus = await checkTrackingCode(trackingCode);
   }
   body.trackingCode = trackingCode;
-  const checkUserStatus = await checkUser(body.userId, res);
+  const checkUserStatus = await checkUser(body.user, res);
   const checkAddressStatus = await checkAddress(body.address, res);
   // check products and set total price
   const checkProductsStatus = await checkProducts(body, body.products, res);
@@ -63,7 +63,7 @@ const add_order = async (req, res) => {
   // create new order
   await Order.create(body)
     .then((result) => {
-      User.findOne({ _id: body.userId }, (err, user) => {
+      User.findOne({ _id: body.user }, (err, user) => {
         if (user) {
           // The below two lines will add the newly saved order's
           // ObjectID to the the User's orders array field
@@ -150,7 +150,7 @@ const checkProducts = async (body, products, res) => {
       break;
     } else {
       productsList.push({
-        userId: product.userId,
+        user: product.user,
         isAvailable: product.isAvailable,
         nameFa: product.nameFa,
         nameEn: product.nameEn,

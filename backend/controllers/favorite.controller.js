@@ -11,21 +11,21 @@ const add_favorite_product = async (req, res) => {
 
   const body = req.body;
 
-  if (!checkDataExist(body, ["userId", "productId"], res)) {
+  if (!checkDataExist(body, ["user", "product"], res)) {
     return null;
   }
 
-  const checkUserStatus = await checkUser(body.userId, res);
-  const checkProductStatus = await checkProduct(body.productId, res);
+  const checkUserStatus = await checkUser(body.user, res);
+  const checkProductStatus = await checkProduct(body.product, res);
   if (!checkUserStatus || !checkProductStatus) {
     return null;
   }
 
-  User.findOne({ _id: body.userId }, (err, user) => {
+  User.findOne({ _id: body.user }, (err, user) => {
     if (user) {
       // The below two lines will add the newly favorite's product
       // ObjectID to the the User's favorites array field
-      user.favorites.push(body.productId);
+      user.favorites.push(body.product);
       user.save();
       res.json(
         jsonResponse(200, {

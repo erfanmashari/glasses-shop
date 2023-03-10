@@ -16,11 +16,11 @@ const set_or_change_password = async (req, res) => {
 
   const body = req.body;
 
-  if (!checkDataExist(body, ["userId", "password", "confirmPassword"], res)) {
+  if (!checkDataExist(body, ["user", "password", "confirmPassword"], res)) {
     return null;
   }
 
-  const checkUserStatus = await checkUser(body.userId, res);
+  const checkUserStatus = await checkUser(body.user, res);
   if (
     !checkUserStatus ||
     !checkPassword(body.password, body.confirmPassword, res)
@@ -29,7 +29,7 @@ const set_or_change_password = async (req, res) => {
   }
 
   bcrypt.hash(body.password, 10, async function (err, hash) {
-    await User.findOneAndUpdate({ _id: body.userId }, { password: hash });
+    await User.findOneAndUpdate({ _id: body.user }, { password: hash });
     res.json(jsonResponse(200, { message: "رمز عبور جدید تایید شد!" }));
   });
   //   const user = await User.findOne({ _id: body.userId });
@@ -45,11 +45,11 @@ const set_or_change_password = async (req, res) => {
 const change_password = async (req, res) => {
   const body = req.body;
 
-  if (!checkDataExist(body, ["userId", "phoneNumber"], res)) {
+  if (!checkDataExist(body, ["user", "phoneNumber"], res)) {
     return null;
   }
 
-  const user = await User.findOne({ _id: body.userId });
+  const user = await User.findOne({ _id: body.user });
 
   if (user) {
     if (!checkPhoneNumber(body.phoneNumber, user.phoneNumber, res)) {

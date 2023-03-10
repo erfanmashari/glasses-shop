@@ -11,18 +11,18 @@ const add_notification = async (req, res) => {
 
   const body = req.body;
 
-  if (!checkDataExist(body, ["userId", "title"], res)) {
+  if (!checkDataExist(body, ["user", "title"], res)) {
     return null;
   }
 
-  const checkUserStatus = await checkUser(body.userId, res);
+  const checkUserStatus = await checkUser(body.user, res);
   if (!checkUserStatus) {
     return null;
   }
 
   Notification.create(body)
     .then((result) => {
-      User.findOne({ _id: body.userId }, (err, user) => {
+      User.findOne({ _id: body.user }, (err, user) => {
         if (user) {
           // The below two lines will add the newly saved notification's
           // ObjectID to the the User's notifications array field

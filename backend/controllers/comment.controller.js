@@ -15,7 +15,7 @@ const add_comment = async (req, res) => {
   if (
     !checkDataExist(
       body,
-      ["userId", "productId", "title", "description", "status", "stars"],
+      ["user", "product", "title", "description", "status", "stars"],
       res
     )
   ) {
@@ -24,8 +24,8 @@ const add_comment = async (req, res) => {
 
   body.stars = Number(body.stars);
 
-  const checkUserStatus = await checkUser(body.userId, res);
-  const checkProductStatus = await checkProduct(body.productId, res);
+  const checkUserStatus = await checkUser(body.user, res);
+  const checkProductStatus = await checkProduct(body.product, res);
   if (
     !checkUserStatus ||
     !checkProductStatus ||
@@ -38,13 +38,13 @@ const add_comment = async (req, res) => {
 
   Comment.create(body)
     .then((result) => {
-      User.findOne({ _id: body.userId }, (err, user) => {
+      User.findOne({ _id: body.user }, (err, user) => {
         if (user) {
           // The below two lines will add the newly saved comment's
           // ObjectID to the the User's comments array field
           user.comments.push(result._id);
           user.save();
-          Product.findOne({ _id: body.productId }, (err, product) => {
+          Product.findOne({ _id: body.product }, (err, product) => {
             if (product) {
               // The below two lines will add the newly saved comment's
               // ObjectID to the the Product's comments array field

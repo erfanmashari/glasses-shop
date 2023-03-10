@@ -19,36 +19,6 @@ const brand_index = (req, res) => {
     });
 };
 
-function createRandomImageName(length) {
-  let result = "";
-  const characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  const charactersLength = characters.length;
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-  return result;
-}
-
-// compare images and images files and check if cover image is set
-const checkImages = (image, imageFile, res) => {
-  if (
-    image.name !== imageFile.originalname ||
-    Number(image.size) !== imageFile.size ||
-    image.type !== imageFile.mimetype
-  ) {
-    res.json(
-      jsonResponse(406, {
-        message: `اطلاعات عکس آپلود شده با اطلاعات عکس تطابق ندارد!`,
-      })
-    );
-  } else if (!imageFile.buffer) {
-    res.json(jsonResponse(406, { message: `عکس آپلود شده صحیح نمی باشد!` }));
-  } else {
-    return true;
-  }
-};
-
 const add_brand = async (req, res) => {
   checkAuthorization(req.headers.authorization);
   
@@ -116,6 +86,36 @@ const add_brand = async (req, res) => {
         message: "برند جدید با موفقیت افزوده شد!",
       })
     );
+  }
+};
+
+function createRandomImageName(length) {
+  let result = "";
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
+
+// compare images and images files and check if cover image is set
+const checkImages = (image, imageFile, res) => {
+  if (
+    image.name !== imageFile.originalname ||
+    Number(image.size) !== imageFile.size ||
+    image.type !== imageFile.mimetype
+  ) {
+    res.json(
+      jsonResponse(406, {
+        message: `اطلاعات عکس آپلود شده با اطلاعات عکس تطابق ندارد!`,
+      })
+    );
+  } else if (!imageFile.buffer) {
+    res.json(jsonResponse(406, { message: `عکس آپلود شده صحیح نمی باشد!` }));
+  } else {
+    return true;
   }
 };
 
