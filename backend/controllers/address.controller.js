@@ -28,7 +28,7 @@ const add_address = async (req, res) => {
       res
     ) ||
     !checkPhoneNumber(body.receiverSpecifications.phoneNumber, res) ||
-    checkReceiverStatus
+    !checkReceiverStatus
   ) {
     return null;
   }
