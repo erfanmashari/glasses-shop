@@ -39,6 +39,28 @@ const add_notification = async (req, res) => {
     });
 };
 
+// seen the notification
+const seen_notification = async (req, res) => {
+  checkAuthorization(req.headers.authorization);
+
+  const body = req.body;
+
+  if (!checkDataExist(body, ["id"], res)) {
+    return null;
+  }
+
+  Notification.findOne({ _id: body.id }, (err, notification) => {
+    if (notification) {
+      // The below two lines will set seen field to true
+      notification.seen = true;
+      notification.save();
+      res.json(
+        jsonResponse(200, { message: "پیغام موردنظر به عنوان دیده شده ست شد!" })
+      );
+    }
+  });
+};
+
 // check if user is real or not
 const checkUser = async (userId, res) => {
   const user = await User.findOne({ _id: userId });
@@ -50,4 +72,4 @@ const checkUser = async (userId, res) => {
   return user ? true : false;
 };
 
-module.exports = { add_notification };
+module.exports = { add_notification, seen_notification };
